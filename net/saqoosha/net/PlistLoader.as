@@ -14,27 +14,7 @@ package net.saqoosha.net {
 
 	public class PlistLoader extends EventDispatcher {
 		
-		private var _loader:URLLoader;
-		private var _data:Object;
-		
-		public function PlistLoader() {
-			super();
-		}
-		
-		public function load(url:String):void {
-			this._loader = new URLLoader();
-			this._loader.dataFormat = URLLoaderDataFormat.TEXT;
-			this._loader.addEventListener(Event.COMPLETE, this._onLoaded);
-			this._loader.load(new URLRequest(url));
-		}
-		
-		private function _onLoaded(e:Event):void {
-			var root:XML = new XML(this._loader.data);
-			this._data = this.parseNode(root.child(0));
-			this.dispatchEvent(new Event(Event.COMPLETE));
-		}
-		
-		private function parseNode(node:*):* {
+		public static function parseNode(node:*):* {
 			var ret:*;
 			switch (node.name().toString()) {
 				case 'string':
@@ -56,24 +36,24 @@ package net.saqoosha.net {
 					ret = parseW3CDTF(node.toString());
 					break;
 				case 'array':
-					ret = this.parseArray(node);
+					ret = parseArray(node);
 					break;
 				case 'dict':
-					ret = this.parseDict(node);
+					ret = parseDict(node);
 					break;
 			}
 			return ret;
 		}
 		
-		private function parseArray(node:*):Array {
+		public static function parseArray(node:*):Array {
 			var ret:Array = [];
 			for each(var n:XML in node.children()) {
-				ret.push(this.parseNode(n));
+				ret.push(parseNode(n));
 			}
 			return ret;
 		}
 		
-		private function parseDict(node:*):Dictionary {
+		public static function parseDict(node:*):Dictionary {
 			var ret:Dictionary = new Dictionary();
 			var key:String;
 			for each(var n:XML in node.children()) {
@@ -82,22 +62,14 @@ package net.saqoosha.net {
 						key = n.children().toString();
 						break;
 					default:
-						ret[key] = this.parseNode(n);
+						ret[key] = parseNode(n);
 						break;
 				}
 			}
 			return ret;
 		}
-		
-		public function get data():* {
-			return this._data;
-		}
-		
-		public function dump():void {
-			this.dumpElement(this._data);
-		}
-		
-		private function dumpElement(e:*, pad:String = ''):void {
+
+		public static function dumpElement(e:*, pad:String = ''):void {
 			if (e is String) {
 				trace(pad + '[String] ' + e);
 			} else if (e is int) {
@@ -110,33 +82,61 @@ package net.saqoosha.net {
 				trace(pad + '[Date] ' + e);
 			} else if (e is Dictionary) {
 				trace(pad + '[Dictionary]');
-				this.dumpList(e, pad + '    ');
+				dumpList(e, pad + '    ');
 			} else if (e is Array) {
 				trace(pad + '[Array]');
-				this.dumpList(e, pad + '    ');
+				dumpList(e, pad + '    ');
 			} else {
 				trace(pad + '[Object]');
-				this.dumpList(e, pad + '    ');
+				dumpList(e, pad + '    ');
 			}
 		}
 		
-		private function dumpList(list:*, pad:String = ''):void {
+		public static function dumpList(list:*, pad:String = ''):void {
 			for (var key:String in list) {
 				trace(pad + key + ' -->');
-				this.dumpElement(list[key], pad + '  ');
+				dumpElement(list[key], pad + '  ');
 			}
 		}
+
+
+
+
+		private var _loader:URLLoader;
+		private var _data:Object;
 		
+		public function PlistLoader() {
+			super();
+		}
+		
+		public function load(url:String):void {
+			_loader = new URLLoader();
+			_loader.dataFormat = URLLoaderDataFormat.TEXT;
+			_loader.addEventListener(Event.COMPLETE, _onLoaded);
+			_loader.load(new URLRequest(url));
+		}
+		
+		private function _onLoaded(e:Event):void {
+			var root:XML = new XML(_loader.data);
+			_data = parseNode(root.child(0));
+			dispatchEvent(new Event(Event.COMPLETE));
+		}
+		
+		public function get data():* {
+			return _data;
+		}
+		
+		public function dump():void {
+			dumpElement(_data);
+		}
 	}
-	
 }
 
 
-function parseW3CDTF(str:String):Date
-{
+
+function parseW3CDTF(str:String):Date {
     var finalDate:Date;
-	try
-	{
+	try {
 		var dateStr:String = str.substring(0, str.indexOf("T"));
 		var timeStr:String = str.substring(str.indexOf("T")+1, str.length);
 		var dateArr:Array = dateStr.split("-");
@@ -149,23 +149,18 @@ function parseW3CDTF(str:String):Date
 		var offsetMinutes:Number;
 		var offsetStr:String;
 		
-		if (timeStr.indexOf("Z") != -1)
-		{
+		if (timeStr.indexOf("Z") != -1) {
 			multiplier = 1;
 			offsetHours = 0;
 			offsetMinutes = 0;
 			timeStr = timeStr.replace("Z", "");
-		}
-		else if (timeStr.indexOf("+") != -1)
-		{
+		} else if (timeStr.indexOf("+") != -1) {
 			multiplier = 1;
 			offsetStr = timeStr.substring(timeStr.indexOf("+")+1, timeStr.length);
 			offsetHours = Number(offsetStr.substring(0, offsetStr.indexOf(":")));
 			offsetMinutes = Number(offsetStr.substring(offsetStr.indexOf(":")+1, offsetStr.length));
 			timeStr = timeStr.substring(0, timeStr.indexOf("+"));
-		}
-		else // offset is -
-		{
+		} else { // offset is -
 			multiplier = -1;
 			offsetStr = timeStr.substring(timeStr.indexOf("-")+1, timeStr.length);
 			offsetHours = Number(offsetStr.substring(0, offsetStr.indexOf(":")));
@@ -182,13 +177,11 @@ function parseW3CDTF(str:String):Date
 		var offset:Number = (((offsetHours * 3600000) + (offsetMinutes * 60000)) * multiplier);
 		finalDate = new Date(utc - offset);
 
-		if (finalDate.toString() == "Invalid Date")
-		{
+		if (finalDate.toString() == "Invalid Date") {
 			throw new Error("This date does not conform to W3CDTF.");
 		}
-	}
-	catch (e:Error)
-	{
+		
+	} catch (e:Error) {
 		var eStr:String = "Unable to parse the string [" +str+ "] into a date. ";
 		eStr += "The internal error was: " + e.toString();
 		throw new Error(eStr);
