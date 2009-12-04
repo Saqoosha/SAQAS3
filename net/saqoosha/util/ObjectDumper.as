@@ -10,6 +10,7 @@
  */
 package net.saqoosha.util {
 
+	import flash.utils.ByteArray;
     public class ObjectDumper extends Object {
 
         /**
@@ -42,6 +43,9 @@ package net.saqoosha.util {
                 t += pad + label + "(" + typeof foo + ") [object Array]\n";
                 for (var n:* = 0; n < foo.length; n++)
                     t += arguments.callee(foo[n], maxObjectNests, level + 1, "[" + n + "] = ");
+			// ByteArray の場合
+            } else if (foo is ByteArray) {
+            	t += pad + label + "(bytearray) length = " + ByteArray(foo).length + "\n";
             // その他の型の場合
             } else {
                 t += pad + label + "(" + typeof foo + ") " + foo + "\n";

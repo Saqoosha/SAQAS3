@@ -12,40 +12,40 @@ package net.saqoosha.pv3d.material {
 		
 		public function AlphaBitmapMaterial(asset:BitmapData = null, alpha:Number = 1.0) {
 			super(asset.clone(), false);
-			this._orignal = asset;//.clone();
-			this._color = new ColorTransform();
+			_orignal = asset;//.clone();
+			_color = new ColorTransform();
 			this.alpha = alpha;
-			this._updateBitmap();
+			_updateBitmap();
 		}
 		
 		protected function _updateBitmap():void {
-			this.bitmap.fillRect(this.bitmap.rect, 0x0);
-			this._color.alphaMultiplier = this.fillAlpha;
-			this.bitmap.draw(this._orignal, null, this._color);
+			bitmap.fillRect(bitmap.rect, 0x0);
+			_color.alphaMultiplier = fillAlpha;
+			bitmap.draw(_orignal, null, _color);
 		}
 		
 		public override function destroy():void {
-//			if (this._orignal) {
-//				this._orignal.dispose();
-//				this._orignal = null;
+//			if (_orignal) {
+//				_orignal.dispose();
+//				_orignal = null;
 //			}
-			this._orignal = null;
-			this._color = null;
+			_orignal = null;
+			_color = null;
 			super.destroy();
 		}
 		
 		public function get original():BitmapData {
-			return this._orignal;
+			return _orignal;
 		}
 		
 		public function get alpha():Number {
-			return this.fillAlpha;
+			return fillAlpha;
 		}
 		
 		public function set alpha(value:Number):void {
-			if (this.fillAlpha != value) {
-				this.fillAlpha = value;
-				this._updateBitmap();
+			if (fillAlpha != value) {
+				fillAlpha = value;
+				_updateBitmap();
 			}
 		}
 	}

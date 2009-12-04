@@ -13,11 +13,11 @@ package net.saqoosha.geom {
 		}
 		
 		public function add(p:Point3D):Point3D {
-			return new Point3D(this.x + p.x, this.y + p.y, this.z + p.z);
+			return new Point3D(x + p.x, y + p.y, z + p.z);
 		}
 		
 		public function subtract(p:Point3D):Point3D {
-			return new Point3D(this.x - p.x, this.y - p.y, this.z - p.z);
+			return new Point3D(x - p.x, y - p.y, z - p.z);
 		}
 		
 		public static function blend(a:Point3D, b:Point3D, alpha:Number = 1, out:Point3D = null):Point3D {
@@ -30,11 +30,11 @@ package net.saqoosha.geom {
 		}
 		
 		public function clone():Point3D {
-			return new Point3D(this.x, this.y, this.z);
+			return new Point3D(x, y, z);
 		}
 		
 		public function toString():String {
-			return '[Point3D x=' + this.x + ', y=' + this.y + ', z=' + this.z + ']';
+			return '[Point3D x=' + x + ', y=' + y + ', z=' + z + ']';
 		}
 	}
 }

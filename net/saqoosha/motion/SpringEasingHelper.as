@@ -7,33 +7,38 @@ package net.saqoosha.motion {
 
 		public function SpringEasingHelper(inival:Number, factor:Number = 20, decay:Number = 0.8) {
 			super(inival, factor);
-			this._velocity = 0;
-			this._decay = decay;
+			_velocity = 0;
+			_decay = decay;
 		}
 
 		public override function update(newVal:Number = NaN):void {
 			if (!isNaN(newVal)) {
-				this.target = newVal;
+				target = newVal;
 			}
-			this._velocity += (this._target - this._current) * this._factor;
-			this._current += this._velocity;
-			this._velocity *= this._decay;
+			_velocity += (_target - _current) * _factor;
+			_current += _velocity;
+			_velocity *= _decay;
 		}
-		
+
+		public override function reset():void {
+			_current = _target;
+			_velocity = 0;
+		}
+
 		public function get velocity():Number {
-			return this._velocity;
+			return _velocity;
 		}
 
 		public function get decay():Number {
-			return this._decay;
+			return _decay;
 		}
 
 		public function set decay(newVal:Number):void {
-			this._decay = newVal;
+			_decay = newVal;
 		}
 
 		public override function toString():String {
-			return '[SpringEasingHelper: current=' + this._current + ', factor=' + this._factor + ']';
+			return '[SpringEasingHelper: current=' + _current + ', factor=' + _factor + ']';
 		}
 	}
 }
