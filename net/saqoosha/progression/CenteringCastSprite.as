@@ -1,9 +1,9 @@
 package net.saqoosha.progression {
-	
-	import flash.events.Event;
-	
 	import jp.progression.casts.CastSprite;
 
+	import flash.events.Event;
+
+	
 	public class CenteringCastSprite extends CastSprite {
 		
 		public function CenteringCastSprite(initObject:Object = null) {
@@ -14,14 +14,14 @@ package net.saqoosha.progression {
 		
 		private function _onAddedToStage(e:Event):void {
 			stage.addEventListener(Event.RESIZE, _onStageResized);
-			_onStageResized(null);
+			_onStageResized();
 		}
 		
 		private function _onRemovedFromStage(e:Event):void {
 			stage.removeEventListener(Event.RESIZE, _onStageResized);
 		}
 	
-		protected function _onStageResized(e:Event):void {
+		protected function _onStageResized(e:Event = null):void {
 			x = stage.stageWidth >> 1;
 			y = stage.stageHeight >> 1;
 		}

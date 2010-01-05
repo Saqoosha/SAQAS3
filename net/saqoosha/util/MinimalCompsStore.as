@@ -75,7 +75,7 @@ package net.saqoosha.util {
 				var name:String = _compInfo[comp].name;
 				var prop:String = _compInfo[comp].prop;
 				_so.data[name] = comp[prop];
-				trace('Save:', getQualifiedClassName(comp) + '.' + prop + ' = ' +  _so.data[name]);
+				trace('Save:', getQualifiedClassName(comp) + '.' + prop + ' (' + name + ') = ' +  _so.data[name]);
 				delete _changed[comp];
 			}
 			_so.flush();
