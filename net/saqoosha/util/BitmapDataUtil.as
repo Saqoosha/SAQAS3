@@ -1,14 +1,50 @@
 package net.saqoosha.util {
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+
 	
-	public class BitmapUtil {
+	public class BitmapDataUtil {
+		
 		
 		private static const ZERO_POINT:Point = new Point(0, 0);
+		
+		
+		public static function resize(source:BitmapData, target:*, smoothing:Boolean = true, quality:String = 'best'):BitmapData {
+			var q:String;
+			if (StageReference.stage) {
+				q = StageReference.stage.quality;
+				StageReference.stage.quality = quality;
+			}
+			
+			var w:Number = 0;
+			var h:Number = 0;
+			var resized:BitmapData = null;
+			if (target is BitmapData) {
+				resized = BitmapData(target);
+				w = resized.width;
+				h = resized.height;
+			} else if (target is Rectangle) {
+				w = Rectangle(target).width;
+				h = Rectangle(target).height;
+				resized = new BitmapData(w, h);
+			}
+			
+			if (w && h) {
+				var s:Number = Math.max(w / source.width, h / source.height);
+				var mtx:Matrix = new Matrix(s, 0, 0, s, (w - s * source.width) / 2, (h - s * source.height) / 2);
+				resized.draw(source, mtx, null, null, null, smoothing);
+			}
+			
+			if (StageReference.stage) {
+				StageReference.stage.quality = q;
+			}
+			return resized;
+		}
+		
 		
 		public static function breakApartHorizontal(orgbmp:BitmapData, ptnbmp:BitmapData, parent:Sprite = null):Sprite {
 			if (!orgbmp.rect.equals(ptnbmp.rect)) {
@@ -43,6 +79,7 @@ package net.saqoosha.util {
 			
 			return sp;
 		}
+
 
 		public static function breakApartVertical(orgbmp:BitmapData, ptnbmp:BitmapData, parent:Sprite = null):Sprite {
 			if (!orgbmp.rect.equals(ptnbmp.rect)) {
