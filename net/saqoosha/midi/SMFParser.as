@@ -17,7 +17,7 @@ package net.saqoosha.midi {
 	import flash.utils.Endian;
 
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFParser {
 		

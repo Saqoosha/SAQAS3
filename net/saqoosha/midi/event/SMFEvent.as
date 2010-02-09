@@ -2,7 +2,7 @@ package net.saqoosha.midi.event {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFEvent {
 		

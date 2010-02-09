@@ -3,7 +3,7 @@ package net.saqoosha.midi.event.meta {
 	import net.saqoosha.util.StringUtil;
 
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFNumberEvent extends SMFMetaEvent {
 		

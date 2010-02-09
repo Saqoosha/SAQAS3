@@ -2,7 +2,7 @@ package net.saqoosha.midi.event.meta {
 	import net.saqoosha.midi.event.SMFMetaEvent;
 
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFKeySignatureEvent extends SMFMetaEvent {
 		

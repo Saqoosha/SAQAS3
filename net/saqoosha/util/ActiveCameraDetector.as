@@ -10,7 +10,7 @@ package net.saqoosha.util {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class ActiveCameraDetector extends EventDispatcher {
 		

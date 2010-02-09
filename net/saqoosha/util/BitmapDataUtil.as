@@ -1,4 +1,6 @@
 package net.saqoosha.util {
+	import net.saqoosha.display.Stage;
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -13,13 +15,7 @@ package net.saqoosha.util {
 		private static const ZERO_POINT:Point = new Point(0, 0);
 		
 		
-		public static function resize(source:BitmapData, target:*, smoothing:Boolean = true, quality:String = 'best'):BitmapData {
-			var q:String;
-			if (StageReference.stage) {
-				q = StageReference.stage.quality;
-				StageReference.stage.quality = quality;
-			}
-			
+		public static function resize(source:BitmapData, target:*, smoothing:Boolean = true, quality:String = 'BEST'):BitmapData {
 			var w:Number = 0;
 			var h:Number = 0;
 			var resized:BitmapData = null;
@@ -36,12 +32,11 @@ package net.saqoosha.util {
 			if (w && h) {
 				var s:Number = Math.max(w / source.width, h / source.height);
 				var mtx:Matrix = new Matrix(s, 0, 0, s, (w - s * source.width) / 2, (h - s * source.height) / 2);
+				if (Stage.ref) Stage.pushQuality(quality);
 				resized.draw(source, mtx, null, null, null, smoothing);
+				if (Stage.ref) Stage.popQuality();
 			}
 			
-			if (StageReference.stage) {
-				StageReference.stage.quality = q;
-			}
 			return resized;
 		}
 		
@@ -87,7 +82,6 @@ package net.saqoosha.util {
 			}
 			
 			var w:int = orgbmp.width;
-			var h:int = orgbmp.height;
 			var tmp:BitmapData = new BitmapData(w, 1, true, 0x0);
 			var copy:Rectangle = new Rectangle(0, 0, w, 1);
 			var rect:Rectangle;

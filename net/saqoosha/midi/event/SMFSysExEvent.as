@@ -2,7 +2,7 @@ package net.saqoosha.midi.event {
 	import flash.utils.ByteArray;
 
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFSysExEvent extends SMFEvent {
 

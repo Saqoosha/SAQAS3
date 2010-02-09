@@ -6,7 +6,7 @@ package net.saqoosha.audio {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SimpleAudioMixer {
 		

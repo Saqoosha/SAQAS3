@@ -2,7 +2,7 @@ package net.saqoosha.midi.chunk {
 	import net.saqoosha.midi.event.SMFEvent;
 
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFTrackChunk extends SMFChunk {
 

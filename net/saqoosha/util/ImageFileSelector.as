@@ -63,12 +63,17 @@ package net.saqoosha.util {
 			_file.removeEventListener(Event.SELECT, _onFileSelect);
 			_file.removeEventListener(Event.CANCEL, _onFileCancel);
 			_file.removeEventListener(Event.COMPLETE, _onFileComplete);
-			_file = null;
+//			_file = null;
 		}
 		
 		
 		public function get image():BitmapData {
 			return _image;
+		}
+		
+		
+		public function get file():FileReference {
+			return _file;
 		}
 	}
 }

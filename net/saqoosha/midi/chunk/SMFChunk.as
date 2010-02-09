@@ -2,7 +2,7 @@ package net.saqoosha.midi.chunk {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SMFChunk {
 		
