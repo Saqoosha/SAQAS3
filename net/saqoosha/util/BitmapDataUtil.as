@@ -1,6 +1,4 @@
 package net.saqoosha.util {
-	import net.saqoosha.display.Stage;
-
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -15,7 +13,7 @@ package net.saqoosha.util {
 		private static const ZERO_POINT:Point = new Point(0, 0);
 		
 		
-		public static function resize(source:BitmapData, target:*, smoothing:Boolean = true, quality:String = 'BEST'):BitmapData {
+		public static function resize(source:BitmapData, target:*, smoothing:Boolean = true):BitmapData {
 			var w:Number = 0;
 			var h:Number = 0;
 			var resized:BitmapData = null;
@@ -32,9 +30,7 @@ package net.saqoosha.util {
 			if (w && h) {
 				var s:Number = Math.max(w / source.width, h / source.height);
 				var mtx:Matrix = new Matrix(s, 0, 0, s, (w - s * source.width) / 2, (h - s * source.height) / 2);
-				if (Stage.ref) Stage.pushQuality(quality);
 				resized.draw(source, mtx, null, null, null, smoothing);
-				if (Stage.ref) Stage.popQuality();
 			}
 			
 			return resized;

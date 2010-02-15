@@ -7,7 +7,7 @@ package net.saqoosha.display {
 
 	
 	/**
-	 * @author Saqoosha
+	 * @author hiko
 	 */
 	public class SigSprite extends Sprite {
 
@@ -21,6 +21,7 @@ package net.saqoosha.display {
 		private var _sigMouseUp:NativeRelaySignal;
 		private var _sigMouseOver:NativeRelaySignal;
 		private var _sigMouseOut:NativeRelaySignal;
+		private var _sigMouseMove:NativeRelaySignal;
 		private var _sigMouseWheel:NativeRelaySignal;
 		private var _sigRollOver:NativeRelaySignal;
 		private var _sigRollOut:NativeRelaySignal;
@@ -69,6 +70,11 @@ package net.saqoosha.display {
 			return _sigMouseOut ||= new NativeRelaySignal(this, MouseEvent.MOUSE_OUT, MouseEvent);
 		}
 		
+		
+		public function get sigMouseMove():NativeRelaySignal {
+			return _sigMouseMove ||= new NativeRelaySignal(this, MouseEvent.MOUSE_MOVE, MouseEvent);
+		}
+
 		
 		public function get sigMouseWheel():NativeRelaySignal {
 			return _sigMouseWheel ||= new NativeRelaySignal(this, MouseEvent.MOUSE_WHEEL, MouseEvent);

@@ -7,7 +7,7 @@ package net.saqoosha.display {
 
 	
 	/**
-	 * @author Saqoosha
+	 * @author hiko
 	 */
 	public class Stage {
 		
@@ -37,17 +37,22 @@ package net.saqoosha.display {
 		
 		
 		public static function pushQuality(quality:String):void {
-			mtrace('pushQuality', 'current', _ref.quality, 'new', quality);
 			_qualityHistry.push(_ref.quality);
 			_ref.quality = quality;
 		}
 		
 		
 		public static function popQuality():void {
-			mtrace('popQuality', 'current', _ref.quality, 'history', _qualityHistry);
 			if (_qualityHistry.length > 0) {
 				_ref.quality = _qualityHistry.pop();
 			}
+		}
+		
+		
+		public static function doInQuality(quality:String, func:Function):void {
+			pushQuality(quality);
+			func();
+			popQuality();
 		}
 
 		

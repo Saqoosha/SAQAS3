@@ -3,7 +3,7 @@ package net.saqoosha.util {
 
 	
 	/**
-	 * @author Saqoosha
+	 * @author hiko
 	 */
 	public class EnterFrameBeacon {
 		

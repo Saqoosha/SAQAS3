@@ -1,6 +1,10 @@
 package net.saqoosha.util {
+	import flash.display.DisplayObject;
+	import flash.geom.ColorTransform;
 
+	
 	public class ColorUtil {
+		
 		
 		/**
 		 * Convert HSV color to RGB color int
@@ -27,6 +31,7 @@ package net.saqoosha.util {
 			return (int(r * 0xff) << 16) | (int(g * 0xff) << 8) | int(b * 0xff);
 		}
 		
+		
 		/**
 		 * Adjust contrast
 		 * @param color	Color value (int)
@@ -44,6 +49,7 @@ package net.saqoosha.util {
 			b = (b * c + o) << 0;
 			return (r << 16) | (g << 8) | b;
 		}
+	
 	
 		/**
 		 * Convert HSV color to RGB color
@@ -72,7 +78,8 @@ package net.saqoosha.util {
 			
 			return { r:Math.round(r*255), g:Math.round(g*255), b:Math.round(b*255) };
 		}
-//	
+
+
 //		/**
 //		 * Convert RGB color to HSV color
 //		 * @param r	Red (0-255)
@@ -162,6 +169,7 @@ package net.saqoosha.util {
 //			return ColorUtil.HSV2RGBNumber(hsv.h, hsv.s, hsv.v);
 //		}
 		
+		
 		public static function blendColors(...colors):int {
 			var n:int = colors.length;
 			var r:int = 0;
@@ -178,6 +186,10 @@ package net.saqoosha.util {
 			b /= n;
 			return ((r << 16) & 0xff0000) | ((g << 8) & 0x00ff00) | (b & 0x0000ff);
 		}
+
+
+		public static function tint(obj:DisplayObject, color:uint):void {
+			obj.transform.colorTransform = new ColorTransform(0, 0, 0, 1, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff, 0);
+		}
 	}
-	
 }

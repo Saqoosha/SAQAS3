@@ -1,6 +1,8 @@
 ﻿package net.saqoosha.util {
 	
+	
 	public class DateUtil {
+		
 		
 		public static const MILLISECOND:Number = 1;
 		public static const SECOND:Number = MILLISECOND * 1000;
@@ -8,7 +10,7 @@
 		public static const HOUR:Number = MINUTE * 60;
 		public static const DAY:Number = HOUR * 24;
 
-		public static var dayNamesShort:Array = [
+		public static const DAY_NAME_SHORT:Array = [
 			'Sun',
 			'Mon',
 			'Tue',
@@ -18,7 +20,7 @@
 			'Sat'
 		];
 
-		public static var monthNamesShort:Array = [
+		public static const MONTH_NAME_SHORT:Array = [
 			'Jan',
 			'Feb',
 			'Mar',
@@ -33,7 +35,7 @@
 			'Dec'
 		];
 
-        public static var monthNamesLong:Array = [
+        public static const MONTH_NAME_LONG:Array = [
 			'January',
 			'Febrary',
 			'March',
@@ -48,7 +50,7 @@
 			'December'
 		];
 
-        public static var timezones:Object = {
+        public static const TIMEZONE:Object = {
             'ADT': -3 * HOUR,
             'AST': -4 * HOUR,
             'CDT': -5 * HOUR,
@@ -67,11 +69,12 @@
             'M': -12 * HOUR,
             'N': 1 * HOUR,
             'Y': 12 * HOUR
-        }
+        };
+		
 		
         public static function fromRFC822(dateString:String):Date {
             var parts:Array = dateString.split(/\s+/);
-            var dayNames:Array = dayNamesShort.map(function (...a):* {
+            var dayNames:Array = DAY_NAME_SHORT.map(function (...a):* {
 				return a[0].toLowerCase();
 			});
 
@@ -84,7 +87,7 @@
 
             var Y:int, m:int, d:int;
             d = int(parts.shift());
-            m = monthNamesShort.indexOf(parts.shift());
+            m = MONTH_NAME_SHORT.indexOf(parts.shift());
             Y = int(parts.shift());
 
             var H:int, M:int, S:int, times:Array, tzInfo:String;
@@ -105,7 +108,7 @@
             var op:int = 1, offset:Number = 0, utc:Number = Date.UTC(Y, m, d, H, M, S);
             
             if (tzInfo.search(/\d/) === -1) {
-                offset = timezones[tzInfo];
+                offset = TIMEZONE[tzInfo];
             }
             else {
                 if (tzInfo.length > 4) {
@@ -119,17 +122,18 @@
             return new Date(utc - offset);
         }
 
+
 		public static function toRFC822(d:Date):String {
 			var date:Number = d.getDate();
 			var hours:Number = d.getHours();
 			var minutes:Number = d.getMinutes();
 			var seconds:Number = d.getSeconds();
 			var sb:String = new String();
-			sb += dayNamesShort[d.getDay()];
+			sb += DAY_NAME_SHORT[d.getDay()];
 			sb += ', ';
 			sb += ('0' + date).substr(-2);
 			sb += ' ';
-			sb += monthNamesShort[d.getMonth()];
+			sb += MONTH_NAME_SHORT[d.getMonth()];
 			sb += ' ';
 			sb += d.getFullYear();
 			sb += ' ';
@@ -167,6 +171,7 @@
 			sb += ofm;
 			return sb;
 		}
+
 
         public static function fromW3C(dateString:String):Date {
             var parts:Array = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})([-+](\d{2})(?::?(\d{2}))|Z)$/.exec(dateString);
