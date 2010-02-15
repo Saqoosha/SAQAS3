@@ -8,7 +8,7 @@ package net.saqoosha.progression {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class CastSigSprite extends CastSprite {
 

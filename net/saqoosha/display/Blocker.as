@@ -5,7 +5,7 @@ package net.saqoosha.display {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class Blocker extends Sprite {
 
@@ -25,7 +25,9 @@ package net.saqoosha.display {
 			Stage.ref.addChild(_blocker);
 			Stage.ref.focus = _blocker;
 			Stage.ref.addEventListener(KeyboardEvent.KEY_DOWN, _onKeyDown, false, int.MAX_VALUE);
-			Stage.sigResize.add(_onStageResize);			_onStageResize();			_blocking = true;
+			Stage.sigResize.add(_onStageResize);
+			_onStageResize();
+			_blocking = true;
 		}
 
 		

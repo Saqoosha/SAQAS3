@@ -4,7 +4,7 @@ package net.saqoosha.math {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SummedAreaTable {
 		
@@ -24,17 +24,27 @@ package net.saqoosha.math {
 			var x:int, y:int, idx:int;
 			for (x = 0; x < w; ++x) {
 				idx = x * 4;
-				_sat[idx] = pix[idx++];				_sat[idx] = pix[idx++];				_sat[idx] = pix[idx++];				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
 			}
 			for (y = 0; y < w; ++y) {
 				idx = y * w * 4;
-				_sat[idx] = pix[idx++];				_sat[idx] = pix[idx++];				_sat[idx] = pix[idx++];				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
+				_sat[idx] = pix[idx++];
 			}
 			
-			var w4:int = w * 4;			for (y = 1; y < h; ++y) {
+			var w4:int = w * 4;
+			for (y = 1; y < h; ++y) {
 				for (x = 1; x < w;++x) {
 					idx = (y * w + x) * 4;
-					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;
+					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;
+					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;
+					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;
+					_sat[idx] = pix[idx] + _sat[idx - 4] + _sat[idx - w4] + _sat[idx - w4 - 4]; idx++;
 				}
 			}
 		}

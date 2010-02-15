@@ -7,7 +7,7 @@ package net.saqoosha.display {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SigSprite extends Sprite {
 
