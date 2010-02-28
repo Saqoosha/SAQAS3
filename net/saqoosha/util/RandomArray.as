@@ -2,7 +2,7 @@ package net.saqoosha.util {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class RandomArray extends Array {
 

@@ -1,7 +1,7 @@
 package net.saqoosha.logging {
 	import net.saqoosha.util.ObjectDumper;
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public function dump(...args:*):void {
 		if (args.length == 1) {

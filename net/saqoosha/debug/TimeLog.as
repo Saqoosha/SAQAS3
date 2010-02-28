@@ -5,7 +5,7 @@ package net.saqoosha.debug {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class TimeLog {
 		

@@ -6,7 +6,7 @@ package net.saqoosha.util {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class SigTimer extends Timer {
 
