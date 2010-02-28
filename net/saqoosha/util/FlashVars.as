@@ -1,6 +1,5 @@
 package net.saqoosha.util {
 
-	
 	public class FlashVars {
 
 		
@@ -14,19 +13,24 @@ package net.saqoosha.util {
 //			ObjectDumper.dump(_parameters);
 		}
 
-		
-		public static function getString(id:String):String {
-			return _parameters ? _parameters[id] as String : null;
+
+		public static function getString(key:String, def:String = null):String {
+			return hasKey(key) ? String(_parameters[key]) : def;
 		}
 
-		
-		public static function getNumber(id:String):Number {
-			return _parameters ? parseFloat(_parameters[id]) : NaN;
+
+		public static function getNumber(key:String, def:Number = NaN):Number {
+			return hasKey(key) ? parseFloat(_parameters[key]) : def;
 		}
 
-		
-		public static function getInt(id:String):int {
-			return _parameters ? parseInt(_parameters[id]) : NaN;
+
+		public static function getInt(key:String, def:int = 0):int {
+			return hasKey(key) ? parseInt(_parameters[key]) : def;
+		}
+
+
+		public static function hasKey(key:String):Boolean {
+			return _parameters && key in _parameters;
 		}
 	}
 }
