@@ -33,6 +33,22 @@ package net.saqoosha.progression {
 		}
 
 
+		public function removeAllSignal():void {
+			if (_sigAddedToStage) _sigAddedToStage.removeAll();
+			if (_sigRemovedFromStage) _sigRemovedFromStage.removeAll();
+			if (_sigEnterFrame) _sigEnterFrame.removeAll();
+			if (_sigClick) _sigClick.removeAll();
+			if (_sigMouseDown) _sigMouseDown.removeAll();
+			if (_sigMouseUp) _sigMouseUp.removeAll();
+			if (_sigMouseOver) _sigMouseOver.removeAll();
+			if (_sigMouseOut) _sigMouseOut.removeAll();
+			if (_sigMouseMove) _sigMouseMove.removeAll();
+			if (_sigMouseWheel) _sigMouseWheel.removeAll();
+			if (_sigRollOver) _sigRollOver.removeAll();
+			if (_sigRollOut) _sigRollOut.removeAll();
+		}
+
+		
 		public function get sigAddedToStage():NativeRelaySignal {
 			return _sigAddedToStage ||= new NativeRelaySignal(this, Event.ADDED_TO_STAGE);
 		}

@@ -46,8 +46,10 @@ package net.saqoosha.display {
 			Stage.sigResize.remove(_onStageResize);
 			Stage.ref.removeEventListener(KeyboardEvent.KEY_DOWN, _onKeyDown, false);
 			Stage.ref.focus = null;
-			_blocker.parent.removeChild(_blocker);
-			_blocking = false;
+			if (_blocker) {
+				_blocker.parent.removeChild(_blocker);
+				_blocking = false;
+			}
 		}
 
 		

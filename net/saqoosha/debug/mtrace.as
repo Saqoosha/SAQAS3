@@ -3,6 +3,6 @@ package net.saqoosha.debug{
 
 
 	public function mtrace(...args):void {
-		MonsterDebugger.trace(null, (args.length == 1) ? args[0] : args.join(' '));
+//		MonsterDebugger.trace(null, (args.length == 1) ? args[0] : args.join(' '));
 	}
 }

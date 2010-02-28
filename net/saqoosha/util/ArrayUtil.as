@@ -4,17 +4,17 @@ package net.saqoosha.util {
 	public class ArrayUtil {
 
 		
-		public static function shuffle(ar:Array):Array {
-			var n:int = ar.length;
+		public static function shuffle(arrayOrVector:*):* {
+			var n:int = arrayOrVector.length;
 			var i:int;
 			var tmp:*;
 			while (n) {
 				i = Math.random() * n;
-				tmp = ar[--n];
-				ar[n] = ar[i];
-				ar[i] = tmp;
+				tmp = arrayOrVector[--n];
+				arrayOrVector[n] = arrayOrVector[i];
+				arrayOrVector[i] = tmp;
 			}
-			return ar;
+			return arrayOrVector;
 		}
 
 		

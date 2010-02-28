@@ -1,9 +1,12 @@
 package net.saqoosha.display {
+	import org.osflash.signals.Signal;
 	import org.osflash.signals.natives.NativeRelaySignal;
 
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 
 	
 	/**
@@ -19,8 +22,11 @@ package net.saqoosha.display {
 		private static var _width:int = 0;
 		private static var _height:int = 0;
 		private static var _qualityHistry:Vector.<String> = new Vector.<String>();
+		private static var _timer:Timer;
 		
 		private static var _sigResize:NativeRelaySignal;
+		private static var _sigResizeDelayed:Signal;
+		private static var _sigClick:NativeRelaySignal;
 		private static var _sigMouseDown:NativeRelaySignal;
 		private static var _sigMouseUp:NativeRelaySignal;
 		private static var _sigMouseMove:NativeRelaySignal;
@@ -34,7 +40,7 @@ package net.saqoosha.display {
 				_onResize();
 			}
 		}
-		
+
 		
 		public static function pushQuality(quality:String):void {
 			_qualityHistry.push(_ref.quality);
@@ -66,8 +72,17 @@ package net.saqoosha.display {
 		private static function _onResize(event:Event = null):void {
 			_width = _ref.stageWidth;
 			_height = _ref.stageHeight;
+			if (_timer) {
+				_timer.reset();
+				_timer.start();
+			}
 		}
+
 		
+		private static function _onTimer(event:TimerEvent):void {
+			_sigResizeDelayed.dispatch();
+		}
+
 		
 		public static function get ref():flash.display.Stage {
 			return _ref;
@@ -89,6 +104,23 @@ package net.saqoosha.display {
 			return _sigResize;
 		}
 		
+		
+		static public function get sigResizeDelayed():Signal {
+			_checkRef();
+			if (!_sigResizeDelayed) {
+				_sigResizeDelayed = new Signal();
+				_timer = new Timer(500, 1);
+				_timer.addEventListener(TimerEvent.TIMER, _onTimer);
+			}
+			return _sigResizeDelayed;
+		}
+		
+		
+		public static function get sigClick():NativeRelaySignal {
+			_checkRef();
+			return _sigClick ||= new NativeRelaySignal(_ref, MouseEvent.CLICK, MouseEvent);
+		}
+
 		
 		public static function get sigMouseDown():NativeRelaySignal {
 			_checkRef();

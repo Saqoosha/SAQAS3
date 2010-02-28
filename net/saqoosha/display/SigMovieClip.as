@@ -1,7 +1,7 @@
 package net.saqoosha.display {
 	import org.osflash.signals.natives.NativeRelaySignal;
 
-	import flash.display.Sprite;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
@@ -9,7 +9,7 @@ package net.saqoosha.display {
 	/**
 	 * @author Saqoosha
 	 */
-	public class SigSprite extends Sprite {
+	public class SigMovieClip extends MovieClip {
 
 		
 		private var _sigAddedToStage:NativeRelaySignal;
@@ -27,7 +27,7 @@ package net.saqoosha.display {
 		private var _sigRollOut:NativeRelaySignal;
 
 		
-		public function SigSprite() {
+		public function SigMovieClip() {
 		}
 		
 		
