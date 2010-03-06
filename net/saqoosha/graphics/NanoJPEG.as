@@ -26,10 +26,10 @@ package net.saqoosha.graphics {
 		
 		
 		private static const ZZ:Vector.<int> = Vector.<int>([
-			 0,  1,  8, 16,  9,  2,  3, 10,
-			17, 24, 32, 25, 18, 11,  4,  5,
+			 0,	 1,	 8, 16,	 9,	 2,	 3, 10,
+			17, 24, 32, 25, 18, 11,	 4,	 5,
 			12, 19, 26, 33, 40, 48, 41, 34,
-			27, 20, 13,  6,  7, 14, 21, 28,
+			27, 20, 13,	 6,	 7, 14, 21, 28,
 			35, 42, 49, 56, 57, 50, 43, 36,
 			29, 22, 15, 23, 30, 37, 44, 51,
 			58, 59, 52, 45, 38, 31, 39, 46,
@@ -85,8 +85,8 @@ package net.saqoosha.graphics {
 			var ssxmax:int = 0;
 			var ssymax:int = 0;
 			var c:Component;
-            _DecodeLength();
-            if (ctx.length < 9) { throw new Error(RESULT_SYNTAX_ERROR); }
+			_DecodeLength();
+			if (ctx.length < 9) { throw new Error(RESULT_SYNTAX_ERROR); }
 			if (ctx.data.readUnsignedByte() != 8) { throw new Error(RESULT_SYNTAX_ERROR); }
 			ctx.height = ctx.data.readUnsignedShort();
 			ctx.width = ctx.data.readUnsignedShort();
@@ -120,11 +120,11 @@ package net.saqoosha.graphics {
 			ctx.mbheight = (ctx.height + ctx.mbsizey - 1) / ctx.mbsizey;
 			for (i = 0; i < ctx.ncomp; ++i) {
 				c = ctx.comp[i];
-                c.width = (ctx.width * c.ssx + ssxmax - 1) / ssxmax;
-                c.stride = (c.width + 7) & 0x7FFFFFF8;
-                c.height = (ctx.height * c.ssy + ssymax - 1) / ssymax;
-                c.stride = ctx.mbwidth * ctx.mbsizex * c.ssx / ssxmax;
-                if (((c.width < 3) && (c.ssx != ssxmax)) || ((c.height < 3) && (c.ssy != ssymax))) { throw new Error(RESULT_UNSUPPORTED); }
+				c.width = (ctx.width * c.ssx + ssxmax - 1) / ssxmax;
+				c.stride = (c.width + 7) & 0x7FFFFFF8;
+				c.height = (ctx.height * c.ssy + ssymax - 1) / ssymax;
+				c.stride = ctx.mbwidth * ctx.mbsizex * c.ssx / ssxmax;
+				if (((c.width < 3) && (c.ssx != ssxmax)) || ((c.height < 3) && (c.ssy != ssymax))) { throw new Error(RESULT_UNSUPPORTED); }
 				c.pixels = new ByteArray();
 				c.pixels.length = c.stride * (ctx.mbheight * ctx.mbsizey * c.ssy / ssymax);
 			}
@@ -140,12 +140,12 @@ package net.saqoosha.graphics {
 		private function _DecodeDHT():void {
 			var codelen:int, currcnt:int, remain:int, spread:int, i:int, j:int;
 			var counts:ByteArray = new ByteArray();
-            _DecodeLength();
-            while (ctx.length >= 17) {
-            	i = ctx.data.readUnsignedByte();
-            	if (i & 0xEC) { throw new Error(RESULT_SYNTAX_ERROR); }
+			_DecodeLength();
+			while (ctx.length >= 17) {
+				i = ctx.data.readUnsignedByte();
+				if (i & 0xEC) { throw new Error(RESULT_SYNTAX_ERROR); }
 				if (i & 0x02) { throw new Error(RESULT_UNSUPPORTED); }
-				i = (i | (i >> 3)) & 3;  // combined DC/AC + tableid value
+				i = (i | (i >> 3)) & 3;	 // combined DC/AC + tableid value
 				ctx.data.readBytes(counts, 0, 16);
 				_Skip(17);
 				
@@ -158,7 +158,7 @@ package net.saqoosha.graphics {
 					if (ctx.length < currcnt) { throw new Error(RESULT_SYNTAX_ERROR); }
 					remain -= currcnt << (16 - codelen);
 					if (remain < 0) { throw new Error(RESULT_SYNTAX_ERROR); }
-					for (i = 0;  i < currcnt;  ++i) {
+					for (i = 0;	 i < currcnt;  ++i) {
 						var code:int = ctx.data.readUnsignedByte();
 						for (j = spread; j; --j) {
 							vlcs.push(new VlcCode(codelen, code));
@@ -169,9 +169,9 @@ package net.saqoosha.graphics {
 				while (remain--) {
 					vlcs.push(new VlcCode());
 				}
-            }
-            if (ctx.length) { throw new Error(RESULT_SYNTAX_ERROR); }
-        }
+			}
+			if (ctx.length) { throw new Error(RESULT_SYNTAX_ERROR); }
+		}
 
 		
 		private function _DecodeDQT():void {
@@ -191,9 +191,9 @@ package net.saqoosha.graphics {
 
 		
 		private function _DecodeDRI():void {
-            _DecodeLength();
-            if (ctx.length < 2) { throw new Error(RESULT_SYNTAX_ERROR); }
-            ctx.rstinterval = ctx.data.readUnsignedShort();
+			_DecodeLength();
+			if (ctx.length < 2) { throw new Error(RESULT_SYNTAX_ERROR); }
+			ctx.rstinterval = ctx.data.readUnsignedShort();
 			ctx.data.position += ctx.length - 2;
 			_Skip(ctx.length);
 		}
@@ -208,7 +208,7 @@ package net.saqoosha.graphics {
 			if (ctx.length < (4 + 2 * ctx.ncomp)) { throw new Error(RESULT_SYNTAX_ERROR); }
 			if (ctx.data.readUnsignedByte() != ctx.ncomp) { throw new Error(RESULT_UNSUPPORTED); }
 			_Skip(1);
-			for (i = 0;  i < ctx.ncomp;  ++i) {
+			for (i = 0;	 i < ctx.ncomp;	 ++i) {
 				c = ctx.comp[i];
 				if (ctx.data.readUnsignedByte() != c.cid) { throw new Error(RESULT_SYNTAX_ERROR); }
 				if ((b = ctx.data.readUnsignedByte()) & 0xEE) { throw new Error(RESULT_SYNTAX_ERROR); }
@@ -221,12 +221,12 @@ package net.saqoosha.graphics {
 			var d2:int = ctx.data.readUnsignedByte();
 			if (d0 || (d1 != 63) || d2) { throw new Error(RESULT_UNSUPPORTED); }
 			_Skip(ctx.length);
-			for (mby = 0;  mby < ctx.mbheight;  ++mby) {
+			for (mby = 0;  mby < ctx.mbheight;	++mby) {
 				for (mbx = 0;  mbx < ctx.mbwidth;  ++mbx) {
-					for (i = 0;  i < ctx.ncomp;  ++i) {
+					for (i = 0;	 i < ctx.ncomp;	 ++i) {
 						c = ctx.comp[i];
-						for (sby = 0;  sby < c.ssy;  ++sby) {
-							for (sbx = 0;  sbx < c.ssx;  ++sbx) {
+						for (sby = 0;  sby < c.ssy;	 ++sby) {
+							for (sbx = 0;  sbx < c.ssx;	 ++sbx) {
 								c.pixels.position = ((mby * c.ssy + sby) * c.stride + mbx * c.ssx + sbx) << 3;
 								_DecodeBlock(c, c.pixels);
 							}
@@ -265,25 +265,25 @@ package net.saqoosha.graphics {
 			for (coef = 0; coef < 64; coef += 8) {
 				_RowIDCT(ctx.block, coef);
 			}
-			for (coef = 0;  coef < 8;  ++coef) {
+			for (coef = 0;	coef < 8;  ++coef) {
 				_ColIDCT(ctx.block, out, coef, c.stride);
 			}
 		}
 
 		
 		private function _GetVLC(vlc:Vector.<VlcCode>, code:IntValue):int {
-            var value:int = _ShowBits(16);
-            var bits:int = vlc[value].bits;
-            if (!bits) { throw new Error(RESULT_SYNTAX_ERROR); }
-            _SkipBits(bits);
-            value = vlc[value].code;
-            if (code) code.value = value;
-            bits = value & 15;
-            if (!bits) return 0;
-            value = _GetBits(bits);
-            if (value < (1 << (bits - 1)))
-                value += ((-1) << bits) + 1;
-            return value;
+			var value:int = _ShowBits(16);
+			var bits:int = vlc[value].bits;
+			if (!bits) { throw new Error(RESULT_SYNTAX_ERROR); }
+			_SkipBits(bits);
+			value = vlc[value].code;
+			if (code) code.value = value;
+			bits = value & 15;
+			if (!bits) return 0;
+			value = _GetBits(bits);
+			if (value < (1 << (bits - 1)))
+				value += ((-1) << bits) + 1;
+			return value;
 		}
 
 		
@@ -295,141 +295,141 @@ package net.saqoosha.graphics {
 		private static const W7:int = 565;
 		
 		private function _RowIDCT(blk:Vector.<int>, offset:int):void {
-            var x0:int, x1:int, x2:int, x3:int, x4:int, x5:int, x6:int, x7:int, x8:int;
-            var i0:int = offset;
-            var i1:int = offset + 1;
-            var i2:int = offset + 2;
-            var i3:int = offset + 3;
-            var i4:int = offset + 4;
-            var i5:int = offset + 5;
-            var i6:int = offset + 6;
-            var i7:int = offset + 7;
-            if (!((x1 = blk[i4] << 11)
-                | (x2 = blk[i6])
-                | (x3 = blk[i2])
-                | (x4 = blk[i1])
-                | (x5 = blk[i7])
-                | (x6 = blk[i5])
-                | (x7 = blk[i3])))
-            {
-                blk[i0] = blk[i1] = blk[i2] = blk[i3] = blk[i4] = blk[i5] = blk[i6] = blk[i7] = blk[i0] << 3;
-                return;
-            }
-            x0 = (blk[i0] << 11) + 128;
-            x8 = W7 * (x4 + x5);
-            x4 = x8 + (W1 - W7) * x4;
-            x5 = x8 - (W1 + W7) * x5;
-            x8 = W3 * (x6 + x7);
-            x6 = x8 - (W3 - W5) * x6;
-            x7 = x8 - (W3 + W5) * x7;
-            x8 = x0 + x1;
-            x0 -= x1;
-            x1 = W6 * (x3 + x2);
-            x2 = x1 - (W2 + W6) * x2;
-            x3 = x1 + (W2 - W6) * x3;
-            x1 = x4 + x6;
-            x4 -= x6;
-            x6 = x5 + x7;
-            x5 -= x7;
-            x7 = x8 + x3;
-            x8 -= x3;
-            x3 = x0 + x2;
-            x0 -= x2;
-            x2 = (181 * (x4 + x5) + 128) >> 8;
-            x4 = (181 * (x4 - x5) + 128) >> 8;
-            blk[i0] = (x7 + x1) >> 8;
-            blk[i1] = (x3 + x2) >> 8;
-            blk[i2] = (x0 + x4) >> 8;
-            blk[i3] = (x8 + x6) >> 8;
-            blk[i4] = (x8 - x6) >> 8;
-            blk[i5] = (x0 - x4) >> 8;
-            blk[i6] = (x3 - x2) >> 8;
-            blk[i7] = (x7 - x1) >> 8;
+			var x0:int, x1:int, x2:int, x3:int, x4:int, x5:int, x6:int, x7:int, x8:int;
+			var i0:int = offset;
+			var i1:int = offset + 1;
+			var i2:int = offset + 2;
+			var i3:int = offset + 3;
+			var i4:int = offset + 4;
+			var i5:int = offset + 5;
+			var i6:int = offset + 6;
+			var i7:int = offset + 7;
+			if (!((x1 = blk[i4] << 11)
+				| (x2 = blk[i6])
+				| (x3 = blk[i2])
+				| (x4 = blk[i1])
+				| (x5 = blk[i7])
+				| (x6 = blk[i5])
+				| (x7 = blk[i3])))
+			{
+				blk[i0] = blk[i1] = blk[i2] = blk[i3] = blk[i4] = blk[i5] = blk[i6] = blk[i7] = blk[i0] << 3;
+				return;
+			}
+			x0 = (blk[i0] << 11) + 128;
+			x8 = W7 * (x4 + x5);
+			x4 = x8 + (W1 - W7) * x4;
+			x5 = x8 - (W1 + W7) * x5;
+			x8 = W3 * (x6 + x7);
+			x6 = x8 - (W3 - W5) * x6;
+			x7 = x8 - (W3 + W5) * x7;
+			x8 = x0 + x1;
+			x0 -= x1;
+			x1 = W6 * (x3 + x2);
+			x2 = x1 - (W2 + W6) * x2;
+			x3 = x1 + (W2 - W6) * x3;
+			x1 = x4 + x6;
+			x4 -= x6;
+			x6 = x5 + x7;
+			x5 -= x7;
+			x7 = x8 + x3;
+			x8 -= x3;
+			x3 = x0 + x2;
+			x0 -= x2;
+			x2 = (181 * (x4 + x5) + 128) >> 8;
+			x4 = (181 * (x4 - x5) + 128) >> 8;
+			blk[i0] = (x7 + x1) >> 8;
+			blk[i1] = (x3 + x2) >> 8;
+			blk[i2] = (x0 + x4) >> 8;
+			blk[i3] = (x8 + x6) >> 8;
+			blk[i4] = (x8 - x6) >> 8;
+			blk[i5] = (x0 - x4) >> 8;
+			blk[i6] = (x3 - x2) >> 8;
+			blk[i7] = (x7 - x1) >> 8;
 		}
 
 		
 		private function _ColIDCT(blk:Vector.<int>, out:ByteArray, offset:int, stride:int):void {
-            var x0:int, x1:int, x2:int, x3:int, x4:int, x5:int, x6:int, x7:int, x8:int;
-            var p:int = out.position + offset;
+			var x0:int, x1:int, x2:int, x3:int, x4:int, x5:int, x6:int, x7:int, x8:int;
+			var p:int = out.position + offset;
 			if (!((x1 = blk[8*4+offset] << 8)
-                | (x2 = blk[8*6+offset])
-                | (x3 = blk[8*2+offset])
-                | (x4 = blk[8*1+offset])
-                | (x5 = blk[8*7+offset])
-                | (x6 = blk[8*5+offset])
-                | (x7 = blk[8*3+offset])))
-            {
-                x1 = _Clip(((blk[offset] + 32) >> 6) + 128);
-                for (x0 = 8;  x0;  --x0) {
-                	out[p] = x1;
+				| (x2 = blk[8*6+offset])
+				| (x3 = blk[8*2+offset])
+				| (x4 = blk[8*1+offset])
+				| (x5 = blk[8*7+offset])
+				| (x6 = blk[8*5+offset])
+				| (x7 = blk[8*3+offset])))
+			{
+				x1 = _Clip(((blk[offset] + 32) >> 6) + 128);
+				for (x0 = 8;  x0;  --x0) {
+					out[p] = x1;
 					p += stride;
-                }
-                return;
-            }
-            x0 = (blk[offset] << 8) + 8192;
-            x8 = W7 * (x4 + x5) + 4;
-            x4 = (x8 + (W1 - W7) * x4) >> 3;
-            x5 = (x8 - (W1 + W7) * x5) >> 3;
-            x8 = W3 * (x6 + x7) + 4;
-            x6 = (x8 - (W3 - W5) * x6) >> 3;
-            x7 = (x8 - (W3 + W5) * x7) >> 3;
-            x8 = x0 + x1;
-            x0 -= x1;
-            x1 = W6 * (x3 + x2) + 4;
-            x2 = (x1 - (W2 + W6) * x2) >> 3;
-            x3 = (x1 + (W2 - W6) * x3) >> 3;
-            x1 = x4 + x6;
-            x4 -= x6;
-            x6 = x5 + x7;
-            x5 -= x7;
-            x7 = x8 + x3;
-            x8 -= x3;
-            x3 = x0 + x2;
-            x0 -= x2;
-            x2 = (181 * (x4 + x5) + 128) >> 8;
-            x4 = (181 * (x4 - x5) + 128) >> 8;
-            out[p] = _Clip(((x7 + x1) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x3 + x2) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x0 + x4) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x8 + x6) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x8 - x6) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x0 - x4) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x3 - x2) >> 14) + 128); p += stride;
-            out[p] = _Clip(((x7 - x1) >> 14) + 128);		
+				}
+				return;
+			}
+			x0 = (blk[offset] << 8) + 8192;
+			x8 = W7 * (x4 + x5) + 4;
+			x4 = (x8 + (W1 - W7) * x4) >> 3;
+			x5 = (x8 - (W1 + W7) * x5) >> 3;
+			x8 = W3 * (x6 + x7) + 4;
+			x6 = (x8 - (W3 - W5) * x6) >> 3;
+			x7 = (x8 - (W3 + W5) * x7) >> 3;
+			x8 = x0 + x1;
+			x0 -= x1;
+			x1 = W6 * (x3 + x2) + 4;
+			x2 = (x1 - (W2 + W6) * x2) >> 3;
+			x3 = (x1 + (W2 - W6) * x3) >> 3;
+			x1 = x4 + x6;
+			x4 -= x6;
+			x6 = x5 + x7;
+			x5 -= x7;
+			x7 = x8 + x3;
+			x8 -= x3;
+			x3 = x0 + x2;
+			x0 -= x2;
+			x2 = (181 * (x4 + x5) + 128) >> 8;
+			x4 = (181 * (x4 - x5) + 128) >> 8;
+			out[p] = _Clip(((x7 + x1) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x3 + x2) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x0 + x4) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x8 + x6) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x8 - x6) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x0 - x4) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x3 - x2) >> 14) + 128); p += stride;
+			out[p] = _Clip(((x7 - x1) >> 14) + 128);		
 		}
 
 		
 		private function _Convert():void {
-            var i:int;
-            var c:Component;
-			for (i = 0;  i < ctx.ncomp;  ++i) {
-            	c = ctx.comp[i];
-                while ((c.width < ctx.width) || (c.height < ctx.height)) {
-                    if (c.height < ctx.height) _UpsampleV(c);
-                    if (c.width < ctx.width) _UpsampleH(c);
-                }
-                if ((c.width < ctx.width) || (c.height < ctx.height)) { throw new Error(RESULT_INTERNAL_ERROR); }
+			var i:int;
+			var c:Component;
+			for (i = 0;	 i < ctx.ncomp;	 ++i) {
+				c = ctx.comp[i];
+				while ((c.width < ctx.width) || (c.height < ctx.height)) {
+					if (c.height < ctx.height) _UpsampleV(c);
+					if (c.width < ctx.width) _UpsampleH(c);
+				}
+				if ((c.width < ctx.width) || (c.height < ctx.height)) { throw new Error(RESULT_INTERNAL_ERROR); }
 			}
-            if (ctx.ncomp == 3) {
-                // convert to RGB
-                var x:int, yy:int;
-                const prgb:ByteArray = ctx.rgb;
-                const py:ByteArray  = ctx.comp[0].pixels;
-                const pcb:ByteArray = ctx.comp[1].pixels;
-                const pcr:ByteArray = ctx.comp[2].pixels;
-                var iprgb:int = 0;
-                var ipy:int = 0;
-                var ipcb:int = 0;
-                var ipcr:int = 0;
-                for (yy = ctx.height;  yy;  --yy) {
-					for (x = 0;  x < ctx.width;  ++x) {
+			if (ctx.ncomp == 3) {
+				// convert to RGB
+				var x:int, yy:int;
+				const prgb:ByteArray = ctx.rgb;
+				const py:ByteArray	= ctx.comp[0].pixels;
+				const pcb:ByteArray = ctx.comp[1].pixels;
+				const pcr:ByteArray = ctx.comp[2].pixels;
+				var iprgb:int = 0;
+				var ipy:int = 0;
+				var ipcb:int = 0;
+				var ipcr:int = 0;
+				for (yy = ctx.height;  yy;	--yy) {
+					for (x = 0;	 x < ctx.width;	 ++x) {
 						var y:int = py[ipy + x] << 8;
 						var cb:int = pcb[ipcb + x] - 128;
 						var cr:int = pcr[ipcr + x] - 128;
 						prgb[iprgb++] = 255; // alpha
-						prgb[iprgb++] = _Clip((y            + 359 * cr + 128) >> 8); // red
-						prgb[iprgb++] = _Clip((y -  88 * cb - 183 * cr + 128) >> 8); // green
-						prgb[iprgb++] = _Clip((y + 454 * cb            + 128) >> 8); // blue
+						prgb[iprgb++] = _Clip((y			+ 359 * cr + 128) >> 8); // red
+						prgb[iprgb++] = _Clip((y -	88 * cb - 183 * cr + 128) >> 8); // green
+						prgb[iprgb++] = _Clip((y + 454 * cb			   + 128) >> 8); // blue
 					}
 					ipy += ctx.comp[0].stride;
 					ipcb += ctx.comp[1].stride;
@@ -439,18 +439,18 @@ package net.saqoosha.graphics {
 				ctx.image = new BitmapData(ctx.width, ctx.height, true, 0x0);
 				ctx.image.setPixels(ctx.image.rect, ctx.rgb);
 				
-            } else if (ctx.comp[0].width != ctx.comp[0].stride) {
-            	throw new Error(RESULT_UNSUPPORTED);
-//                // grayscale -> only remove stride
-//                unsigned char *pin = &ctx.comp[0].pixels[ctx.comp[0].stride];
-//                unsigned char *pout = &ctx.comp[0].pixels[ctx.comp[0].width];
-//                int y;
-//                for (y = ctx.comp[0].height - 1;  y;  --y) {
-//                    memcpy(pout, pin, ctx.comp[0].width);
-//                    pin += ctx.comp[0].stride;
-//                    pout += ctx.comp[0].width;
-//                }
-//                ctx.comp[0].stride = ctx.comp[0].width;
+			} else if (ctx.comp[0].width != ctx.comp[0].stride) {
+				throw new Error(RESULT_UNSUPPORTED);
+//				  // grayscale -> only remove stride
+//				  unsigned char *pin = &ctx.comp[0].pixels[ctx.comp[0].stride];
+//				  unsigned char *pout = &ctx.comp[0].pixels[ctx.comp[0].width];
+//				  int y;
+//				  for (y = ctx.comp[0].height - 1;	y;	--y) {
+//					  memcpy(pout, pin, ctx.comp[0].width);
+//					  pin += ctx.comp[0].stride;
+//					  pout += ctx.comp[0].width;
+//				  }
+//				  ctx.comp[0].stride = ctx.comp[0].width;
 			}
 		}
 
@@ -474,30 +474,30 @@ package net.saqoosha.graphics {
 		
 		
 		private function _UpsampleH(c:Component):void {
-            const xmax:int = c.width - 3;
-            var x:int, y:int;
-            var org:ByteArray = c.pixels;
+			const xmax:int = c.width - 3;
+			var x:int, y:int;
+			var org:ByteArray = c.pixels;
 			var out:ByteArray = new ByteArray();
 			out.length = ((c.width * c.height) << 1) * 4;
 			var iorg:int = 0;
-            var iout:int = 0;
-            for (y = c.height;  y;  --y) {
-                out[iout + 0] = CF(CF2A * org[iorg + 0] + CF2B * org[iorg + 1]);
+			var iout:int = 0;
+			for (y = c.height;	y;	--y) {
+				out[iout + 0] = CF(CF2A * org[iorg + 0] + CF2B * org[iorg + 1]);
 				out[iout + 1] = CF(CF3X * org[iorg + 0] + CF3Y * org[iorg + 1] + CF3Z * org[iorg + 2]);
-                out[iout + 2] = CF(CF3A * org[iorg + 0] + CF3B * org[iorg + 1] + CF3C * org[iorg + 2]);
-                for (x = 0;  x < xmax;  ++x) {
-                    out[iout + (x << 1) + 3] = CF(CF4A * org[iorg + x] + CF4B * org[iorg + x + 1] + CF4C * org[iorg + x + 2] + CF4D * org[iorg + x + 3]);
-                    out[iout + (x << 1) + 4] = CF(CF4D * org[iorg + x] + CF4C * org[iorg + x + 1] + CF4B * org[iorg + x + 2] + CF4A * org[iorg + x + 3]);
-                }
+				out[iout + 2] = CF(CF3A * org[iorg + 0] + CF3B * org[iorg + 1] + CF3C * org[iorg + 2]);
+				for (x = 0;	 x < xmax;	++x) {
+					out[iout + (x << 1) + 3] = CF(CF4A * org[iorg + x] + CF4B * org[iorg + x + 1] + CF4C * org[iorg + x + 2] + CF4D * org[iorg + x + 3]);
+					out[iout + (x << 1) + 4] = CF(CF4D * org[iorg + x] + CF4C * org[iorg + x + 1] + CF4B * org[iorg + x + 2] + CF4A * org[iorg + x + 3]);
+				}
 				iorg += c.stride;
 				iout += c.width << 1;
-                out[iout - 3] = CF(CF3A * org[iorg - 1] + CF3B * org[iorg - 2] + CF3C * org[iorg - 3]);
-                out[iout - 2] = CF(CF3X * org[iorg - 1] + CF3Y * org[iorg - 2] + CF3Z * org[iorg - 3]);
-                out[iout - 1] = CF(CF2A * org[iorg - 1] + CF2B * org[iorg - 2]);
-            }
-            c.width <<= 1;
-            c.stride = c.width;
-            c.pixels = out;
+				out[iout - 3] = CF(CF3A * org[iorg - 1] + CF3B * org[iorg - 2] + CF3C * org[iorg - 3]);
+				out[iout - 2] = CF(CF3X * org[iorg - 1] + CF3Y * org[iorg - 2] + CF3Z * org[iorg - 3]);
+				out[iout - 1] = CF(CF2A * org[iorg - 1] + CF2B * org[iorg - 2]);
+			}
+			c.width <<= 1;
+			c.stride = c.width;
+			c.pixels = out;
 		}
 
 		
@@ -515,11 +515,13 @@ package net.saqoosha.graphics {
 				iorg = x;
 				iout = x;
 				out[iout] = CF(CF2A * org[iorg + 0] + CF2B * org[iorg + s1]);	 iout += w;
-				out[iout] = CF(CF3X * org[iorg + 0] + CF3Y * org[iorg + s1] + CF3Z * org[iorg + s2]);  iout += w;				out[iout] = CF(CF3A * org[iorg + 0] + CF3B * org[iorg + s1] + CF3C * org[iorg + s2]);  iout += w;
+				out[iout] = CF(CF3X * org[iorg + 0] + CF3Y * org[iorg + s1] + CF3Z * org[iorg + s2]);  iout += w;
+				out[iout] = CF(CF3A * org[iorg + 0] + CF3B * org[iorg + s1] + CF3C * org[iorg + s2]);  iout += w;
 				iorg += s1;
 				for (y = c.height - 3;	y;	--y) {
 					out[iout] = CF(CF4A * org[iorg - s1] + CF4B * org[iorg + 0] + CF4C * org[iorg + s1] + CF4D * org[iorg + s2]);	iout += w;
-					out[iout] = CF(CF4D * org[iorg - s1] + CF4C * org[iorg + 0] + CF4B * org[iorg + s1] + CF4A * org[iorg + s2]);	iout += w;					iorg += s1;
+					out[iout] = CF(CF4D * org[iorg - s1] + CF4C * org[iorg + 0] + CF4B * org[iorg + s1] + CF4A * org[iorg + s2]);	iout += w;
+					iorg += s1;
 				}
 				iorg += s1;
 				out[iout] = CF(CF3A * org[iorg + 0] + CF3B * org[iorg - s1] + CF3C * org[iorg - s2]);	iout += w;
@@ -541,7 +543,7 @@ package net.saqoosha.graphics {
 
 		
 		private function _SkipMarker():void {
-            _DecodeLength();
+			_DecodeLength();
 			ctx.data.position += ctx.length;
 			_Skip(ctx.length);
 		}
@@ -608,9 +610,9 @@ package net.saqoosha.graphics {
 
 		
 		private function _GetBits(bits:int):int {
-            var res:int = _ShowBits(bits);
-            _SkipBits(bits);
-            return res;
+			var res:int = _ShowBits(bits);
+			_SkipBits(bits);
+			return res;
 		}
 
 		
