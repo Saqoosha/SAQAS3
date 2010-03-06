@@ -9,6 +9,7 @@
  * @license MIT License http://www.opensource.org/licenses/mit-license.php
  */
 package net.saqoosha.util {
+	import flash.display.BitmapData;
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
 
@@ -60,7 +61,9 @@ package net.saqoosha.util {
 						}
 						break;
 					case 'flash.utils::ByteArray':
-						out += pad + label + '(object) [ByteArray length = ' + ByteArray(data).length + ']\n';
+						out += pad + label + '(object) [ByteArray length = ' + ByteArray(data).length + ']\n';						break;
+					case 'flash.display::BitmapData':
+						out += pad + label + '(object) [BitmapData width = ' + BitmapData(data).width+ ' height = ' + BitmapData(data).height+ ']\n';
 						break;
 					default:
 						out += pad + label + '(' + typeof data + ') ' + data + '\n';
