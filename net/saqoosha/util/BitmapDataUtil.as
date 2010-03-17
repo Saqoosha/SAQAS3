@@ -1,17 +1,33 @@
 package net.saqoosha.util {
+	import net.saqoosha.geom.ZERO_POINT;
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
-	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
 	
 	public class BitmapDataUtil {
 		
 		
-		private static const ZERO_POINT:Point = new Point(0, 0);
-		
+		public static function calcAverageColor(image:BitmapData, rect:Rectangle = null):uint {
+			var hist:Vector.<Vector.<Number>> = image.histogram(rect);
+			var r:Number = 0;
+			var g:Number = 0;
+			var b:Number = 0;
+			var a:Number = 0;
+			for (var i:int = 0; i < 255; ++i) {
+				r += hist[0][i] * i;				g += hist[1][i] * i;				b += hist[2][i] * i;				a += hist[3][i] * i;
+			}
+			var p:int = rect ? rect.width * rect.height : image.width * image.height;
+			r /= p;
+			g /= p;
+			b /= p;
+			a /= p;
+			return (a << 24) | (r << 16) | (g << 8) | b;
+		}
+
 		
 		public static function resize(source:BitmapData, target:*, smoothing:Boolean = true):BitmapData {
 			var w:Number = 0;

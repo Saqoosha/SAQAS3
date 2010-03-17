@@ -97,6 +97,45 @@ package net.saqoosha.display {
 		public static function get height():int {
 			return _height;
 		}
+		
+		
+		public static function get mouseX():Number {
+			var x:Number = _ref.mouseX;
+			return x < 0 ? 0 : _width < x ? _width : x;
+		}
+		
+		
+		public static function get mouseY():Number {
+			var y:Number = _ref.mouseY;
+			return y < 0 ? 0 : _height < y ? _height : y;
+		}
+		
+		
+		public static function get mouseXFromCenter():Number {
+			var hw:Number = _width * 0.5;
+			var x:Number = _ref.mouseX - hw;
+			return x < -hw ? -hw : hw < x ? hw : x;
+		}
+		
+		
+		public static function get mouseYFromCenter():Number {
+			var hh:Number = _height * 0.5;
+			var y:Number = _ref.mouseY - hh;
+			return y < -hh ? -hh : hh < y ? hh : y;
+		}
+		
+		
+		public static function get mouseXPercentFromCenter():Number {
+			var hw:Number = _width * 0.5;
+			var p:Number = (_ref.mouseX - hw) / hw;
+			return p < -1 ? -1 : 1 < p ? 1 : p;		}
+		
+		
+		public static function get mouseYPercentFromCenter():Number {
+			var hh:Number = _height * 0.5;
+			var p:Number = (_ref.mouseY - hh) / hh;
+			return p < -1 ? -1 : 1 < p ? 1 : p;
+		}
 
 		
 		public static function get sigResize():NativeRelaySignal {

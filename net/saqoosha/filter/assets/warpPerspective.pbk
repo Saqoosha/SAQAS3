@@ -1,0 +1,50 @@
+<languageVersion: 1.0;>
+kernel HomographyTransform
+<
+	namespace: "net.saqoosha";
+	vendor: "Saqoosha";
+	version: 1;
+	description: "Warp Perspective Filter";
+>
+{
+	input image4 source;
+	output pixel4 target;
+	
+	parameter float A;
+	parameter float B;
+	parameter float C;
+	parameter float D;
+	parameter float E;
+	parameter float F;
+	parameter float G;
+	parameter float H;
+	parameter float I;
+	
+	parameter int srcWidth
+	<
+		minValue: int(1);
+		defaultValue: int(256);
+		description: "width of output BitmapData";
+	>;
+	
+	parameter int srcHeight
+	<
+		minValue: int(1);
+		defaultValue: int(256);
+		description: "height of output BitmapData";
+	>;
+	
+	void evaluatePixel()
+	{
+		float u = outCoord().x;
+		float v = outCoord().y;
+		float w = G * u + H * v + I;
+		float px = (A * u + B * v + C) / w;
+		float py = (D * u + E * v + F) / w;
+		if (px < 0.0 || 1.0 < px || py < 0.0 || 1.0 < py) {
+			target = pixel4(0.0, 0.0, 0.0, 0.0);
+		} else {
+			target = sampleLinear(source, float2(px * float(srcWidth), py * float(srcHeight)));
+		}
+	}
+}
