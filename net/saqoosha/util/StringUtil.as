@@ -7,6 +7,16 @@ package net.saqoosha.util {
 	public class StringUtil {
 		
 		
+		public static function trim(str:String):String {
+			 return str.match(/^\s*(.*)\s*$/)[1];
+		}
+		
+		
+		public static function stripTags(str:String):String {
+			return new XML('<a>' + str + '</a>').text();
+		}
+		
+		
 		public static function toHex(value:*, width:int = 0):String {
 			return ('00000000' + value.toString(16)).substr(-width);
 		}

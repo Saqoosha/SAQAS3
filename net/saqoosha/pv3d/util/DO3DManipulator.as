@@ -38,8 +38,8 @@ package net.saqoosha.pv3d.util {
 			vbox.spacing = 0;
 			_posX = new HUISlider(vbox, 0, 0, 'posX', _onChange);
 			_posY = new HUISlider(vbox, 0, 0, 'posY', _onChange);			_posZ = new HUISlider(vbox, 0, 0, 'posZ', _onChange);
-			_posX.tick = _posY.tick = _posZ.tick = 0.1;
-			_posX.labelPrecision = _posY.labelPrecision = _posZ.labelPrecision = 1;
+			_posX.tick = _posY.tick = _posZ.tick = 0.01;
+			_posX.labelPrecision = _posY.labelPrecision = _posZ.labelPrecision = 2;
 			positionRange = 20;
 			_posX.value = _target.x;
 			_posY.value = _target.y;
@@ -47,8 +47,8 @@ package net.saqoosha.pv3d.util {
 			_posX.width = _posY.width = _posZ.width = 300;
 			
 			_rotX = new HUISlider(vbox, 0, 0, 'rotX', _onChange);			_rotY = new HUISlider(vbox, 0, 0, 'rotY', _onChange);			_rotZ = new HUISlider(vbox, 0, 0, 'rotZ', _onChange);
-			_rotX.tick = _rotY.tick = _rotZ.tick = 0.1;
-			_rotX.labelPrecision = _rotY.labelPrecision = _rotZ.labelPrecision = 1;
+			_rotX.tick = _rotY.tick = _rotZ.tick = 0.01;
+			_rotX.labelPrecision = _rotY.labelPrecision = _rotZ.labelPrecision = 2;
 			_rotX.minimum = _rotY.minimum = _rotZ.minimum = -180;
 			_rotX.maximum = _rotY.maximum = _rotZ.maximum = 180;
 			_rotX.value = _target.rotationX;

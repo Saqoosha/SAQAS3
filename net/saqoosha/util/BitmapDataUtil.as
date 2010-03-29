@@ -1,5 +1,6 @@
 package net.saqoosha.util {
 	import net.saqoosha.geom.ZERO_POINT;
+	import net.saqoosha.logging.dump;
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -11,13 +12,24 @@ package net.saqoosha.util {
 	public class BitmapDataUtil {
 		
 		
+		public static function hasAlphaChannel(image:BitmapData):Boolean {
+			image.lock();
+			var tmp:uint = image.getPixel32(0, 0);
+			image.setPixel32(0, 0, 0x0);
+			var alpha:Boolean = image.getPixel32(0, 0) == 0x0; // if image doesn't have alpha channel, getPixel32 returns 0xff000000
+			image.setPixel32(0, 0, tmp);
+			image.unlock();
+			return alpha;
+		}
+
+		
 		public static function calcAverageColor(image:BitmapData, rect:Rectangle = null):uint {
 			var hist:Vector.<Vector.<Number>> = image.histogram(rect);
 			var r:Number = 0;
 			var g:Number = 0;
 			var b:Number = 0;
 			var a:Number = 0;
-			for (var i:int = 0; i < 255; ++i) {
+			for (var i:int = 0; i < 256; ++i) {
 				r += hist[0][i] * i;				g += hist[1][i] * i;				b += hist[2][i] * i;				a += hist[3][i] * i;
 			}
 			var p:int = rect ? rect.width * rect.height : image.width * image.height;
