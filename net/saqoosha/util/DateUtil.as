@@ -1,5 +1,5 @@
 ﻿package net.saqoosha.util {
-	
+
 	
 	public class DateUtil {
 		
@@ -174,13 +174,13 @@
 
 
         public static function fromW3C(dateString:String):Date {
-            var parts:Array = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})([-+](\d{2})(?::?(\d{2}))|Z)$/.exec(dateString);
+            var parts:Array = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?([-+](\d{2})(?::?(\d{2}))|Z)$/.exec(dateString);
             var utc:Number = Date.UTC(parts[1], int(parts[2])-1, parts[3], parts[4], parts[5], parts[6]);
 
             var offset:Number = 0;
-            var tzInfo:String = parts[7];
-            var hour:int = int(parts[8]);
-            var minutes:int = int(parts[9]);
+            var tzInfo:String = parts[8];
+            var hour:int = int(parts[9]);
+            var minutes:int = int(parts[10]);
 
             if (tzInfo && tzInfo != 'Z') {
                 offset = hour * HOUR + minutes * MINUTE;
@@ -190,5 +190,32 @@
             }
             return new Date(utc - offset);
         }
-    }
+
+		
+		public static function toW3C(d:Date):String {
+			var year:String = d.fullYearUTC.toString();
+			var month:String = '0' + (d.monthUTC + 1).toString();
+			var date:String = '0' + d.dateUTC.toString();
+			var hour:String = '0' + d.hoursUTC.toString();
+			var minute:String = '0' + d.minutesUTC.toString();
+			var second:String = '0' + d.secondsUTC.toString();
+			return year + '-' + month.substr(-2) + '-' + date.substr(-2) + 'T' + hour.substr(-2) + ':' + minute.substr(-2) + ':' + second.substr(-2) + 'Z';
+		}
+        
+        
+        /**
+         * @param year Same as Data class constructor parameter.
+         * @param month Same as Data class constructor parameter.
+         * @return Number of days in specified month.
+         */
+        public static function numberOfDaysIn(year:int, month:int):int {
+        	var d:Date = new Date(year, month);
+        	return new Date(d.getTime() - 1).getDate();
+		}
+		
+		
+		public static function getFirstDayOf(year:int, month:int):int {
+			return new Date(year, month).getDay();
+		}
+	}
 }
