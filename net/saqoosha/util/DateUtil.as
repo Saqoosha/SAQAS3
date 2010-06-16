@@ -217,5 +217,24 @@
 		public static function getFirstDayOf(year:int, month:int):int {
 			return new Date(year, month).getDay();
 		}
+
+		
+		public static function getTwitterStyle(date:Date):String {
+			var current:Date = new Date();
+			var time:Number = (current.getTime() - date.getTime()) / 1000;
+			var tweetTime:String;
+			if (time < 60) {
+				tweetTime = int(time) + ' seconds ago';
+			} else if (time < 3600) {
+				tweetTime = int(time / 60) + ' minutes ago';
+			} else if (time < 3600 * 24) {
+				tweetTime = int(time / (3600)) + ' hours ago';
+			} else if (current.getDate() - date.getDate() < 31) {
+				tweetTime = int(time / (3600 * 24)) + ' days ago';
+			} else if (date.getMonth() < current.getMonth()) {
+				tweetTime = current.getMonth() - date.getMonth() + ' months ago';
+			}
+			return tweetTime;
+		}
 	}
 }

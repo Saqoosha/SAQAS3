@@ -32,5 +32,12 @@ package net.saqoosha.util {
 		public static function hasKey(key:String):Boolean {
 			return _parameters && key in _parameters;
 		}
+		
+		
+		public static function deleteKey(key:String):void {
+			if (hasKey(key)) {
+				delete _parameters[key];
+			}
+		}
 	}
 }

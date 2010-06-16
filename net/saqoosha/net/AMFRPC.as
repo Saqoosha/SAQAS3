@@ -96,7 +96,12 @@ package net.saqoosha.net {
 
 		
 		private function _onComplete(event:Event):void {
-			_parseResponse(_loader.data);
+			try {
+				_parseResponse(_loader.data);
+			} catch (e:Error) {
+				_isError = true;
+				trace(e.getStackTrace());
+			}
 			
 			_loader.removeEventListener(IOErrorEvent.IO_ERROR, dispatchEvent);
 			_loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, dispatchEvent);
