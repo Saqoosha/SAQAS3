@@ -8,7 +8,7 @@ package net.saqoosha.pv3d.util {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class DO3DManipulator extends Window {
 
@@ -37,7 +37,8 @@ package net.saqoosha.pv3d.util {
 			var vbox:VBox = new VBox(content, 5, 5);
 			vbox.spacing = 0;
 			_posX = new HUISlider(vbox, 0, 0, 'posX', _onChange);
-			_posY = new HUISlider(vbox, 0, 0, 'posY', _onChange);			_posZ = new HUISlider(vbox, 0, 0, 'posZ', _onChange);
+			_posY = new HUISlider(vbox, 0, 0, 'posY', _onChange);
+			_posZ = new HUISlider(vbox, 0, 0, 'posZ', _onChange);
 			_posX.tick = _posY.tick = _posZ.tick = 0.01;
 			_posX.labelPrecision = _posY.labelPrecision = _posZ.labelPrecision = 2;
 			positionRange = 20;
@@ -46,7 +47,9 @@ package net.saqoosha.pv3d.util {
 			_posZ.value = _target.z;
 			_posX.width = _posY.width = _posZ.width = 300;
 			
-			_rotX = new HUISlider(vbox, 0, 0, 'rotX', _onChange);			_rotY = new HUISlider(vbox, 0, 0, 'rotY', _onChange);			_rotZ = new HUISlider(vbox, 0, 0, 'rotZ', _onChange);
+			_rotX = new HUISlider(vbox, 0, 0, 'rotX', _onChange);
+			_rotY = new HUISlider(vbox, 0, 0, 'rotY', _onChange);
+			_rotZ = new HUISlider(vbox, 0, 0, 'rotZ', _onChange);
 			_rotX.tick = _rotY.tick = _rotZ.tick = 0.01;
 			_rotX.labelPrecision = _rotY.labelPrecision = _rotZ.labelPrecision = 2;
 			_rotX.minimum = _rotY.minimum = _rotZ.minimum = -180;
@@ -56,7 +59,9 @@ package net.saqoosha.pv3d.util {
 			_rotZ.value = _target.rotationZ;
 			_rotX.width = _rotY.width = _rotZ.width = 300;
 			
-			_scaleX = new HUISlider(vbox, 0, 0, 'sclX', _onChange);			_scaleY = new HUISlider(vbox, 0, 0, 'sclY', _onChange);			_scaleZ = new HUISlider(vbox, 0, 0, 'sclZ', _onChange);
+			_scaleX = new HUISlider(vbox, 0, 0, 'sclX', _onChange);
+			_scaleY = new HUISlider(vbox, 0, 0, 'sclY', _onChange);
+			_scaleZ = new HUISlider(vbox, 0, 0, 'sclZ', _onChange);
 			_scaleX.tick = _scaleY.tick = _scaleZ.tick = 0.01;
 			_scaleX.labelPrecision = _scaleY.labelPrecision = _scaleZ.labelPrecision = 2;
 			_scaleX.minimum = _scaleY.minimum = _scaleZ.minimum = 0.01;
@@ -76,7 +81,9 @@ package net.saqoosha.pv3d.util {
 		private function _onChange(event:Event):void {
 			if (_linkScale) {
 				switch (event.currentTarget){
-					case _scaleX: _scaleY.value = _scaleZ.value = _scaleX.value; break;					case _scaleY: _scaleX.value = _scaleZ.value = _scaleY.value; break;					case _scaleZ: _scaleX.value = _scaleY.value = _scaleZ.value; break;
+					case _scaleX: _scaleY.value = _scaleZ.value = _scaleX.value; break;
+					case _scaleY: _scaleX.value = _scaleZ.value = _scaleY.value; break;
+					case _scaleZ: _scaleX.value = _scaleY.value = _scaleZ.value; break;
 				}
 			}
 			

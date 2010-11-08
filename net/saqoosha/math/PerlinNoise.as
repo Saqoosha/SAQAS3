@@ -1,34 +1,37 @@
 package net.saqoosha.math {
 	import de.polygonal.math.PM_PRNG;
-	
+
 	
 	public class PerlinNoise {
+
 		
 		private static const MAXB:int = 0x100;
 		private static const N:int = 0x1000;
-		 
+
 		private static function s_curve(t:Number):Number {
 			return t * t * (3 - 2 * t);
 		}
+
 		
 		private static function lerp(t:Number, a:Number, b:Number):Number {
 			return a + t * (b - a);
 		}
-		
+
 		private static var p:Array;
 		private static var g1:Array;
 		private static var g2:Array;
 		private static var g3:Array;
-	
+
 		private static var start:int = 1;
 		private static var B:int;
 		private static var BM:int;	
-		
+
 		public static function SetNoiseFrequency(frequency:int):void {
 			start = 1;
 			B = frequency;
-			BM = B-1;
+			BM = B - 1;
 		}
+
 		
 		public static function noise1(arg:Number):Number {
 			var bx0:int, bx1:int;
@@ -53,6 +56,7 @@ package net.saqoosha.math {
 		
 			return lerp(sx, u, v);
 		}
+
 		
 		public static function noise2(vec:Array):Number {
 			var bx0:int, bx1:int, by0:int, by1:int, b00:int, b10:int, b01:int, b11:int;
@@ -101,6 +105,7 @@ package net.saqoosha.math {
 		
 			return lerp(sy, a, b);
 		}
+
 		
 		public static function noise3(vec:Array):Number {
 			var bx0:int, bx1:int, by0:int, by1:int, bz0:int, bz1:int, b00:int, b10:int, b01:int, b11:int;
@@ -137,7 +142,7 @@ package net.saqoosha.math {
 			b01 = p[i + by1];
 			b11 = p[j + by1];
 		
-			t  = s_curve(rx0);
+			t = s_curve(rx0);
 			sy = s_curve(ry0);
 			sz = s_curve(rz0);
 		
@@ -148,29 +153,30 @@ package net.saqoosha.math {
 			a = lerp(t, u, v);
 		
 			q = g3[b01 + bz0];
-			u = rx0 * q[0] + ry1 * q[1] + rz0 * q[2]
+			u = rx0 * q[0] + ry1 * q[1] + rz0 * q[2];
 			q = g3[b11 + bz0];
-			v = rx1 * q[0] + ry1 * q[1] + rz0 * q[2]
+			v = rx1 * q[0] + ry1 * q[1] + rz0 * q[2];
 			b = lerp(t, u, v);
 		
 			c = lerp(sy, a, b);
 		
 			q = g3[b00 + bz1];
-			u = rx0 * q[0] + ry0 * q[1] + rz1 * q[2]
+			u = rx0 * q[0] + ry0 * q[1] + rz1 * q[2];
 			q = g3[b10 + bz1];
-			v = rx1 * q[0] + ry0 * q[1] + rz1 * q[2]
+			v = rx1 * q[0] + ry0 * q[1] + rz1 * q[2];
 			a = lerp(t, u, v);
 		
 			q = g3[b01 + bz1];
-			u = rx0 * q[0] + ry1 * q[1] + rz1 * q[2]
+			u = rx0 * q[0] + ry1 * q[1] + rz1 * q[2];
 			q = g3[b11 + bz1];
-			v = rx1 * q[0] + ry1 * q[1] + rz1 * q[2]
+			v = rx1 * q[0] + ry1 * q[1] + rz1 * q[2];
 			b = lerp(t, u, v);
 		
 			d = lerp(sy, a, b);
 		
 			return lerp(sz, c, d);
 		}
+
 		
 		public static function normalize2(v:Array):void {
 			var s:Number;
@@ -179,6 +185,7 @@ package net.saqoosha.math {
 			v[0] = v[0] / s;
 			v[1] = v[1] / s;
 		}
+
 		
 		public static function normalize3(v:Array):void {
 			var s:Number;
@@ -188,7 +195,7 @@ package net.saqoosha.math {
 			v[1] = v[1] / s;
 			v[2] = v[2] / s;
 		}
-		
+
 		
 		public static function initNoise():void {
 			var i:int, j:int, k:int;
@@ -231,6 +238,7 @@ package net.saqoosha.math {
 					g3[B + i][j] = g3[i][j];
 			}
 		}
+
 		
 		// My harmonic summing functions - PDB
 		
@@ -239,7 +247,6 @@ package net.saqoosha.math {
 		// Typically it is 2, As this approaches 1 the function is noisier.
 		// "beta" is the harmonic scaling/spacing, typically 2.
 		//
-		
 		public static function get1d(x:Number, alpha:Number, beta:Number, n:int):Number {
 			var i:int;
 			var val:Number, sum:Number = 0;
@@ -255,6 +262,7 @@ package net.saqoosha.math {
 			return sum;
 		}
 
+		
 		public static function get2d(x:Number, y:Number, alpha:Number, beta:Number, n:int):Number {		
 			var i:int;
 			var val:Number, sum:Number = 0;
@@ -270,6 +278,7 @@ package net.saqoosha.math {
 			}
 			return sum;
 		}
+
 		
 		public static function get3d(x:Number, y:Number, z:Number, alpha:Number, beta:Number, n:int):Number {
 			var i:int;
@@ -287,7 +296,5 @@ package net.saqoosha.math {
 			}
 			return sum;
 		}
-		
 	}
-	
 }

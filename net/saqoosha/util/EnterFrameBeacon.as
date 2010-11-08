@@ -15,20 +15,18 @@ package net.saqoosha.util {
 
 		
 		public function EnterFrameBeacon():void {
-			if (_instance) {
-				throw new Error('EnterFrameBeacon is singleton.');
-			}
+			if (_instance) throw new Error('EnterFrameBeacon is singleton.');
 			beacon = new SigSprite();
 		}
 		
 		
 		public static function add(listener:Function, priority:int = 0):void {
-			_instance.beacon.sigEnterFrame.add(listener, priority);
+			_instance.beacon.sigEnterFrame.addWithPriority(listener, priority);
 		}
 		
 		
 		public static function addOnce(listener:Function, priority:int = 0):void {
-			_instance.beacon.sigEnterFrame.addOnce(listener, priority);
+			_instance.beacon.sigEnterFrame.addOnceWithPriority(listener, priority);
 		}
 		
 		

@@ -1,6 +1,5 @@
 package net.saqoosha.util {
 	import net.saqoosha.geom.ZERO_POINT;
-	import net.saqoosha.logging.dump;
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -11,6 +10,16 @@ package net.saqoosha.util {
 	
 	public class BitmapDataUtil {
 		
+		
+		public static function mirror(image:BitmapData):BitmapData {
+			var mirrored:BitmapData = image.clone();
+			var mtx:Matrix = new Matrix();
+			mtx.scale(-1, 1);
+			mtx.translate(image.width, 0);
+			mirrored.draw(image, mtx);
+			return mirrored;
+		}
+
 		
 		public static function hasAlphaChannel(image:BitmapData):Boolean {
 			image.lock();

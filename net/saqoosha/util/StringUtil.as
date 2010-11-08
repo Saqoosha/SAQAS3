@@ -1,4 +1,5 @@
 package net.saqoosha.util {
+	import flash.utils.ByteArray;
 
 	
 	/**
@@ -6,6 +7,24 @@ package net.saqoosha.util {
 	 */
 	public class StringUtil {
 		
+		
+		public static function encodeURLWithEncoding(data:String, encoding:String):String {
+			var b:ByteArray = new ByteArray();
+			b.writeMultiByte(data, encoding);
+			b.position = 0;
+			var encoded:String = '';
+			var n:int = b.length;
+			while (n--) {
+				var val:int = b.readByte() & 0xff;
+				if (val < 0x80) {
+					encoded += encodeURIComponent(String.fromCharCode(val));
+				} else {
+					encoded += '%' + val.toString(16);
+				}
+			}
+			return encoded;
+		}
+
 		
 		public static function trim(str:String):String {
 			 return str.match(/^\s*(.*)\s*$/)[1];

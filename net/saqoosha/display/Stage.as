@@ -1,8 +1,13 @@
 package net.saqoosha.display {
+	import flash.geom.Point;
+	import flash.display.InteractiveObject;
 	import org.osflash.signals.Signal;
 	import org.osflash.signals.natives.NativeRelaySignal;
 
 	import flash.display.Stage;
+	import flash.display.StageAlign;
+	import flash.display.StageQuality;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
@@ -32,9 +37,12 @@ package net.saqoosha.display {
 		private static var _sigMouseMove:NativeRelaySignal;
 
 		
-		public static function init(stage:flash.display.Stage):void {
+		public static function init(stage:flash.display.Stage, scaleMode:String = StageScaleMode.NO_SCALE, align:String = StageAlign.TOP_LEFT, quality:String = StageQuality.HIGH):void {
 			if (!_ref) {
 				_ref = stage;
+				_ref.scaleMode = scaleMode;
+				_ref.align = align;
+				_ref.quality = quality;
 				_sigResize = new NativeRelaySignal(stage, Event.RESIZE);
 				_sigResize.add(_onResize);
 				_onResize();
@@ -63,9 +71,7 @@ package net.saqoosha.display {
 
 		
 		private static function _checkRef():void {
-			if (!_ref) {
-				throw new Error(ERROR_MSG);
-			}
+			if (!_ref) throw new Error(ERROR_MSG);
 		}
 
 		
@@ -84,19 +90,27 @@ package net.saqoosha.display {
 		}
 
 		
-		public static function get ref():flash.display.Stage {
-			return _ref;
-		}
+		public static function get ref():flash.display.Stage { return _ref; }
+		
+		public static function get scaleMode():String { return _ref.scaleMode; }
+		public static function set scaleMode(value:String):void { _ref.scaleMode = value; }
+		
+		public static function get align():String { return _ref.align; }
+		public static function set align(value:String):void { _ref.align = value; }
+		
+		public static function get quality():String { return _ref.quality; }
+		public static function set quality(value:String):void { _ref.quality = value; }
+		
+		public static function get frameRate():Number { return _ref.frameRate; }
+		public static function set frameRate(value:Number):void { _ref.frameRate = value; }
+		
+		public static function get focus():InteractiveObject { return _ref.focus; }
+		public static function set focus(value:InteractiveObject):void { _ref.focus = value; }
 
+		public static function get width():int { return _width; }
+		public static function get height():int { return _height; }
 		
-		public static function get width():int {
-			return _width;
-		}
-		
-		
-		public static function get height():int {
-			return _height;
-		}
+		public static function get center():Point { return new Point(_width / 2, _height / 2); }
 		
 		
 		public static function get mouseX():Number {

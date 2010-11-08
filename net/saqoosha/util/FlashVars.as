@@ -34,6 +34,11 @@ package net.saqoosha.util {
 		}
 		
 		
+		public static function setValue(key:String, value:*):void {
+			_parameters[key] = value;
+		}
+
+		
 		public static function deleteKey(key:String):void {
 			if (hasKey(key)) {
 				delete _parameters[key];

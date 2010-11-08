@@ -23,22 +23,33 @@ package net.saqoosha.net {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class AMFRPC extends EventDispatcher {
 		
 		
 		public static var DEFAULT_GATEWAY:String;
-		
 		public static var DEBUG_OUT:Boolean = false;
+		private static var NEXT_RESPONSE_ID:int = 1;
 		
-		private static var NEXT_RESPONCE_ID:int = 1;
+		
+		public static function call(gateway:String, method:String, args:Array, callback:Function):void {
+			var rpc:AMFRPC = new AMFRPC(gateway);
+			rpc.addEventListener(Event.COMPLETE, function (e:Event):void {
+				rpc.removeEventListener(Event.COMPLETE, arguments.callee);
+				callback(rpc.result);
+			});
+			rpc.call.apply(rpc, [method].concat(args));
+		}
+		
+		
+		//
 		
 		
 		private var _gateway:String;
 		private var _loader:URLLoader;
 		private var _isError:Boolean = false;
-		protected var _result:*;
+		protected var _result:Object;
 
 		
 		public function AMFRPC(gateway:String = null) {
@@ -46,10 +57,10 @@ package net.saqoosha.net {
 		}
 		
 		
-		public function call(remoteMethod:String, ...args):void {
+		public function call(method:String, ...args):void {
 			var amf3:Boolean;
-			
-			var bodyByte:ByteArray = new ByteArray();			bodyByte.objectEncoding = ObjectEncoding.AMF0; 
+			var bodyByte:ByteArray = new ByteArray();
+			bodyByte.objectEncoding = ObjectEncoding.AMF0; 
 			bodyByte.writeByte(0x0A); // AMF0 array type
 			bodyByte.writeInt(args.length); // length of AMF0 arguments array
 			for each (var arg:* in args) {
@@ -67,14 +78,14 @@ package net.saqoosha.net {
 				bodyByte.objectEncoding = ObjectEncoding.AMF0;
 			}
 			
-			var responseId:String = '/' + NEXT_RESPONCE_ID++; // responce ID
+			var responseId:String = '/' + NEXT_RESPONSE_ID++; // responce ID
 			
 			var messageByte:ByteArray = new ByteArray();
 			messageByte.objectEncoding = ObjectEncoding.AMF0; // should be AMF0
 			messageByte.writeShort(0x03); // AMF version
 			messageByte.writeShort(0x00); // Number of headers (No header)
 			messageByte.writeShort(0x01); // Number of body
-			messageByte.writeUTF(remoteMethod); // remote method name
+			messageByte.writeUTF(method); // remote method name
 			messageByte.writeUTF(responseId); // responce id
 			messageByte.writeInt(bodyByte.length); // size of serialized body
 			messageByte.writeBytes(bodyByte); // serialized body data
@@ -167,18 +178,7 @@ package net.saqoosha.net {
 		}
 		
 		
-		public function get gateway():String {
-			return _gateway;
-		}
+		public function get result():Object { return _result; }
 		
-		
-		public function set gateway(gateway:String):void {
-			_gateway = gateway;
-		}
-		
-		
-		public function get result():* {
-			return _result;
-		}
 	}
 }

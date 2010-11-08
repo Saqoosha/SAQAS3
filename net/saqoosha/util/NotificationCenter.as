@@ -1,39 +1,48 @@
 package net.saqoosha.util {
-	
-	import jp.progression.commands.Func;
+
 	
 	public class NotificationCenter {
+
 		
 		private static const _defaultCenter:NotificationCenter = new NotificationCenter();
-		
-		public static function defaultCenter():NotificationCenter {
+
+		public static function get defaultCenter():NotificationCenter {
 			return _defaultCenter;
 		}
 		
+		
+		//
+		
+
 		private var _observers:Array;
-		
+
+
 		public function NotificationCenter() {
-			this._observers = [];
+			_observers = [];
 		}
+
 		
-		public function addObserver(observer:Object, func:String, name:String = null, object:Object = null):void {
-			this._observers.push(new ObserverInfo(observer, func, name, object));
+		public function addObserver(callback:Function, name:String = null, object:Object = null):void {
+			_observers.push(new ObserverInfo(callback, name, object));
 		}
+
 		
-		public function removeObserver(observer:Object, name:String = null, object:Object = null):void {
-			var i:int = this._observers.length;
+		public function removeObserver(callback:Function, name:String = null, object:Object = null):void {
+			var i:int = _observers.length;
 			while (i--) {
-				var info:ObserverInfo = this._observers[i];
-				if (info.observer == observer && (name == null || info.name == name) && (object == null || info.object == object)) {
-					this._observers.splice(i, 1);
+				var info:ObserverInfo = _observers[i];
+				if (info.callback == callback && (name == null || info.name == name) && (object == null || info.object == object)) {
+					_observers.splice(i, 1);
+					break;
 				}
 			}
 		}
+
 		
 		public function postNotification(name:String, object:Object, userInfo:* = null):void {
-			for each (var info:ObserverInfo in this._observers) {
+			for each (var info:ObserverInfo in _observers) {
 				if ((info.name == null || info.name == name) && (info.object == null || info.object == object)) {
-					info.observer[info.func](name, object, userInfo);
+					info.callback(name, object, userInfo);
 				}
 			}
 		}
@@ -42,15 +51,14 @@ package net.saqoosha.util {
 
 
 class ObserverInfo {
+
 	
-	public var observer:Object;
-	public var func:String;
+	public var callback:Function;
 	public var name:String;
 	public var object:Object;
-	
-	public function ObserverInfo(observer:Object, func:String, name:String, object:Object) {
-		this.observer = observer;
-		this.func = func;
+
+	public function ObserverInfo(callback:Function, name:String, object:Object) {
+		this.callback = callback;
 		this.name = name;
 		this.object = object;
 	}

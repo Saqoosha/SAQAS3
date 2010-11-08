@@ -1,6 +1,9 @@
 package net.saqoosha.util {
+	import flash.display.MovieClip;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.InteractiveObject;
+	import flash.display.Sprite;
 	import flash.geom.Point;
 
 	
@@ -39,7 +42,7 @@ package net.saqoosha.util {
 		}
 		
 		
-		public static function changeParentTo(target:DisplayObject, newParent:DisplayObjectContainer):DisplayObject {
+		public static function changeParent(target:DisplayObject, newParent:DisplayObjectContainer):DisplayObject {
 			// TODO: Support rotation and other transform props. (matrix or so)
 			var gp:Point = convertCoord(new Point(target.x, target.y), target.parent, newParent);
 			target.x = gp.x;
@@ -53,6 +56,19 @@ package net.saqoosha.util {
 			var n:int = container.numChildren;
 			while (n--) {
 				container.removeChildAt(n);
+			}
+		}
+		
+		
+		public static function inactivate(object:InteractiveObject):void {
+			object.mouseEnabled = false;
+			object.tabEnabled = false;
+			if (object is Sprite) {
+				Sprite(object).mouseChildren = false;
+				Sprite(object).tabChildren = false;
+			}
+			if (object is MovieClip) {
+				MovieClip(object).enabled = false;
 			}
 		}
 	}
