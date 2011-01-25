@@ -30,7 +30,7 @@ package sh.saqoo.util {
 			_file = new FileReference();
 			_file.addEventListener(Event.SELECT, _onFileSelect);
 			_file.addEventListener(Event.CANCEL, _onFileCancel);
-			_file.browse([new FileFilter('Image file', '*.jpg;*.png;*.gif')]);
+			_file.browse([new FileFilter('Image file', '*.jpg;*.jpeg;*.png;*.gif')]);
 		}
 
 		
