@@ -3,12 +3,12 @@ package sh.saqoo.geom {
 	import flash.display.Graphics;
 	import flash.geom.Point;
 	
-	public class Line implements IPathSegment {
+	public class LineSegment implements IPathSegment {
 		
 		private var _start:Point;
 		private var _end:Point;
 		
-		public function Line(start:Point, end:Point) {
+		public function LineSegment(start:Point, end:Point) {
 			this._start = start;
 			this._end = end;
 		}

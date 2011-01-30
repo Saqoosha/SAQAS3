@@ -75,7 +75,8 @@ package sh.saqoo.geom {
 
 
 		/**
-		 * code by nutsu: http://nutsu.com/blog/2007/092600_as_bezjesegment1.html
+		 * code by nutsu
+		 * @see http://nutsu.com/blog/2007/092600_as_bezjesegment1.html
 		 */
 		 
 		private var XY:Number;

@@ -1,16 +1,17 @@
 package sh.saqoo.display {
-	import flash.geom.Point;
-	import flash.display.InteractiveObject;
 	import org.osflash.signals.Signal;
 	import org.osflash.signals.natives.NativeRelaySignal;
 
+	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.display.StageAlign;
 	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
+	import flash.geom.Point;
 	import flash.utils.Timer;
 
 	
@@ -35,6 +36,8 @@ package sh.saqoo.display {
 		private static var _sigMouseDown:NativeRelaySignal;
 		private static var _sigMouseUp:NativeRelaySignal;
 		private static var _sigMouseMove:NativeRelaySignal;
+		private static var _sigKeyDown:NativeRelaySignal;
+		private static var _sigKeyUp:NativeRelaySignal;
 
 		
 		public static function init(stage:flash.display.Stage, scaleMode:String = StageScaleMode.NO_SCALE, align:String = StageAlign.TOP_LEFT, quality:String = StageQuality.HIGH):void {
@@ -191,6 +194,18 @@ package sh.saqoo.display {
 		public static function get sigMouseMove():NativeRelaySignal {
 			_checkRef();
 			return _sigMouseMove ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_MOVE, MouseEvent);
+		}
+		
+		
+		public static function get sigKeyDown():NativeRelaySignal {
+			_checkRef();
+			return _sigKeyDown ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_DOWN, KeyboardEvent);
+		}
+		
+		
+		public static function get sigKeyUp():NativeRelaySignal {
+			_checkRef();
+			return _sigKeyUp ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_UP, KeyboardEvent);
 		}
 	}
 }

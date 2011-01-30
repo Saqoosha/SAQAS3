@@ -2,12 +2,12 @@ package sh.saqoo.geom {
 	
 	import flash.geom.Point;
 	
-	public class Vector {
+	public class _Vector {
 		
 		public var x:Number;
 		public var y:Number;
 	
-		public function Vector(px:Number = 0, py:Number = 0) {
+		public function _Vector(px:Number = 0, py:Number = 0) {
 			x = px;
 			y = py;
 		}

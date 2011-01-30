@@ -27,7 +27,7 @@ package sh.saqoo.geom {
 		}
 		
 		public function lineTo(px:Number, py:Number):void {
-			var l:Line = new Line(this._last.clone(), new Point(px, py));
+			var l:LineSegment = new LineSegment(this._last.clone(), new Point(px, py));
 			this._totalLen += l.length;
 			this._length.push(this._totalLen);
 			this._segments.push(l);
