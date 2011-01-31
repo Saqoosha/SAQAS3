@@ -26,6 +26,41 @@ package sh.saqoo.geom {
 			_p3 = p3 || new Point();
 			_points = Vector.<Point>([_p0, _p1, _p2, _p3]);
 		}
+		
+		
+		public function getPointAt(t:Number, out:Point = null):Point {
+			out ||= new Point();
+			var t2:Number = t * t;
+			var t3:Number = t2 * t;
+			var c1:Number, c2:Number, c3:Number, c4:Number;
+			c1 = (_p3.x - (3.0 * _p2.x) + (3.0 * _p1.x) - _p0.x);
+			c2 = ((3.0 * _p2.x) - (6.0 * _p1.x) + (3.0 * _p0.x));
+			c3 = ((3.0 * _p1.x) - (3.0 * _p0.x));
+			c4 = _p0.x;
+			out.x = c1 * t3 + c2 * t2 + c3 * t + c4;
+			c1 = (_p3.y - (3.0 * _p2.y) + (3.0 * _p1.y) - _p0.y);
+			c2 = ((3.0 * _p2.y) - (6.0 * _p1.y) + (3.0 * _p0.y));
+			c3 = ((3.0 * _p1.y) - (3.0 * _p0.y));
+			c4 = _p0.y;
+			out.y = c1 * t3 + c2 * t2 + c3 * t + c4;
+			return out;
+		}
+		
+		
+		public function getTangentAt(t:Number, out:Point = null):Point {
+			out ||= new Point();
+			var t2:Number = t * t;
+			var c1:Number, c2:Number, c3:Number;
+			c1 = (_p3.x - (3.0 * _p2.x) + (3.0 * _p1.x) - _p0.x);
+			c2 = ((3.0 * _p2.x) - (6.0 * _p1.x) + (3.0 * _p0.x));
+			c3 = ((3.0 * _p1.x) - (3.0 * _p0.x));
+			out.x = (3.0 * c1 * t2) + (2.0 * c2 * t) + c3;
+			c1 = (_p3.y - (3.0 * _p2.y) + (3.0 * _p1.y) - _p0.y);
+			c2 = ((3.0 * _p2.y) - (6.0 * _p1.y) + (3.0 * _p0.y));
+			c3 = ((3.0 * _p1.y) - (3.0 * _p0.y));
+			out.y = (3.0 * c1 * t2) + (2.0 * c2 * t) + c3;
+			return out;
+		}
 
 		
 		public function draw(graphics:Graphics):void {
@@ -108,6 +143,11 @@ package sh.saqoo.geom {
 			if (index < 0 || 3 < index || !(name is String)) throw new ArgumentError('Prop name must be int in range 0 to 3.');
 			if (!(value is Point)) throw new ArgumentError('Value must be instance of flash.geom.Point.');
 			_points[index].x = value.x;			_points[index].y = value.y;
+		}
+		
+		
+		public function toString():String {
+			return '[CubicBezier p0=' + _p0 + ' p1=' + _p1 + ' p2=' + _p2 + ' p3=' + _p3 + ']';
 		}
 	}
 }
