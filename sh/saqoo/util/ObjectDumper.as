@@ -30,7 +30,7 @@ package sh.saqoo.util {
 			var pad:String = '';
 			var i:int = 0;
 			for (i = 0; i < level; i++) {
-				pad += '	';
+				pad += '    ';
 			}
 
 			// プリミティヴ型の場合
