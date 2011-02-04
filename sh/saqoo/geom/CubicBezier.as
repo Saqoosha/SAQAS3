@@ -30,35 +30,29 @@ package sh.saqoo.geom {
 		
 		public function getPointAt(t:Number, out:Point = null):Point {
 			out ||= new Point();
-			var t2:Number = t * t;
-			var t3:Number = t2 * t;
-			var c1:Number, c2:Number, c3:Number, c4:Number;
-			c1 = (_p3.x - (3.0 * _p2.x) + (3.0 * _p1.x) - _p0.x);
-			c2 = (3.0 * _p2.x) - (6.0 * _p1.x) + (3.0 * _p0.x);
-			c3 = (3.0 * _p1.x) - (3.0 * _p0.x);
-			c4 = _p0.x;
-			out.x = c1 * t3 + c2 * t2 + c3 * t + c4;
-			c1 = (_p3.y - (3.0 * _p2.y) + (3.0 * _p1.y) - _p0.y);
-			c2 = (3.0 * _p2.y) - (6.0 * _p1.y) + (3.0 * _p0.y);
-			c3 = (3.0 * _p1.y) - (3.0 * _p0.y);
-			c4 = _p0.y;
-			out.y = c1 * t3 + c2 * t2 + c3 * t + c4;
+			var a:Number = 1 - t;
+			var b:Number = a * a;
+			var c:Number = t * t;
+			var c0:Number = a * b;
+			var c1:Number = 3 * b * t;
+			var c2:Number = 3 * a * c;
+			var c3:Number = t * c;
+			out.x = _p0.x * c0 + _p1.x * c1 + _p2.x * c2 + _p3.x * c3;			out.y = _p0.y * c0 + _p1.y * c1 + _p2.y * c2 + _p3.y * c3;
 			return out;
 		}
 		
 		
 		public function getTangentAt(t:Number, out:Point = null):Point {
 			out ||= new Point();
+			var t1:Number = t - 1;
+			var t12:Number = t1 * t1;
 			var t2:Number = t * t;
-			var c1:Number, c2:Number, c3:Number;
-			c1 = (_p3.x - (3.0 * _p2.x) + (3.0 * _p1.x) - _p0.x);
-			c2 = ((3.0 * _p2.x) - (6.0 * _p1.x) + (3.0 * _p0.x));
-			c3 = ((3.0 * _p1.x) - (3.0 * _p0.x));
-			out.x = (3.0 * c1 * t2) + (2.0 * c2 * t) + c3;
-			c1 = (_p3.y - (3.0 * _p2.y) + (3.0 * _p1.y) - _p0.y);
-			c2 = ((3.0 * _p2.y) - (6.0 * _p1.y) + (3.0 * _p0.y));
-			c3 = ((3.0 * _p1.y) - (3.0 * _p0.y));
-			out.y = (3.0 * c1 * t2) + (2.0 * c2 * t) + c3;
+			var t3:Number = 2 * t1 * t;
+			var a:Number = -3 * t12;
+			var b:Number = 3 * (t3 + t12);
+			var c:Number = -3 * (t2 + t3);
+			var d:Number = 3 * t2;
+			out.x = _p0.x * a + _p1.x * b + _p2.x * c + _p3.x * d;			out.y = _p0.y * a + _p1.y * b + _p2.y * c + _p3.y * d;
 			return out;
 		}
 
