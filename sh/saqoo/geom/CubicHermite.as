@@ -31,7 +31,7 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function getPointAt(t:Number, out:Point = null):Point {
+		public function getPositionAt(t:Number, out:Point = null):Point {
 			out ||= new Point();
 			var t2:Number = t * t;
 			var t3:Number = t2 * t;
@@ -61,7 +61,7 @@ package sh.saqoo.geom {
 		public function draw(graphics:Graphics, numSegments:int = 50):void {
 			var p:Point = new Point();
 			for (var i:int = 1; i <= numSegments; ++i) {
-				getPointAt(i / numSegments, p);
+				getPositionAt(i / numSegments, p);
 				graphics.lineTo(p.x, p.y);
 			}
 		}

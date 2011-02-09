@@ -76,7 +76,7 @@ package sh.saqoo.audio {
 			}
 			
 			var tracks:Array = [];
-			var node:DLLNode = _sounds.head();
+			var node:DLLNode = _sounds.head;
 			while (node) {
 				var loop:MixInfo = MixInfo(node.val);
 				if (loop.startTime + loop.duration <= currentTime) {

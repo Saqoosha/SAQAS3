@@ -27,6 +27,7 @@ package sh.saqoo.geom {
 		
 		public function RoundedNonuniformSpline(points:Vector.<Point> = null) {
 			_points = new Vector.<HermiteCurvePoint>();
+			_curves = new Vector.<CubicHermite>();
 			_totalDistance = 0;
 			
 			if (points) {
@@ -49,7 +50,13 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function getPointAt(t:Number, out:Point = null):Point {
+		public function getCurveAt(index:int):CubicHermite {
+			if (_buildRequired) _buildCurves();
+			return _curves[index];
+		}
+
+		
+		public function getPositionAt(t:Number, out:Point = null):Point {
 			if (_buildRequired) _buildCurves();
 			
 			var distance:Number = t * _totalDistance;
@@ -61,7 +68,7 @@ package sh.saqoo.geom {
 			}
 			t = (distance - currentDistance) / _points[i].distance;
 			
-			return _curves[i].getPointAt(t, out);
+			return _curves[i].getPositionAt(t, out);
 		}
 		
 		
@@ -103,7 +110,7 @@ package sh.saqoo.geom {
 					curve = _curves[idx];
 				}
 				t = (d - distance) / _points[idx].distance;
-				curve.getPointAt(t, p);
+				curve.getPositionAt(t, p);
 				graphics.lineTo(p.x, p.y);
 			}
 		}
@@ -134,10 +141,10 @@ package sh.saqoo.geom {
 					p.velocity.normalize(1);
 				}
 			}
-			_points[0].velocity = _calcEdgeVelocity(_points[0].position, _points[1].position, _points[0].distance, _points[1].velocity);
-			_points[n - 1].velocity = _calcEdgeVelocity(_points[n - 2].position, _points[n - 1].position, _points[n - 2].distance, _points[n - 2].velocity);
+			_points[0].velocity = calcEdgeVelocity(_points[0].position, _points[1].position, _points[0].distance, _points[1].velocity);
+			_points[n - 1].velocity = calcEdgeVelocity(_points[n - 2].position, _points[n - 1].position, _points[n - 2].distance, _points[n - 2].velocity);
 			
-			_curves = new Vector.<CubicHermite>();
+			_curves.length = n - 1;
 			for (i = 0; i < n - 1; ++i) {
 				p = _points[i];
 				var v0:Point = p.velocity.clone();
@@ -146,15 +153,20 @@ package sh.saqoo.geom {
 				var v1:Point = _points[i + 1].velocity.clone();
 				v1.x *= p.distance;
 				v1.y *= p.distance;
-				_curves.push(new CubicHermite(p.position, v0, _points[i + 1].position, v1));
+				var curve:CubicHermite = _curves[i] || new CubicHermite();
+				curve.p0 = p.position;
+				curve.v0 = v0;
+				curve.p1 = _points[i + 1].position;
+				curve.v1 = v1;
+				_curves[i] = curve;
 			}
 			
 			_buildRequired = false;
 		}
 		
 		
-		private function _calcEdgeVelocity(p0:Point, p1:Point, distance:Number, v:Point):Point {
-			var t:Number = 3.0 * (1.0 / distance);
+		public function calcEdgeVelocity(p0:Point, p1:Point, distance:Number, v:Point):Point {
+			var t:Number = 3.0 / distance;
 			return new Point(
 				((p1.x - p0.x) * t - v.x) * 0.5,
 				((p1.y - p0.y) * t - v.y) * 0.5
@@ -165,5 +177,18 @@ package sh.saqoo.geom {
 		public function get totalLength():Number {
 			return _totalDistance;
 		}
+		
+		
+		public function get numPoints():int {
+			return _points.length;
+		}
+
+		
+		public function get numCurves():int {
+			return _curves ? 0 : _curves.length;
+		}
+		
+		
+
 	}
 }

@@ -7,6 +7,7 @@ package sh.saqoo.audio {
 
 	
 	/**
+	 * Play loop sound seemlessly.
 	 * @author Saqoosha
 	 */
 	public class LoopPlayer {
@@ -21,6 +22,10 @@ package sh.saqoo.audio {
 		private var _timer:Timer;
 
 		
+		/**
+		 * @param sound Sound object.
+		 * @param loopLength Loop length in milliseconds.
+		 */
 		public function LoopPlayer(sound:Sound, loopLength:int = 0) {
 			_sound = sound;
 			_length = Math.min(_sound.length, loopLength) || _sound.length;
@@ -54,5 +59,10 @@ package sh.saqoo.audio {
 			_timer.start();
 			_nextTime += _length;
 		}
+		
+		
+		public function get masterSound():MasterSound { return _master; }
+		
+		
 	}
 }
