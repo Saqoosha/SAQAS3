@@ -20,15 +20,19 @@ package sh.saqoo.geom {
 		
 		
 		protected var _points:Vector.<HermiteCurvePoint>;
+		protected var _distance:Vector.<Number>;
 		protected var _curves:Vector.<CubicHermite>;
-		protected var _totalDistance:Number;
+		protected var _totalDistance:Number; // = _distance[_distance.length - 1]
 		protected var _buildRequired:Boolean;
 		
 		
 		public function RoundedNonuniformSpline(points:Vector.<Point> = null) {
 			_points = new Vector.<HermiteCurvePoint>();
+			_distance = new Vector.<Number>();
+			_distance.push(0);
 			_curves = new Vector.<CubicHermite>();
 			_totalDistance = 0;
+			_buildRequired = false;
 			
 			if (points) {
 				for each (var p:Point in points) {
@@ -39,77 +43,91 @@ package sh.saqoo.geom {
 
 		
 		public function addPoint(point:Point):void {
-			var n:int = _points.length;
-			if (n > 0) {
-				--n;
-				_points[n].distance = Point.distance(_points[n].position, point);
-				_totalDistance += _points[n].distance;
-			}
 			_points.push(new HermiteCurvePoint(point));
+			var n:int = _points.length;
+			_distance.length = n;
+			if (n > 1) {
+				var d:Number = Point.distance(_points[n - 2].position, _points[n - 1].position);
+				_distance[n - 1] = _distance[n - 2] + d;
+				_totalDistance += d;
+			}
 			_buildRequired = true;
 		}
 		
 		
-		public function getCurveAt(index:int):CubicHermite {
-			if (_buildRequired) _buildCurves();
+		public function addCurve(curve:CubicHermite):void {
+			if (_buildRequired) build();
+			_curves.push(curve);
+			var d:Number = Point.distance(curve.p0, curve.p1);
+			_totalDistance += d;
+			_distance.push(_totalDistance);
+		}
+
+		
+		public function append(spline:RoundedNonuniformSpline):void {
+			if (_curves.length > 0) {
+				var c0:CubicHermite = _curves[_curves.length - 1];
+				var c1:CubicHermite = spline.getCurveAt(0);
+				var d:Number = Point.distance(c0.p1, c1.p0);
+				var v0:Point = c0.v1.clone();
+				v0.normalize(d);
+				var v1:Point = c1.v0.clone();
+				v1.normalize(d);
+				addCurve(new CubicHermite(c0.p1.clone(), v0, c1.p0.clone(), v1));
+			}
+			
+			var n:int = spline.numCurves;
+			for (var i:int = 0; i < n; i++) {
+				addCurve(spline.getCurveAt(i));
+			}
+		}
+
+		
+		public function getCurveAt(index:int):CubicHermite {			if (_buildRequired) build();
 			return _curves[index];
 		}
 
 		
 		public function getPositionAt(t:Number, out:Point = null):Point {
-			if (_buildRequired) _buildCurves();
+			if (_buildRequired) build();
 			
 			var distance:Number = t * _totalDistance;
-			var currentDistance:Number = 0;
 			var i:int = 0;
-			while (currentDistance + _points[i].distance < distance && i < _points.length - 2) {
-				currentDistance += _points[i].distance;
-				++i;
-			}
-			t = (distance - currentDistance) / _points[i].distance;
-			
+			while (_distance[i + 1] < distance) i++;
+			t = (distance - _distance[i]) / (_distance[i - 1] - _distance[i]);
 			return _curves[i].getPositionAt(t, out);
 		}
 		
 		
 		public function getTangentAt(t:Number, out:Point = null):Point {
-			if (_buildRequired) _buildCurves();
+			if (_buildRequired) build();
 			
 			var distance:Number = t * _totalDistance;
-			var currentDistance:Number = 0;
 			var i:int = 0;
-			while (currentDistance + _points[i].distance < distance && i < _points.length - 2) {
-				currentDistance += _points[i].distance;
-				++i;
-			}
-			t = (distance - currentDistance) / _points[i].distance;
-			
+			while (_distance[i + 1] < distance) i++;
+			t = (distance - _distance[i]) / (_distance[i - 1] - _distance[i]);
 			return _curves[i].getTangentAt(t, out);
 		}
 
 		
 		public function draw(graphics:Graphics, segmentLength:Number = 5, moveToFirst:Boolean = true):void {
-			if (_buildRequired) _buildCurves();			
+			if (_buildRequired) build();			
 			if (moveToFirst) {
-				graphics.moveTo(_points[0].position.x, _points[0].position.y);
+				graphics.moveTo(_curves[0].p0.x, _curves[0].p0.y);
 			}
 			
 			var numSegments:int = _totalDistance / segmentLength;
 			var idx:int = 0;
-			var distance:Number = 0;
-			var nextDistance:Number = _points[0].distance;
 			var curve:CubicHermite = _curves[0];
 			var p:Point = new Point();
 			for (var i:int = 0; i <= numSegments; ++i) {
 				var t:Number = i / numSegments;
 				var d:Number = t * _totalDistance;
-				if (nextDistance < d) {
+				if (_distance[idx + 1] < d) {
 					++idx;
-					distance = nextDistance;
-					nextDistance += _points[idx].distance;
 					curve = _curves[idx];
 				}
-				t = (d - distance) / _points[idx].distance;
+				t = (d - _distance[idx]) / (_distance[idx + 1] - _distance[idx]);
 				curve.getPositionAt(t, p);
 				graphics.lineTo(p.x, p.y);
 			}
@@ -117,14 +135,14 @@ package sh.saqoo.geom {
 		
 		
 		public function debugDraw(graphics:Graphics):void {
-			if (_buildRequired) _buildCurves();
+			if (_buildRequired) build();
 			for each (var curve:CubicHermite in _curves) {
 				curve.debugDraw(graphics);
 			}
 		}
 
 		
-		private function _buildCurves():void {
+		public function build():void {
 			var i:int;
 			var n:int = _points.length;
 			if (n < 2) throw new Error('Required more than 2 points.');
@@ -141,18 +159,19 @@ package sh.saqoo.geom {
 					p.velocity.normalize(1);
 				}
 			}
-			_points[0].velocity = calcEdgeVelocity(_points[0].position, _points[1].position, _points[0].distance, _points[1].velocity);
-			_points[n - 1].velocity = calcEdgeVelocity(_points[n - 2].position, _points[n - 1].position, _points[n - 2].distance, _points[n - 2].velocity);
+			_points[0].velocity = calcEdgeVelocity(_points[0].position, _points[1].position, _distance[1], _points[1].velocity);
+			_points[n - 1].velocity = calcEdgeVelocity(_points[n - 2].position, _points[n - 1].position, _distance[n - 1] - _distance[n - 2], _points[n - 2].velocity);
 			
 			_curves.length = n - 1;
 			for (i = 0; i < n - 1; ++i) {
 				p = _points[i];
 				var v0:Point = p.velocity.clone();
-				v0.x *= p.distance;
-				v0.y *= p.distance;
+				var d:Number = _distance[i + 1] - _distance[i];
+				v0.x *= d;
+				v0.y *= d;
 				var v1:Point = _points[i + 1].velocity.clone();
-				v1.x *= p.distance;
-				v1.y *= p.distance;
+				v1.x *= d;
+				v1.y *= d;
 				var curve:CubicHermite = _curves[i] || new CubicHermite();
 				curve.p0 = p.position;
 				curve.v0 = v0;
@@ -174,6 +193,15 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function clone():RoundedNonuniformSpline {
+			var copy:RoundedNonuniformSpline = new RoundedNonuniformSpline();
+			for each (var curve:CubicHermite in _curves) {
+				copy.addCurve(curve.clone());
+			}
+			return copy;
+		}
+		
+		
 		public function get totalLength():Number {
 			return _totalDistance;
 		}
@@ -185,10 +213,7 @@ package sh.saqoo.geom {
 
 		
 		public function get numCurves():int {
-			return _curves ? 0 : _curves.length;
+			return _curves ? _curves.length : 0;
 		}
-		
-		
-
 	}
 }

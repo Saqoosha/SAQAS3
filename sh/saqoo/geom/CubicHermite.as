@@ -58,12 +58,20 @@ package sh.saqoo.geom {
 		}
 
 		
-		public function draw(graphics:Graphics, numSegments:int = 50):void {
+		public function draw(graphics:Graphics, numSegments:int = 50, moveToFirst:Boolean = false):void {
+			if (moveToFirst) {
+				graphics.moveTo(_p0.x, _p0.y);
+			}
 			var p:Point = new Point();
 			for (var i:int = 1; i <= numSegments; ++i) {
 				getPositionAt(i / numSegments, p);
 				graphics.lineTo(p.x, p.y);
 			}
+		}
+		
+		
+		public function clone():CubicHermite {
+			return new CubicHermite(_p0.clone(), _v0.clone(), _p1.clone(), _v1.clone());
 		}
 
 		

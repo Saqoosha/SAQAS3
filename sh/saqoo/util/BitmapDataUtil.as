@@ -21,17 +21,6 @@ package sh.saqoo.util {
 		}
 
 		
-		public static function hasAlphaChannel(image:BitmapData):Boolean {
-			image.lock();
-			var tmp:uint = image.getPixel32(0, 0);
-			image.setPixel32(0, 0, 0x0);
-			var alpha:Boolean = image.getPixel32(0, 0) == 0x0; // if image doesn't have alpha channel, getPixel32 returns 0xff000000
-			image.setPixel32(0, 0, tmp);
-			image.unlock();
-			return alpha;
-		}
-
-		
 		public static function calcAverageColor(image:BitmapData, rect:Rectangle = null):uint {
 			var hist:Vector.<Vector.<Number>> = image.histogram(rect);
 			var r:Number = 0;
