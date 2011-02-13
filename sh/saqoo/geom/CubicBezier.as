@@ -87,6 +87,12 @@ package sh.saqoo.geom {
 			graphics.drawCircle(_p2.x, _p2.y, 3);
 			graphics.endFill();
 		}
+		
+		
+		public function convertToHermite():CubicHermite {
+			var v0:Point = new Point(3 * (_p1.x - p0.x), 3 * (_p1.y - p0.y));			var v1:Point = new Point(3 * (_p3.x - p2.x), 3 * (_p3.y - p2.y));
+			return new CubicHermite(_p0.clone(), v0, _p3.clone(), v1);
+		}
 
 		
 		public function setPoints(points:Vector.<Point>):void {
@@ -244,7 +250,7 @@ class DrawImpl2 {
 		// prevents infinite recursion (no more than 10 levels)
 		// if 10 levels are reached the latest subsegment is 
 		// approximated with a line (no quadratic curve). It should be good enough.
-		if (recurs > 20) {
+		if (recurs > 10) {
 			graphics.lineTo(Tu2.P.x, Tu2.P.y);
 			return 1;
 		}

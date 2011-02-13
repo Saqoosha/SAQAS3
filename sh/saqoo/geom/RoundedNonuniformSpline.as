@@ -1,4 +1,5 @@
 package sh.saqoo.geom {
+	import sh.saqoo.logging.dump;
 	import flash.display.Graphics;
 	import flash.geom.Point;
 
@@ -192,6 +193,15 @@ package sh.saqoo.geom {
 			);
 		}
 		
+		
+		public function reverse():void {
+			_points.reverse();
+			_curves.reverse();
+			for each (var c:CubicHermite in _curves) {
+				c.reverse();
+			}
+		}
+
 		
 		public function clone():RoundedNonuniformSpline {
 			var copy:RoundedNonuniformSpline = new RoundedNonuniformSpline();

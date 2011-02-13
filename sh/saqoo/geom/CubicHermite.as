@@ -70,6 +70,20 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function reverse():void {
+			var tmp:Point = _p0;
+			_p0 = _p1;
+			_p1 = tmp;
+			tmp = _v0;
+			_v0 = _v1;
+			_v1 = tmp;
+			_v0.x *= -1;
+			_v0.y *= -1;
+			_v1.x *= -1;
+			_v1.y *= -1;
+		}
+		
+		
 		public function clone():CubicHermite {
 			return new CubicHermite(_p0.clone(), _v0.clone(), _p1.clone(), _v1.clone());
 		}
