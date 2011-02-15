@@ -11,6 +11,21 @@ package sh.saqoo.geom {
 	public dynamic class CubicBezier extends Proxy {
 		
 		
+		private static var __c:CubicBezier;
+		
+		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
+			__c ||= new CubicBezier();
+			__c.p0 = p0;
+			__c.p1 = p1;
+			__c.p2 = p2;
+			__c.p3 = p3;
+			__c.draw2(graphics);
+		}
+
+		
+		//
+		
+		
 		private var _p0:Point;
 		private var _p1:Point;
 		private var _p2:Point;
@@ -90,7 +105,7 @@ package sh.saqoo.geom {
 		
 		
 		public function convertToHermite():CubicHermite {
-			var v0:Point = new Point(3 * (_p1.x - p0.x), 3 * (_p1.y - p0.y));			var v1:Point = new Point(3 * (_p3.x - p2.x), 3 * (_p3.y - p2.y));
+			var v0:Point = new Point(3 * (_p1.x - _p0.x), 3 * (_p1.y - _p0.y));			var v1:Point = new Point(3 * (_p3.x - _p2.x), 3 * (_p3.y - _p2.y));
 			return new CubicHermite(_p0.clone(), v0, _p3.clone(), v1);
 		}
 

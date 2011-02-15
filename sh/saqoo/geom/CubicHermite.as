@@ -14,6 +14,20 @@ package sh.saqoo.geom {
 	public dynamic class CubicHermite extends Proxy {
 		
 		
+		public static function getSmoothConnection(a:CubicHermite, b:CubicHermite, minDistance:Number = 0.5):CubicHermite {
+			var d:Number = Point.distance(a.p1, b.p0);
+			if (d < minDistance) return null;
+			var v0:Point = a.v1.clone();
+			v0.normalize(d);
+			var v1:Point = b.v0.clone();
+			v1.normalize(d);
+			return new CubicHermite(a.p1.clone(), v0, b.p0.clone(), v1);
+		}
+		
+		
+		//
+		
+		
 		private var _p0:Point;
 		private var _v0:Point;
 		private var _p1:Point;
@@ -55,6 +69,11 @@ package sh.saqoo.geom {
 			out.x = _p0.x * a + _v0.x * b + _p1.x * c + _v1.x * d;
 			out.y = _p0.y * a + _v0.y * b + _p1.y * c + _v1.y * d;
 			return out;
+		}
+		
+		
+		public function getLength(accuracy:Number = 0):Number {
+			return Point.distance(_p0, _p1);
 		}
 
 		

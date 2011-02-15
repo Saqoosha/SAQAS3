@@ -29,6 +29,15 @@ package sh.saqoo.util {
 		}
 		
 		
+		public static function dot(a:Point, b:Point):Number {
+			return a.x * b.x + a.y * b.y;
+		}
+		
+		public static function cross(a:Point, b:Point):Number {
+			return a.x * b.y - a.y * b.x;
+		}
+		
+		
 		//
 		
 		

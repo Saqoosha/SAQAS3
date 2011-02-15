@@ -1,5 +1,4 @@
 package sh.saqoo.geom {
-	import sh.saqoo.logging.dump;
 	import flash.display.Graphics;
 	import flash.geom.Point;
 
@@ -58,25 +57,21 @@ package sh.saqoo.geom {
 		
 		public function addCurve(curve:CubicHermite):void {
 			if (_buildRequired) build();
+			if (_curves.length) {
+				var conn:CubicHermite = CubicHermite.getSmoothConnection(_curves[_curves.length - 1], curve);
+				if (conn) {
+					_curves.push(conn);
+					_totalDistance += conn.getLength();
+					_distance.push(_totalDistance);
+				}
+			}
 			_curves.push(curve);
-			var d:Number = Point.distance(curve.p0, curve.p1);
-			_totalDistance += d;
+			_totalDistance += curve.getLength();
 			_distance.push(_totalDistance);
 		}
 
 		
 		public function append(spline:RoundedNonuniformSpline):void {
-			if (_curves.length > 0) {
-				var c0:CubicHermite = _curves[_curves.length - 1];
-				var c1:CubicHermite = spline.getCurveAt(0);
-				var d:Number = Point.distance(c0.p1, c1.p0);
-				var v0:Point = c0.v1.clone();
-				v0.normalize(d);
-				var v1:Point = c1.v0.clone();
-				v1.normalize(d);
-				addCurve(new CubicHermite(c0.p1.clone(), v0, c1.p0.clone(), v1));
-			}
-			
 			var n:int = spline.numCurves;
 			for (var i:int = 0; i < n; i++) {
 				addCurve(spline.getCurveAt(i));
