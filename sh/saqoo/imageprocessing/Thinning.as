@@ -1,5 +1,6 @@
 package sh.saqoo.imageprocessing {
 	import flash.display.BitmapData;
+	import flash.geom.Point;
 	import flash.utils.ByteArray;
 
 	
@@ -22,7 +23,7 @@ package sh.saqoo.imageprocessing {
 		 * Apply thinning filter. Using blue channel only.
 		 * @return Black and white image.
 		 */
-		public static function apply(image:BitmapData):BitmapData {
+		public static function apply(image:BitmapData):void {
 			var w:int = image.width;
 			var h:int = image.height;
 			var i:int, n:int, x:int, y:int, idx:int;
@@ -72,7 +73,6 @@ package sh.saqoo.imageprocessing {
 			
 			pixels.position = 0;
 			image.setPixels(image.rect, pixels);
-			return image;
 		}
 
 		
@@ -92,6 +92,110 @@ package sh.saqoo.imageprocessing {
 			var cn_num:int = CountCn();
 			A[n] = tmp;
 			return cn_num;
+		}
+		
+		
+		/**
+		 * Extract chain of points from skeltonized image.
+		 */
+		public static function extractPointChains(image:BitmapData):Vector.<Vector.<Point>> {
+			var chains:Vector.<Vector.<Point>> = new Vector.<Vector.<Point>>();
+			var pixels:ByteArray = image.getPixels(image.rect);
+			var width:int = image.width;
+			var height:int = image.height;
+			var idx:int, idx2:int;
+			var x:int, y:int, i:int;
+			
+			// set black to 1px border around image.
+			for (x = 0; x < width; x++) {
+				idx = x * 4 + 1;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+				idx = ((height - 1) * width + x) * 4 + 1;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+			}
+			for (y = 0; y < height; y++) {
+				idx = y * width * 4 + 1;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+				idx += (width - 1) * 4;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+				pixels[idx++] = 0;
+			}
+			
+			var w1:int = width - 1;
+			var h1:int = height - 1;
+			for (y = 1; y < h1; y++) {
+				for (x = 1; x < w1; x++) {
+					idx = (y * width + x) * 4 + 3; // blue channel
+					if (pixels[idx] != WHITE) continue; // non-line pixel or already labeled.
+					
+					pixels[idx - 2] = 0;
+					pixels[idx - 1] = 0;
+					pixels[idx - 0] = 0;
+					
+					const dx:Vector.<int> = Vector.<int>([1, 1, 0, -1, -1, -1, 0, 1]);
+					const dy:Vector.<int> = Vector.<int>([0, 1, 1, 1, 0, -1, -1, -1]);
+					const dd:Vector.<uint> = Vector.<uint>([0, 3, 6, 1, 4, 7, 2, 5]);
+					var dir:int = 0;
+					var d:int;
+					var target:Vector.<int> = new Vector.<int>();
+					for (i = 0; i < 8; i++) {
+						d = dd[i];
+						idx2 = idx + (dx[d] + dy[d] * width) * 4;
+						if (pixels[idx2] == WHITE) {
+							target.push(d);
+							if (target.length == 2) {
+								break;
+							}
+						}
+					}
+					
+					if (target.length > 0) {
+						var points:Vector.<Point> = new Vector.<Point>();
+						points.push(new Point(x, y));
+	
+						for each (dir in target) {
+							idx = (y * width + x) * 4 + 3;
+							var xx:int = x;
+							var yy:int = y;
+							var foundNext:Boolean;
+							do {
+								foundNext = false;
+								for (i = 0; i < 8; i++) {
+									d = (dir + i) & 7;
+									idx2 = idx + (dx[d] + dy[d] * width) * 4;
+									if (pixels[idx2] == 0xff) {
+										pixels[idx2 - 2] = 0;
+										pixels[idx2 - 1] = 0;
+										pixels[idx2 - 0] = 0;
+										dir = d;
+										idx = idx2;
+										xx += dx[d];
+										yy += dy[d];
+										points.push(new Point(xx, yy));
+										foundNext = true;
+										break;
+									}
+								}
+							} while (foundNext);
+							if (target.length == 2) {
+								points.reverse();
+							}
+						}
+						if (points.length > 1) {
+							chains.push(points);
+						}
+					}
+				}
+			}
+			
+			return chains;
 		}
 	}
 }

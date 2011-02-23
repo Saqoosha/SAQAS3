@@ -1,4 +1,5 @@
 package sh.saqoo.geom {
+
 	import flash.display.Graphics;
 	import flash.geom.Point;
 	import flash.utils.Proxy;
@@ -40,6 +41,21 @@ package sh.saqoo.geom {
 			_p2 = p2 || new Point();
 			_p3 = p3 || new Point();
 			_points = Vector.<Point>([_p0, _p1, _p2, _p3]);
+		}
+		
+		
+		public function getLength(n:uint = 4):Number {
+			n = Math.pow(2, n);
+			var p0:Point = getPointAt(0);
+			var p1:Point = new Point();
+			var len:Number = 0;
+			for (var i:int = 1; i <= n; i++) {
+				getPointAt(i / n, p1);
+				len += Point.distance(p0, p1);
+				p0.x = p1.x;
+				p0.y = p1.y;
+			}
+			return len;
 		}
 		
 		
@@ -101,6 +117,26 @@ package sh.saqoo.geom {
 			graphics.drawCircle(_p1.x, _p1.y, 3);
 			graphics.drawCircle(_p2.x, _p2.y, 3);
 			graphics.endFill();
+		}
+		
+		
+		public function reverse():void {
+			var tmp:Point;
+			tmp = _p0;
+			_p0 = _p3;
+			_p3 = tmp;
+			tmp = _p1;
+			_p1 = _p2;
+			_p2 = tmp;
+		}
+		
+		
+		public function clone(reverse:Boolean = false):CubicBezier {
+			if (reverse) {
+				return new CubicBezier(_p3.clone(), _p2.clone(), _p1.clone(), _p0.clone());
+			} else {
+				return new CubicBezier(_p0.clone(), _p1.clone(), _p2.clone(), _p3.clone());
+			}
 		}
 		
 		

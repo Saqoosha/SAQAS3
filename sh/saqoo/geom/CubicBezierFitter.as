@@ -5,7 +5,7 @@ package sh.saqoo.geom {
 	/**
 	 * An Algorithm for Automatically Fitting Digitized Curves
 	 * by Philip J. Schneider
-	 * from "Graphics Gems", Academic Press, 1990
+	 * from "Graphics Gems", Academic Press, 1990.
 	 * @author Saqoosha
 	 * @see http://www.graphicsgems.org/
 	 * @see http://www.carlosicaza.com/?p=56
