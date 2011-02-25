@@ -6,7 +6,7 @@ package sh.saqoo.graphics {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class Scale9Bitmap extends Sprite {
 		

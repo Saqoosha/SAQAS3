@@ -72,21 +72,29 @@ package sh.saqoo.net {
 			loader.addVariable('api_secret', _apiSecret);
 			loader.dataFormat = URLLoaderDataFormat.TEXT;
 			loader.addEventListener(Event.COMPLETE, function (e:Event):void {
-				var data:Object = JSON.decode(loader.loader.data);
-				for each (var photo:Object in data.photos) {
-					var width:Number = photo.width;
-					var height:Number = photo.height;
-					for each (var tag:Object in photo.tags) {
-						convertToPixelSize(tag, width, height);
-					}
-				}
-				callback(data);
+				callback(JSON.decode(loader.loader.data));
 			});
 			loader.load(API_ENDPOINT + 'faces/detect.json');
 		}
 		
 		
-		public function convertToPixelSize(tag:Object, width:Number, height:Number):void {
+		//
+		
+		
+		public static function convertToPixelSize(tag:Object, width:Number, height:Number):void {
+			if (tag['photos']) {
+				for each (var photo:Object in tag.photos) {
+					for each (var t:Object in photo.tags) {
+						_convertToPixelSize(t, width, height);
+					}
+				}
+			} else {
+				_convertToPixelSize(tag, width, height);
+			}
+		}
+		
+		
+		private static function _convertToPixelSize(tag:Object, width:Number, height:Number):void {
 			var w:Number = width / 100;
 			var h:Number = height / 100;
 			tag.width *= w;
@@ -95,6 +103,62 @@ package sh.saqoo.net {
 				var p:Object = tag[key];
 				if (p) tag[key] = new Point(p.x * w, p.y * h);
 			}
+		}
+		
+		
+		public static function extractFace(image:BitmapData, tag:Object, mtx:Matrix = null):BitmapData {
+			mtx ||= new Matrix();
+			mtx.identity();
+			mtx.translate(-tag.center.x, -tag.center.y);
+			mtx.rotate(-tag.roll * Math.PI / 180);
+			mtx.translate(tag.width / 2, tag.height / 2);
+			var face:BitmapData = new BitmapData(tag.width, tag.height);
+			face.draw(image, mtx, null, null, null, true);
+			return face;
+		}
+		
+		
+		public static function extractMouth(image:BitmapData, tag:Object, mtx:Matrix = null):BitmapData {
+			mtx ||= new Matrix();
+			mtx.identity();
+			mtx.translate(-tag.mouth_center.x, -tag.mouth_center.y);
+			var p:Point = tag.mouth_right.subtract(tag.mouth_left);
+			mtx.rotate(-Math.atan2(p.y, p.x));
+			var left:Point = mtx.transformPoint(tag.mouth_left);
+			var right:Point = mtx.transformPoint(tag.mouth_right);
+			var len:Number = p.length;
+			var mouth:BitmapData = new BitmapData(len * 1.3, len * 0.66 * 1.3);
+			mtx.translate(-(right.x + left.x) * 0.5 + mouth.width * 0.5, mouth.height * 0.5);
+			mouth.draw(image, mtx, null, null, null, true);
+			return mouth;
+		}
+		
+		
+		public static function extractEye(image:BitmapData, tag:Object, right:Boolean = true, mtx:Matrix = null):BitmapData {
+			mtx ||= new Matrix();
+			mtx.identity();
+			var e:Point = right ? tag.eye_right : tag.eye_left;
+			mtx.translate(-e.x, -e.y);
+			var p:Point = tag.eye_right.subtract(tag.eye_left);
+			mtx.rotate(-Math.atan2(p.y, p.x));
+			var len:Number = Point.distance(tag.mouth_left, tag.mouth_right);
+			var eye:BitmapData = new BitmapData(len, len * 0.66);
+			mtx.translate(eye.width * 0.5, eye.height * 0.5);
+			eye.draw(image, mtx, null, null, null, true);
+			return eye;
+		}
+		
+		
+		public static function extractNose(image:BitmapData, tag:Object, mtx:Matrix = null):BitmapData {
+			mtx ||= new Matrix();
+			mtx.identity();
+			mtx.translate(-tag.nose.x, -tag.nose.y);
+			mtx.rotate(-tag.roll * Math.PI / 180);
+			var len:Number = Point.distance(tag.mouth_right, tag.mouth_left);
+			var nose:BitmapData = new BitmapData(len, len * 0.8);
+			mtx.translate(len * 0.5, len * 0.6);
+			nose.draw(image, mtx, null, null, null, true);
+			return nose;
 		}
 	}
 }

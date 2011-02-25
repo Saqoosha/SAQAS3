@@ -8,7 +8,7 @@ package sh.saqoo.filter {
 
 	
 	/**
-	 * @author hiko
+	 * @author Saqoosha
 	 */
 	public class CannyEdgeDetector {
 		

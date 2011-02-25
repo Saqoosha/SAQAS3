@@ -1,4 +1,5 @@
 package sh.saqoo.util {
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Loader;
@@ -16,6 +17,21 @@ package sh.saqoo.util {
 	 * @author Saqoosha
 	 */
 	public class ImageFileSelector extends EventDispatcher {
+		
+		
+		public static function browse(onComplete:Function, onCancel:Function = null):void {
+			var selector:ImageFileSelector = new ImageFileSelector();
+			selector.addEventListener(Event.COMPLETE, function (e:Event):void {
+				onComplete(selector.image);
+			});
+			if (onCancel is Function) {
+				selector.addEventListener(Event.CANCEL, onCancel);
+			}
+			selector.browse();
+		}
+		
+		
+		//
 
 		
 		private var _file:FileReference;
