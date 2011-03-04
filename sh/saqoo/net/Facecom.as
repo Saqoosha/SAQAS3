@@ -135,17 +135,21 @@ package sh.saqoo.net {
 		
 		
 		public static function extractEye(image:BitmapData, tag:Object, right:Boolean = true, mtx:Matrix = null):BitmapData {
-			mtx ||= new Matrix();
-			mtx.identity();
-			var e:Point = right ? tag.eye_right : tag.eye_left;
-			mtx.translate(-e.x, -e.y);
-			var p:Point = tag.eye_right.subtract(tag.eye_left);
-			mtx.rotate(-Math.atan2(p.y, p.x));
-			var len:Number = Point.distance(tag.mouth_left, tag.mouth_right);
-			var eye:BitmapData = new BitmapData(len, len * 0.66);
-			mtx.translate(eye.width * 0.5, eye.height * 0.5);
-			eye.draw(image, mtx, null, null, null, true);
-			return eye;
+			if (tag.eye_right && tag.eye_left && tag.mouth_right && tag.mouth_left) {
+				mtx ||= new Matrix();
+				mtx.identity();
+				var e:Point = right ? tag.eye_right : tag.eye_left;
+				mtx.translate(-e.x, -e.y);
+				var p:Point = tag.eye_right.subtract(tag.eye_left);
+				mtx.rotate(-Math.atan2(p.y, p.x));
+				var len:Number = Point.distance(tag.mouth_left, tag.mouth_right);
+				var eye:BitmapData = new BitmapData(len, len * 0.66);
+				mtx.translate(eye.width * 0.5, eye.height * 0.5);
+				eye.draw(image, mtx, null, null, null, true);
+				return eye;
+			} else {
+				return null;
+			}
 		}
 		
 		

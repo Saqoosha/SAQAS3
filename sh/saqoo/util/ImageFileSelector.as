@@ -22,7 +22,11 @@ package sh.saqoo.util {
 		public static function browse(onComplete:Function, onCancel:Function = null):void {
 			var selector:ImageFileSelector = new ImageFileSelector();
 			selector.addEventListener(Event.COMPLETE, function (e:Event):void {
-				onComplete(selector.image);
+				switch (onComplete.length) {
+					case 0: onComplete(); break;
+					case 1: onComplete(selector.image); break;
+					case 2: onComplete(selector.image, selector.file.name); break;
+				}
 			});
 			if (onCancel is Function) {
 				selector.addEventListener(Event.CANCEL, onCancel);

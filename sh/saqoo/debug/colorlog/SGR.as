@@ -1,4 +1,4 @@
-package sh.saqoo.colorlog {
+package sh.saqoo.debug.colorlog {
 	
 	public class SGR {
 		
