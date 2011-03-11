@@ -1,6 +1,8 @@
 package sh.saqoo.util {
+
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 
 	
 	public class GeometryUtil {
@@ -26,6 +28,14 @@ package sh.saqoo.util {
 		public static function globalYToLocalY(local:DisplayObject, y:Number):Number {
 			_tmpPoint.y = y;
 			return local.globalToLocal(_tmpPoint).y;
+		}
+		
+		
+		public static function center(rect:Rectangle, out:Point = null):Point {
+			out ||= new Point();
+			out.x = rect.x + rect.width * 0.5;
+			out.y = rect.y + rect.height * 0.5;
+			return out;
 		}
 		
 		

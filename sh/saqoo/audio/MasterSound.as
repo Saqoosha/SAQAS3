@@ -18,7 +18,7 @@ package sh.saqoo.audio {
 
 		
 		public static const SAMPLES_PER_MSEC:Number = 44.1;
-		public static const BUFFER_SAMPLES:int = 8192;
+		public static const BUFFER_SAMPLES:int = 4096;
 		public static const BUFFER_MSECS:Number = BUFFER_SAMPLES / SAMPLES_PER_MSEC;
 		public static const BUFFER_BYTES:int = BUFFER_SAMPLES * 8;
 		public static const SILENCE_DATA:ByteArray = new ByteArray();
