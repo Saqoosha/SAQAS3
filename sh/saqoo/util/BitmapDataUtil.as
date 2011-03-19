@@ -8,6 +8,7 @@ package sh.saqoo.util {
 	import flash.display.Sprite;
 	import flash.filters.ColorMatrixFilter;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
 
@@ -50,21 +51,23 @@ package sh.saqoo.util {
 		}
 
 
-		public static function stretchHistogram(image:BitmapData):void {
-			function _getMinMax(hist:Vector.<Number>):Object {
-				var min:int = 0;
-				var max:int = 255;
-				var i:int;
-				for (i = 0; i < 256; i++) {
-					min = i;
-					if (hist[i]) break;
-				}
-				for (i = 255; i >= 0; i--) {
-					max = i;
-					if (hist[i]) break;
-				}
-				return {min: min, max: max};
+		internal static function _getMinMax(hist:Vector.<Number>):Object {
+			var min:int = 0;
+			var max:int = 255;
+			var i:int;
+			for (i = 0; i < 256; i++) {
+				min = i;
+				if (hist[i]) break;
 			}
+			for (i = 255; i >= 0; i--) {
+				max = i;
+				if (hist[i]) break;
+			}
+			return {min: min, max: max};
+		}
+
+
+		public static function stretchHistogram(image:BitmapData):void {
 			var hist:Vector.<Vector.<Number>> = image.histogram();
 			var r:Object = _getMinMax(hist[0]);
 			var rs:Number = 255 / (r.max - r.min);
@@ -79,6 +82,34 @@ package sh.saqoo.util {
 				 0,  0,  0, 1, 0
 			]));
 			return;
+		}
+		
+		
+		public static function equalizeHistogram(image:BitmapData):void {
+			var hist:Vector.<Vector.<Number>> = image.histogram();
+			var v:Object = _getMinMax(hist[0]);
+			var cfd:Array = [];
+			var sum:int = 0;
+			var i:int;
+			for (i = 0; i < 256; i++) {
+				sum += hist[0][i];
+				cfd.push(sum);
+			}
+			var lut:Array = new Array(256);
+			var alpha:Array = new Array(256);
+			var size:int = image.width * image.height;
+			for (i = 0; i < 256; i++) {
+				if (v.min <= i && i <= v.max) {
+					var l:int = Math.round((cfd[i] - cfd[0]) / (size - cfd[0]) * 255);
+					lut[i] = l << 16 | l << 8 | l | 0xff000000;
+				} else {
+					lut[i] = 0;
+				}
+				alpha[i] = 255;
+			}
+			var org:BitmapData = image.clone();
+			image.fillRect(image.rect, 0x0);
+			image.paletteMap(org, image.rect, ZERO_POINT, lut, [], []);
 		}
 
 
@@ -95,14 +126,22 @@ package sh.saqoo.util {
 			var w:Number = 0;
 			var h:Number = 0;
 			var resized:BitmapData = null;
-			if (target is BitmapData) {
-				resized = BitmapData(target);
-				w = resized.width;
-				h = resized.height;
-			} else if (target is Rectangle) {
-				w = Rectangle(target).width;
-				h = Rectangle(target).height;
-				resized = new BitmapData(w, h);
+			switch (true) {
+				case target is BitmapData:
+					resized = BitmapData(target);
+					w = resized.width;
+					h = resized.height;
+					break;
+				case target is Point:
+					w = target.x;
+					h = target.y;
+					resized = new BitmapData(w, h);
+					break;
+				case target is Rectangle:
+					w = Rectangle(target).width;
+					h = Rectangle(target).height;
+					resized = new BitmapData(w, h);
+					break;
 			}
 
 			if (w && h) {
