@@ -1,4 +1,5 @@
 package sh.saqoo.geom {
+
 	import flash.display.Graphics;
 	import flash.geom.Point;
 	import flash.utils.Proxy;
@@ -11,7 +12,7 @@ package sh.saqoo.geom {
 	 * @see http://en.wikipedia.org/wiki/Cubic_Hermite_spline
 	 * @see http://www.cubic.org/docs/hermite.htm
 	 */
-	public dynamic class CubicHermite extends Proxy {
+	public dynamic class CubicHermite extends Proxy implements IParametricCurve {
 		
 		
 		public static function getSmoothConnection(a:CubicHermite, b:CubicHermite, minDistance:Number = 0.5):CubicHermite {
@@ -45,7 +46,7 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function getPositionAt(t:Number, out:Point = null):Point {
+		public function getPointAt(t:Number, out:Point = null):Point {
 			out ||= new Point();
 			var t2:Number = t * t;
 			var t3:Number = t2 * t;
@@ -72,7 +73,7 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function getLength(accuracy:Number = 0):Number {
+		public function getLength(n:uint = 2):Number {
 			return Point.distance(_p0, _p1);
 		}
 
@@ -83,7 +84,7 @@ package sh.saqoo.geom {
 			}
 			var p:Point = new Point();
 			for (var i:int = 1; i <= numSegments; ++i) {
-				getPositionAt(i / numSegments, p);
+				getPointAt(i / numSegments, p);
 				graphics.lineTo(p.x, p.y);
 			}
 		}
@@ -105,6 +106,16 @@ package sh.saqoo.geom {
 		
 		public function clone():CubicHermite {
 			return new CubicHermite(_p0.clone(), _v0.clone(), _p1.clone(), _v1.clone());
+		}
+		
+		
+		public function toCubicBezier():CubicBezierSegment {
+			return new CubicBezierSegment(
+				_p0.clone(),
+				new Point(p0.x + v0.x / 3, p0.y + v0.y / 3),
+				new Point(p1.x - v1.x / 3, p1.y - v1.y / 3),
+				_p1.clone()
+			);
 		}
 
 		

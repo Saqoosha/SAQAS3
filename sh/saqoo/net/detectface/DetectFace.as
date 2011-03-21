@@ -30,15 +30,18 @@ package sh.saqoo.net.detectface {
 		private var _loader:MultipartURLLoader;
 		private var _response:XML;
 		public function get responseXML():XML { return _response; }
-		private var _facesInfo:Array;
-		public function get facesInfo():Array { return _facesInfo; }
+		private var _faceInfo:Vector.<FaceInfo>;
+		public function get faceInfo():Vector.<FaceInfo> { return _faceInfo; }
+		
+		private var _scale:Number;
 		
 		
 		public function DetectFace() {
 		}
 		
 		
-		public function detect(image:BitmapData):void {
+		public function detect(image:BitmapData, scale:Number = 1.0):void {
+			_scale = scale;
 			_loader = new MultipartURLLoader();
 			var encoder:JPGEncoder = new JPGEncoder(80);
 			_loader.addFile(encoder.encode(image), 'image.jpg', 'imageFile', 'image/jpeg');
@@ -51,16 +54,21 @@ package sh.saqoo.net.detectface {
 
 		private function _onComplete(event:Event):void {
 			var loader:MultipartURLLoader = MultipartURLLoader(event.target);
-			_response = new XML(loader.loader.data);
-			trace(_response.toXMLString());
-			_facesInfo = [];
-			for each (var face:XML in _response.face) {
-				_facesInfo.push(new FaceInfo(face));
-			}
-			_facesInfo.sort(function (a:FaceInfo, b:FaceInfo):int {
-				return a.bounds.width * a.bounds.height * (int(a.rightEye) + int(a.leftEye)) - b.bounds.width * b.bounds.height * (int(b.rightEye) + int(b.leftEye));
-			});
+			trace(loader.loader.data);
+			parseResponse(loader.loader.data, _scale);
 			_sigComplete.dispatch();
+		}
+		
+		
+		public function parseResponse(response:String, scale:Number = 1.0):void {
+			_response = new XML(response);
+			var tmp:Vector.<FaceInfo> = new Vector.<FaceInfo>();
+			for each (var face:XML in _response.face) {
+				tmp.push(new FaceInfo(face, scale));
+			}
+			_faceInfo = tmp.sort(function (a:FaceInfo, b:FaceInfo):int {
+				return b.bounds.width * b.bounds.height * (int(!!b.rightEye) + int(!!b.leftEye)) - a.bounds.width * a.bounds.height * (int(!!a.rightEye) + int(!!a.leftEye));
+			});
 		}
 
 
@@ -70,7 +78,7 @@ package sh.saqoo.net.detectface {
 		
 		
 		public function debugDraw(graphics:Graphics, scale:Number = 1):void {
-			for each (var face:FaceInfo in _facesInfo) {
+			for each (var face:FaceInfo in _faceInfo) {
 				face.debugDraw(graphics, scale);
 			}
 		}

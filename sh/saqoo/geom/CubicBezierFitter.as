@@ -18,14 +18,14 @@ package sh.saqoo.geom {
 		 * @param points Array of digitized points
 		 * @param error User-defined error squared
 		 */
-		public static function FitCurve(points:Vector.<Point>, error:Number):Vector.<CubicBezier> {
+		public static function FitCurve(points:Vector.<Point>, error:Number):Vector.<CubicBezierSegment> {
 			var nPts:int = points.length;	/*  Number of digitized points	*/
 			var tHat1:Point, tHat2:Point;	/*  Unit tangent vectors at endpoints */
 			
 			tHat1 = ComputeLeftTangent(points, 0);
 			tHat2 = ComputeRightTangent(points, nPts - 1);
 			
-			var curves:Vector.<CubicBezier> = new Vector.<CubicBezier>();
+			var curves:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
 			FitCubic(points, 0, nPts - 1, tHat1, tHat2, error, curves);
 			
 			return curves;
@@ -43,7 +43,7 @@ package sh.saqoo.geom {
 		 * @param error User-defined error squared
 		 * @param out Container for generatet contorl points
 		 */
-		private static function FitCubic(d:Vector.<Point>, first:int, last:int, tHat1:Point, tHat2:Point, error:Number, curves:Vector.<CubicBezier>):void {
+		private static function FitCubic(d:Vector.<Point>, first:int, last:int, tHat1:Point, tHat2:Point, error:Number, curves:Vector.<CubicBezierSegment>):void {
 			var bezCurve:Vector.<Point>;	/*  Control points of fitted Bezier curve  */
 			var u:Vector.<Number>;			/*  Parameter values for point  */
 			var uPrime:Vector.<Number>;		/*  Improved parameter values */
@@ -67,7 +67,7 @@ package sh.saqoo.geom {
 				bezCurve[3] = d[last].clone();
 				V2Add(bezCurve[0], V2Scale(tHat1, dist), bezCurve[1]);
 				V2Add(bezCurve[3], V2Scale(tHat2, dist), bezCurve[2]);
-				curves.push(new CubicBezier(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]));
+				curves.push(new CubicBezierSegment(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]));
 				return;			}
 
 			/*  Parameterize points, and attempt to fit curve */
@@ -78,7 +78,7 @@ package sh.saqoo.geom {
 			maxError = ComputeMaxError(d, first, last, bezCurve, u, splitPoint);
 			if (maxError < error) {
 //				out.push(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]);
-				curves.push(new CubicBezier(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]));				return;
+				curves.push(new CubicBezierSegment(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]));				return;
 			}
 
 			/*  If error not too large, try some reparameterization  */
@@ -90,7 +90,7 @@ package sh.saqoo.geom {
 					maxError = ComputeMaxError(d, first, last, bezCurve, uPrime, splitPoint);
 					if (maxError < error) {
 //						out.push(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]);
-						curves.push(new CubicBezier(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]));
+						curves.push(new CubicBezierSegment(bezCurve[0], bezCurve[1], bezCurve[2], bezCurve[3]));
 						return;
 					}
 					u = uPrime;

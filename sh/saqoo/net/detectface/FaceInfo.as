@@ -9,8 +9,8 @@ package sh.saqoo.net.detectface {
 	 * @author Saqoosha
 	 */
 	public class FaceInfo {
-
-
+		
+		
 		public var bounds:Rectangle;
 		public var rightEye:Point;
 		public var leftEye:Point;
@@ -21,17 +21,17 @@ package sh.saqoo.net.detectface {
 		public var sMax:Number;
 
 
-		public function FaceInfo(data:XML) {
-			bounds = new Rectangle(parseInt(data.bounds.@x), parseInt(data.bounds.@y), parseInt(data.bounds.@width), parseInt(data.bounds.@height));
-			if (data.hasOwnProperty('right-eye')) rightEye = new Point(parseInt(data['right-eye'].@x), parseInt(data['right-eye'].@y));
-			if (data.hasOwnProperty('left-eye')) leftEye = new Point(parseInt(data['left-eye'].@x), parseInt(data['left-eye'].@y));
+		public function FaceInfo(data:XML, scale:Number = 1.0) {
+			bounds = new Rectangle(parseInt(data.bounds.@x) * scale, parseInt(data.bounds.@y) * scale, parseInt(data.bounds.@width) * scale, parseInt(data.bounds.@height) * scale);
+			if (data.hasOwnProperty('right-eye')) rightEye = new Point(parseInt(data['right-eye'].@x) * scale, parseInt(data['right-eye'].@y) * scale);
+			if (data.hasOwnProperty('left-eye')) leftEye = new Point(parseInt(data['left-eye'].@x) * scale, parseInt(data['left-eye'].@y) * scale);
 			if (data.hasOwnProperty('features')) {
 				sAvg = parseFloat(data.features.attribute('s-avg'));
 				sMin = parseFloat(data.features.attribute('s-min'));
 				sMax = parseFloat(data.features.attribute('s-max'));
 				features = new Dictionary();
 				for each (var feat:XML in data.features.point) {
-					var f:FeaturePoint = new FeaturePoint(feat.@id, parseInt(feat.@x), parseInt(feat.@y), parseFloat(feat.@s));
+					var f:FeaturePoint = new FeaturePoint(feat.@id, parseInt(feat.@x) * scale, parseInt(feat.@y) * scale, parseFloat(feat.@s));
 					features[f.id] = f;
 				}
 			}
@@ -41,51 +41,80 @@ package sh.saqoo.net.detectface {
 		public function getFeaturePointByName(name:String):FeaturePoint {
 			return features ? features[name] || null : null;
 		}
+		
+		
+		public function getFeaturePoints(names:Array, full:Boolean = true):Vector.<Point> {
+			var tmp:Vector.<Point> = new Vector.<Point>();
+			for each (var name:String in names) {
+				var fp:FeaturePoint = getFeaturePointByName(name);
+				if (full && !fp) return null;
+				tmp.push(fp);
+			}
+			return tmp;
+		}
 
 
 		public function debugDraw(graphics:Graphics, scale:Number = 1):void {
 			// bounds
 			graphics.lineStyle(0, 0xffffff);
 			graphics.drawRect(bounds.x * scale, bounds.y * scale, bounds.width * scale, bounds.height * scale);
-			_drawFeatures(graphics, ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10'], scale);
+			_drawFeatures(graphics, PointNames.FACE, scale);
 
 			// right eye
 			if (rightEye) {
 				graphics.lineStyle(0, 0xff0000, 0.8);
-				_drawFeatures(graphics, ['ER1', 'ER2', 'ER3', 'ER4', 'ER5', 'ER6'], scale);
-				graphics.lineStyle();
-				graphics.beginFill(0xff0000, 0.5);
-				graphics.drawCircle(rightEye.x * scale, rightEye.y * scale, 5 * scale);
-				graphics.endFill();
+				_drawFeatures(graphics, PointNames.RIGHT_EYE, scale);
+				graphics.lineStyle(0, 0x00aaff, 0.8);
+				graphics.moveTo((rightEye.x - 8) * scale, (rightEye.y - 8) * scale);
+				graphics.lineTo((rightEye.x + 8) * scale, (rightEye.y + 8) * scale);
+				graphics.moveTo((rightEye.x + 8) * scale, (rightEye.y - 8) * scale);
+				graphics.lineTo((rightEye.x - 8) * scale, (rightEye.y + 8) * scale);
+			}
+			var p:FeaturePoint = getFeaturePointByName('PR');
+			if (p) {
+				graphics.lineStyle(0, 0xff0000, 0.8);
+				graphics.moveTo((p.x - 3) * scale, p.y * scale);
+				graphics.lineTo((p.x + 3) * scale, p.y * scale);
+				graphics.moveTo(p.x * scale, (p.y - 3) * scale);
+				graphics.lineTo(p.x * scale, (p.y + 3) * scale);
 			}
 
 			// right eyebrow
 			graphics.lineStyle(0, 0x00ff00, 0.8);
-			_drawFeatures(graphics, ['BR1', 'BR2', 'BR3', 'BR4', 'BR5', 'BR6'], scale);
+			_drawFeatures(graphics, PointNames.RIGHT_BROW, scale);
 
 			// left eye
 			if (leftEye) {
 				graphics.lineStyle(0, 0xff0000, 0.8);
-				_drawFeatures(graphics, ['EL1', 'EL2', 'EL3', 'EL4', 'EL5', 'EL6'], scale);
-				graphics.lineStyle();
-				graphics.beginFill(0xff0000, 0.5);
-				graphics.drawCircle(leftEye.x * scale, leftEye.y * scale, 5 * scale);
-				graphics.endFill();
+				_drawFeatures(graphics, PointNames.LEFT_EYE, scale);
+				graphics.lineStyle(0, 0x00aaff, 0.8);
+				graphics.moveTo((leftEye.x - 8) * scale, (leftEye.y - 8) * scale);
+				graphics.lineTo((leftEye.x + 8) * scale, (leftEye.y + 8) * scale);
+				graphics.moveTo((leftEye.x + 8) * scale, (leftEye.y - 8) * scale);
+				graphics.lineTo((leftEye.x - 8) * scale, (leftEye.y + 8) * scale);
+			}
+			p = getFeaturePointByName('PL');
+			if (p) {
+				graphics.lineStyle(0, 0xff0000, 0.8);
+				graphics.moveTo((p.x - 3) * scale, p.y * scale);
+				graphics.lineTo((p.x + 3) * scale, p.y * scale);
+				graphics.moveTo(p.x * scale, (p.y - 3) * scale);
+				graphics.lineTo(p.x * scale, (p.y + 3) * scale);
 			}
 
 			// left eyebrow
 			graphics.lineStyle(0, 0x00ff00, 0.8);
-			_drawFeatures(graphics, ['BL1', 'BL2', 'BL3', 'BL4', 'BL5', 'BL6'], scale);
+			_drawFeatures(graphics, PointNames.LEFT_BROW, scale);
 
 			// nose
 			graphics.lineStyle(0, 0x0000ff, 0.8);
-			_drawFeatures(graphics, ['N1', 'N5'], scale, false);
-			_drawFeatures(graphics, ['N2', 'N3', 'N4'], scale, false);
+			_drawFeatures(graphics, PointNames.NOSE_VERTICAL_LINE, scale, false);
+			_drawFeatures(graphics, PointNames.NOSE_BOTTOM_LINE, scale, false);
 
 			// mouth
 			graphics.lineStyle(0, 0xffcc00, 0.8);
-			_drawFeatures(graphics, ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8'], scale);
-			_drawFeatures(graphics, ['M3', 'M9', 'M7'], scale, false);
+			_drawFeatures(graphics, PointNames.MOUTH_ROUND, scale);
+			_drawFeatures(graphics, PointNames.MOUTH_MIDDLE_LINE, scale, false);
 		}
 
 

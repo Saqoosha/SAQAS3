@@ -9,18 +9,27 @@ package sh.saqoo.geom {
 	/**
 	 * @author Saqoosha
 	 */
-	public dynamic class CubicBezier extends Proxy {
+	public dynamic class CubicBezierSegment extends Proxy implements IParametricCurve {
 		
 		
-		private static var __c:CubicBezier;
+		private static var __c:CubicBezierSegment;
 		
 		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
-			__c ||= new CubicBezier();
+			__c ||= new CubicBezierSegment();
 			__c.p0 = p0;
 			__c.p1 = p1;
 			__c.p2 = p2;
 			__c.p3 = p3;
 			__c.draw2(graphics);
+		}
+		
+		
+		public static function drawSegments(graphics:Graphics, segments:Vector.<CubicBezierSegment>):void {
+			graphics.moveTo(segments[0].p0.x, segments[0].p0.y);
+			var n:int = segments.length;
+			for (var i:int = 0; i < n; i++) {
+				segments[i].draw2(graphics);
+			}
 		}
 
 		
@@ -35,7 +44,7 @@ package sh.saqoo.geom {
 		private var _points:Vector.<Point>;
 		
 		
-		public function CubicBezier(p0:Point = null, p1:Point = null, p2:Point = null, p3:Point = null) {
+		public function CubicBezierSegment(p0:Point = null, p1:Point = null, p2:Point = null, p3:Point = null) {
 			_p0 = p0 || new Point();
 			_p1 = p1 || new Point();
 			_p2 = p2 || new Point();
@@ -131,18 +140,22 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function clone(reverse:Boolean = false):CubicBezier {
+		public function clone(reverse:Boolean = false):CubicBezierSegment {
 			if (reverse) {
-				return new CubicBezier(_p3.clone(), _p2.clone(), _p1.clone(), _p0.clone());
+				return new CubicBezierSegment(_p3.clone(), _p2.clone(), _p1.clone(), _p0.clone());
 			} else {
-				return new CubicBezier(_p0.clone(), _p1.clone(), _p2.clone(), _p3.clone());
+				return new CubicBezierSegment(_p0.clone(), _p1.clone(), _p2.clone(), _p3.clone());
 			}
 		}
 		
 		
-		public function convertToHermite():CubicHermite {
-			var v0:Point = new Point(3 * (_p1.x - _p0.x), 3 * (_p1.y - _p0.y));			var v1:Point = new Point(3 * (_p3.x - _p2.x), 3 * (_p3.y - _p2.y));
-			return new CubicHermite(_p0.clone(), v0, _p3.clone(), v1);
+		public function toCubicHermite():CubicHermite {
+			return new CubicHermite(
+				_p0.clone(),
+				new Point(3 * (_p1.x - _p0.x), 3 * (_p1.y - _p0.y)),
+				_p3.clone(),
+				new Point(3 * (_p3.x - _p2.x), 3 * (_p3.y - _p2.y))
+			);
 		}
 
 		

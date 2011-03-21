@@ -1,4 +1,5 @@
 package sh.saqoo.geom {
+
 	import flash.display.Graphics;
 	import flash.geom.Point;
 	import flash.utils.Proxy;
@@ -9,7 +10,31 @@ package sh.saqoo.geom {
 	 * Catmull-Rom Spline Curve
 	 * @author Saqoosha
 	 */
-	public dynamic class CatmullRom extends Proxy {
+	public dynamic class CatmullRom extends Proxy implements IParametricCurve {
+		
+		
+		public static function draw(graphics:Graphics, points:Vector.<Point>):void {
+			var n:int = points.length;
+			if (n < 4) throw new Error('Requires at least 4 points to draw.');
+			graphics.moveTo(points[0].x, points[0].y);
+			var c:CatmullRom = new CatmullRom();
+			c.p0 = c.p1 = points[0];
+			c.p2 = points[1];
+			c.p3 = points[2];
+			c.draw(graphics);
+			n -= 2;
+			for (var i:int = 1; i < n; i++) {
+				c.p0 = points[i - 1];
+				c.p1 = points[i];
+				c.p2 = points[i + 1];
+				c.p3 = points[i + 2];
+				c.draw(graphics);
+			}
+			c.p0 = points[n - 1];
+			c.p1 = points[n];
+			c.p2 = c.p3 = points[n + 1];
+			c.draw(graphics);
+		}
 		
 		
 		private var _p0:Point;
@@ -29,6 +54,21 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function getLength(n:uint = 2):Number {
+			n = Math.pow(2, n);
+			var p0:Point = getPointAt(0);
+			var p1:Point = new Point();
+			var len:Number = 0;
+			for (var i:int = 1; i <= n; i++) {
+				getPointAt(i / n, p1);
+				len += Point.distance(p0, p1);
+				p0.x = p1.x;
+				p0.y = p1.y;
+			}
+			return len;
+		}
+
+
 		public function getPointAt(t:Number, out:Point = null):Point {
 			out ||= new Point();
 			var t2:Number = t * t;

@@ -1,4 +1,5 @@
 package sh.saqoo.geom {
+
 	import flash.display.Graphics;
 	import flash.geom.Point;
 
@@ -91,7 +92,7 @@ package sh.saqoo.geom {
 			var i:int = 0;
 			while (_distance[i + 1] < distance) i++;
 			t = (distance - _distance[i]) / (_distance[i - 1] - _distance[i]);
-			return _curves[i].getPositionAt(t, out);
+			return _curves[i].getPointAt(t, out);
 		}
 		
 		
@@ -124,7 +125,7 @@ package sh.saqoo.geom {
 					curve = _curves[idx];
 				}
 				t = (d - _distance[idx]) / (_distance[idx + 1] - _distance[idx]);
-				curve.getPositionAt(t, p);
+				curve.getPointAt(t, p);
 				graphics.lineTo(p.x, p.y);
 			}
 		}
@@ -204,6 +205,16 @@ package sh.saqoo.geom {
 				copy.addCurve(curve.clone());
 			}
 			return copy;
+		}
+		
+		
+		public function toCubicBezier():Vector.<CubicBezierSegment> {
+			if (_buildRequired) build();
+			var bez:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
+			for each (var hermite:CubicHermite in _curves) {
+				bez.push(hermite.toCubicBezier());
+			}
+			return bez;
 		}
 		
 		

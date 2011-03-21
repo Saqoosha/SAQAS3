@@ -43,7 +43,7 @@ package sh.saqoo.math {
 			var xm:Number = z[0] * 0.5;
 			var ym:Number = z[1] * 0.5;
 			var r:Number = Math.sqrt(z[2] + xm * xm + ym * ym);
-			
+
 			return {x: xm, y: ym, r: r};
 		}
 	}
