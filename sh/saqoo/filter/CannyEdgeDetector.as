@@ -13,7 +13,7 @@ package sh.saqoo.filter {
 	public class CannyEdgeDetector {
 		
 		
-		private static const MONO_FILTER:ColorMatrixFilter = LumaFilterFactory.create();
+		private static const MONO_FILTER:ColorMatrixFilter = ColorMatrixFilterFactory.luma();
 		private static const BLUR_FILTER:ConvolutionFilter = new ConvolutionFilter(5, 5, [
 			2,  4,  5,  4, 2,
 			4,  9, 12,  9, 4,

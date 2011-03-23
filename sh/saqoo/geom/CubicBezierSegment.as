@@ -20,7 +20,7 @@ package sh.saqoo.geom {
 			__c.p1 = p1;
 			__c.p2 = p2;
 			__c.p3 = p3;
-			__c.draw2(graphics);
+			__c.draw2(graphics, true);
 		}
 		
 		
@@ -28,8 +28,13 @@ package sh.saqoo.geom {
 			graphics.moveTo(segments[0].p0.x, segments[0].p0.y);
 			var n:int = segments.length;
 			for (var i:int = 0; i < n; i++) {
-				segments[i].draw2(graphics);
+				segments[i].draw2(graphics, false);
 			}
+		}
+		
+		
+		public static function buildLineSegment(p0:Point, p1:Point):CubicBezierSegment {
+			return new CubicBezierSegment(p0, Point.interpolate(p0, p1, 0.66), Point.interpolate(p0, p1, 0.33), p1);
 		}
 
 		
@@ -102,7 +107,8 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function draw2(graphics:Graphics):void {
+		public function draw2(graphics:Graphics, moveToStart:Boolean):void {
+			if (moveToStart) graphics.moveTo(_p0.x, _p0.y);
 			DrawImpl2.draw(graphics, _p0, _p1, _p2, _p3);
 		}
 		

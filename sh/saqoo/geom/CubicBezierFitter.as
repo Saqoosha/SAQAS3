@@ -1,4 +1,5 @@
 package sh.saqoo.geom {
+
 	import flash.geom.Point;
 
 	
@@ -18,17 +19,14 @@ package sh.saqoo.geom {
 		 * @param points Array of digitized points
 		 * @param error User-defined error squared
 		 */
-		public static function FitCurve(points:Vector.<Point>, error:Number):Vector.<CubicBezierSegment> {
+		public static function FitCurve(points:Vector.<Point>, error:Number):CubicBezier {
 			var nPts:int = points.length;	/*  Number of digitized points	*/
 			var tHat1:Point, tHat2:Point;	/*  Unit tangent vectors at endpoints */
-			
 			tHat1 = ComputeLeftTangent(points, 0);
 			tHat2 = ComputeRightTangent(points, nPts - 1);
-			
-			var curves:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
-			FitCubic(points, 0, nPts - 1, tHat1, tHat2, error, curves);
-			
-			return curves;
+			var segments:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
+			FitCubic(points, 0, nPts - 1, tHat1, tHat2, error, segments);
+			return new CubicBezier(segments);
 		}
 
 		

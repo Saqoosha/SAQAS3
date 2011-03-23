@@ -1,6 +1,6 @@
 package sh.saqoo.util {
 
-	import sh.saqoo.filter.LumaFilterFactory;
+	import sh.saqoo.filter.ColorMatrixFilterFactory;
 	import sh.saqoo.geom.ZERO_POINT;
 
 	import flash.display.Bitmap;
@@ -47,7 +47,7 @@ package sh.saqoo.util {
 		
 		
 		public static function mono(image:BitmapData):void {
-			image.applyFilter(image, image.rect, ZERO_POINT, LumaFilterFactory.create());
+			image.applyFilter(image, image.rect, ZERO_POINT, ColorMatrixFilterFactory.luma());
 		}
 
 
@@ -116,9 +116,18 @@ package sh.saqoo.util {
 		/**
 		 * Binarize image with threshold. Only blue channel is used in thresholding.
 		 */
-		public static function binarize(image:BitmapData, threshold:int):void {
-			image.threshold(image, image.rect, ZERO_POINT, '>', threshold, 0xffffffff, 0x000000ff);
-			image.threshold(image, image.rect, ZERO_POINT, '<=', threshold, 0xff000000, 0x000000ff);
+		public static function binarize(image:BitmapData, threshold:int, inverted:Boolean = false, target:BitmapData = null):void {
+			var source:BitmapData = image;
+			var white:String = '>';
+			var black:String = '<=';
+			if (inverted) {
+				source = image.clone();
+				white = '<=';
+				black = '>';
+			}
+			target ||= image;
+			target.threshold(source, source.rect, ZERO_POINT, white, threshold, 0xffffffff, 0x000000ff);
+			target.threshold(source, source.rect, ZERO_POINT, black, threshold, 0xff000000, 0x000000ff);
 		}
 
 
