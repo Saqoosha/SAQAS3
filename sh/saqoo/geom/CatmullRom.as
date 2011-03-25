@@ -107,6 +107,16 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function toCubicBezier():CubicBezierSegment {
+			return new CubicBezierSegment(
+				_p1.clone(),
+				new Point((_p2.x + 6 * _p1.x - _p0.x) / 6, (_p2.y + 6 * _p1.y - _p0.y) / 6),
+				new Point((-_p3.x + 6 * _p2.x + _p1.x) / 6, (-_p3.y + 6 * _p2.y + _p1.y) / 6),
+				_p2.clone()
+			);
+		}
+
+
 		public function debugDraw(graphics:Graphics):void {
 			graphics.lineStyle(0, 0x0, 0.2);
 			graphics.moveTo(_p0.x, _p0.y);

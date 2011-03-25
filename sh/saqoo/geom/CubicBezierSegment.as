@@ -1,7 +1,9 @@
 package sh.saqoo.geom {
 
 	import flash.display.Graphics;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
 
@@ -100,6 +102,99 @@ package sh.saqoo.geom {
 			out.x = _p0.x * a + _p1.x * b + _p2.x * c + _p3.x * d;			out.y = _p0.y * a + _p1.y * b + _p2.y * c + _p3.y * d;
 			return out;
 		}
+		
+		
+		public function getParameterAtLength(length:Number):Number {
+			if (length < 0) return 0;
+			var total:Number = getLength();
+			if (total <= length) return 1;
+			var n:int = total / 5;
+			var tr:Array = [0];
+			var lr:Array = [0];
+			var p0:Point = getPointAt(0);
+			var p1:Point = new Point();
+			for (var i:int = 1; i <= n; i++) {
+				var t:Number = i / n;
+				tr.push(t);
+				getPointAt(t, p1);
+				lr.push(lr[i - 1] + Point.distance(p0, p1));;
+				p0.x = p1.x;
+				p0.y = p1.y;
+			}
+			var r:int, m:int, l:int;
+			r = 0;
+			l = n - 1;
+			m = (r + l) / 2;
+			while (l - r > 1) {
+				if (lr[m] < length) {
+					r = m;
+				} else {
+					l = m;
+				}
+				m = (r + l) / 2;
+			}
+			t = (length - lr[r]) / (lr[l] - lr[r]) * (tr[l] - tr[r]) + tr[r];
+			return t;
+		}
+		
+		
+		/**
+		 * @see http://d.hatena.ne.jp/nishiohirokazu/20090616/1245104751
+		 */
+		public function getBounds():Rectangle {
+			var a:Number, b:Number, c:Number, d:Number;
+			var t:Number, p:Point = new Point();
+			var v:Array;
+			var minX:Number, maxX:Number, minY:Number, maxY:Number;
+			
+			v = [_p0.x, _p3.x];
+			b = 6 * _p0.x - 12 * _p1.x + 6 * _p2.x;
+			a = -3 * _p0.x + 9 * _p1.x - 9 * _p2.x + 3 * _p3.x;
+			c = 3 * _p1.x - 3 * _p0.x;
+			if (a == 0) {
+				if (b != 0) {
+					t = -c / b;
+					if (0 < t && t < 1) v.push(getPointAt(t, p).x);
+				}
+			} else {
+				d = b * b - 4 * c * a;
+				if (d >= 0) {
+					a *= 2;
+					d = Math.sqrt(d);
+					t = (-b + d) / a;
+					if (0 < t && t < 1) v.push(getPointAt(t, p).x);
+					t = (-b - d) / a;
+					if (0 < t && t < 1) v.push(getPointAt(t, p).x);
+				}
+			}
+			minX = Math.min.apply(null, v);
+			maxX = Math.max.apply(null, v);
+			
+			v = [_p0.y, _p3.y];
+			b = 6 * _p0.y - 12 * _p1.y + 6 * _p2.y;
+			a = -3 * _p0.y + 9 * _p1.y - 9 * _p2.y + 3 * _p3.y;
+			c = 3 * _p1.y - 3 * _p0.y;
+			if (a == 0) {
+				if (b != 0) {
+					t = -c / b;
+					if (0 < t && t < 1) v.push(getPointAt(t, p).y);
+				}
+			} else {
+				d = b * b - 4 * c * a;
+				if (d >= 0) {
+					a *= 2;
+					d = Math.sqrt(d);
+					t = (-b + d) / a;
+					if (0 < t && t < 1) v.push(getPointAt(t, p).y);
+					t = (-b - d) / a;
+					if (0 < t && t < 1) v.push(getPointAt(t, p).y);
+				}
+			}
+			minY = Math.min.apply(null, v);
+			maxY = Math.max.apply(null, v);
+			
+			return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+		}
 
 		
 		public function draw(graphics:Graphics):void {
@@ -143,6 +238,14 @@ package sh.saqoo.geom {
 			tmp = _p1;
 			_p1 = _p2;
 			_p2 = tmp;
+		}
+		
+		
+		public function transform(matrix:Matrix):void {
+			p0 = matrix.transformPoint(_p0);
+			p1 = matrix.transformPoint(_p1);
+			p2 = matrix.transformPoint(_p2);
+			p3 = matrix.transformPoint(_p3);
 		}
 		
 		

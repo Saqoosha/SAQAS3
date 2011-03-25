@@ -1,5 +1,6 @@
 package sh.saqoo.util {
 
+	import sh.saqoo.geom.CubicBezier;
 	import sh.saqoo.geom.CubicBezierSegment;
 
 	import flash.display.DisplayObject;
@@ -204,14 +205,14 @@ package sh.saqoo.util {
 		 * Approximate circular arc with several cubic bezier segments.
 		 * @see http://www.devenezia.com/papers/other/Bezier%20Points%20for%20Circular%20Arc.pdf
 		 */
-		public static function convertArcToCubicBezier(center:Point, radius:Number, startAngle:Number, endAngle:Number):Vector.<CubicBezierSegment> {
+		public static function convertArcToCubicBezier(center:Point, radius:Number, startAngle:Number, endAngle:Number):CubicBezier {
 			var th:Number = endAngle - startAngle;
 			var n:int = Math.ceil(th / (Math.PI / 2));
 			var segments:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
 			for (var i:int = 0; i < n; i++) {
 				segments.push(_convertArcToBezier(center, radius, startAngle + i / n * th, startAngle + (i + 1) / n * th));
 			}
-			return segments;
+			return new CubicBezier(segments);
 		}
 		
 		

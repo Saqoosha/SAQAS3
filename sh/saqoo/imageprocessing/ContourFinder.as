@@ -1,5 +1,7 @@
 package sh.saqoo.imageprocessing {
 
+	import frocessing.color.ColorHSV;
+
 	import sh.saqoo.geom.Blob;
 
 	import flash.display.BitmapData;
@@ -73,6 +75,23 @@ package sh.saqoo.imageprocessing {
 							blobs.push(blob);
 						}
 					}
+				}
+			}
+			return blobs;
+		}
+		
+		
+		public static function labeling(image:BitmapData, fillHoles:Boolean = false):Vector.<Blob> {
+			var color:ColorHSV = new ColorHSV();
+			var p:Point;
+			var blobs:Vector.<Blob> = find(image.clone());
+			for each (var blob:Blob in blobs) {
+				p = blob.points[0];
+				if (!blob.isHole) {
+					image.floodFill(p.x, p.y, color.value32);
+					color.h += 79;
+				} else if (fillHoles) {
+					image.floodFill(p.x + 1, p.y, image.getPixel32(p.x, p.y));
 				}
 			}
 			return blobs;

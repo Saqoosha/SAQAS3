@@ -27,12 +27,15 @@ package sh.saqoo.imageprocessing {
 			var pixels:Vector.<uint> = image.getVector(image.rect);
 			_width = image.width;
 			_height = image.height;
-			var n:int = _width * _height;
-			for (var i:int = 0; i < n; i++) {
+			var i:int, n:int = _width * _height;
+			for (i = 0; i < n; i++) {
 				_distanceMap[i] = (pixels[i] & 0xff) < 128 ? 0 : MAX_DISTANCE;
 			}
 			_maxDistance = _dt2d(_distanceMap, image.width, image.height);
 			_maxDistance = Math.sqrt(_maxDistance);
+			for (i = 0; i < n; i++) {
+				_distanceMap[i] = Math.sqrt(_distanceMap[i]);
+			}
 			return _distanceMap;
 		}
 		
@@ -42,7 +45,7 @@ package sh.saqoo.imageprocessing {
 			var pixels:Vector.<uint> = new Vector.<uint>();
 			var n:int = _width * _height;
 			for (var i:int = 0; i < n; i++) {
-				var c:int = Math.sqrt(_distanceMap[i]) / _maxDistance * 255;
+				var c:uint = _distanceMap[i] / _maxDistance * 255;
 				c = c > 255 ? 255 : c;
 				pixels[i] = c << 16 | c << 8 | c | 0xff000000;
 			}

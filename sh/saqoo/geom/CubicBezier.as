@@ -3,6 +3,7 @@ package sh.saqoo.geom {
 	import flash.display.Graphics;
 	import flash.display.GraphicsPathCommand;
 	import flash.display.GraphicsPathWinding;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 
 	/**
@@ -84,6 +85,11 @@ package sh.saqoo.geom {
 		
 		public function CubicBezier(segments:Vector.<CubicBezierSegment>) {
 			_segments = segments;
+			recalcLength();
+		}
+		
+		
+		public function recalcLength():void {
 			_ratio = new Vector.<Number>();
 			_ratio.push(0);
 			_length = 0;
@@ -118,6 +124,13 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function getParameterAtLength(length:Number):Number {
+			var idx:Number = getSegmentIndexAt(length / _length);
+			var t:Number = _segments[idx].getParameterAtLength(length - _ratio[idx] * _length);
+			return _ratio[idx] + (_ratio[idx + 1] - _ratio[idx]) * t;
+		}
+		
+		
 		public function getSegmentIndexAt(t:Number):int {
 			if (t < 0 || 1 < t) throw new Error('parameter t must be between 0 to 1.');
 			var r:int, m:int, l:int;
@@ -141,6 +154,14 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function transform(matrix:Matrix):void {
+			for each (var segment:CubicBezierSegment in _segments) {
+				segment.transform(matrix);
+			}
+			recalcLength();
+		}
+		
+		
 		public function clone():CubicBezier {
 			var clonedsegs:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
 			for each (var segs:CubicBezierSegment in _segments) {
@@ -161,19 +182,15 @@ package sh.saqoo.geom {
 		public function drawStroke(graphics:Graphics, thickness:Number = 2.0, start:Number = 0, end:Number = 1):void {
 			var i:int, ii:int;
 			var dt:Number = end - start;
-			var n:int = _length * dt / 5;
+			var n:int = _length * dt / 2;
 			var commands:Vector.<int> = new Vector.<int>(n * 2, true);
 			commands[0] = GraphicsPathCommand.MOVE_TO;
 			for (i = 1; i < n * 2; i++) {
 				commands[i] = GraphicsPathCommand.LINE_TO;
 			}
 			var pt:Number = 0;
-			var si:int = 0;
 			var t:Number = start;
-			while (_ratio[si] < t) {
-				pt = _ratio[si];
-				si++;
-			}
+			var si:int = getSegmentIndexAt(t);
 			var data:Vector.<Number> = new Vector.<Number>(n * 4, true);
 			var p:Point = new Point();
 			var tan:Point = new Point();
@@ -203,6 +220,39 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function toSVG():XML {
+			var d:String = '';
+			var cx:Number, cy:Number;
+			for each (var segment:CubicBezierSegment in _segments) {
+				if (d.length == 0) {
+					cx = segment.p0.x;
+					cy = segment.p0.y;
+					d += 'M' + _toSVGNumber(cx, false) + _toSVGNumber(cy);
+				}
+				d += 'c';
+				var p:Point;
+				for (var i:int = 1; i < 4; i++) {
+					p = segment[i];
+					d += _toSVGNumber(p.x - cx, i > 1);
+					d += _toSVGNumber(p.y - cy);
+				}
+				cx = p.x;
+				cy = p.y;
+			}
+			return <path fill="none" stroke="#000000" stroke-width="0.25" d={d}/>;
+		}
+		
+
+		private function _toSVGNumber(val:Number, hoge:Boolean = true):String {
+			if (val >= 0 && hoge) {
+				return ',' + String(int(val * 1000) / 1000);
+			} else {
+				return String(int(val * 1000) / 1000);
+			}
+		}
+		
+		
 		public function get segments():Vector.<CubicBezierSegment> { return _segments; }
+		public function get ratio():Vector.<Number> { return _ratio; }
 	}
 }

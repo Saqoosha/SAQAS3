@@ -144,12 +144,12 @@ package sh.saqoo.util {
 				case target is Point:
 					w = target.x;
 					h = target.y;
-					resized = new BitmapData(w, h);
+					resized = new BitmapData(w, h, source.transparent, 0x00000000);
 					break;
 				case target is Rectangle:
 					w = Rectangle(target).width;
 					h = Rectangle(target).height;
-					resized = new BitmapData(w, h);
+					resized = new BitmapData(w, h, source.transparent, 0x00000000);
 					break;
 			}
 
