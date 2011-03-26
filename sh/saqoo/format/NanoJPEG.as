@@ -1,4 +1,4 @@
-package sh.saqoo.graphics {
+package sh.saqoo.format {
 	import flash.display.BitmapData;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
