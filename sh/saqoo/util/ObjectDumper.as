@@ -9,11 +9,11 @@
  * @license MIT License http://www.opensource.org/licenses/mit-license.php
  */
 package sh.saqoo.util {
+
 	import flash.display.BitmapData;
 	import flash.utils.ByteArray;
 	import flash.utils.getQualifiedClassName;
 
-	
 	public class ObjectDumper extends Object {
 
 
@@ -29,57 +29,57 @@ package sh.saqoo.util {
 			var out:String = '';
 			var pad:String = '';
 			var i:int = 0;
-			for (i = 0; i < level; i++) {
-				pad += '    ';
-			}
+			for (i = 0; i < level; i++) pad += '    ';
 
-			// プリミティヴ型の場合
-			if (   data is Boolean
-				|| data is Number
-				|| data is int
-				|| data is uint
-				|| data is String
-				|| data === undefined
-				|| data === null
-			) {
-				out += pad + label + '(' + typeof data + ') ' + data + '\n';
-				
-			} else {
-				var type:String = getQualifiedClassName(data);
-				var vecType:String = '';
-				var match:Array = type.match(/__AS3__\.vec::Vector\.<(.*)>/);
-				if (match) {
-					type = 'Vector';
-					vecType = '.<' + match[1].replace(/::/g, '.') + '>';
-				}
-				switch (type) {
-					case 'Array':
-					case 'Vector':
-						out += pad + label + '(' + typeof data + ') [' + type + vecType + ' size = ' + data.length + ']\n';
-						for (var n:* = 0; n < data.length; n++) {
-							out += arguments.callee(data[n], maxObjectNests, level + 1, '[' + n + '] = ');
-						}
-						break;
-					case 'flash.utils::ByteArray':
-						out += pad + label + '(object) [ByteArray length = ' + ByteArray(data).length + ']\n';
-						break;
-					case 'flash.display::BitmapData':
-						out += pad + label + '(object) [BitmapData width = ' + BitmapData(data).width+ ' height = ' + BitmapData(data).height+ ']\n';
-						break;
-					default:
-						out += pad + label + '(' + typeof data + ') ' + data + '\n';
-						if (level < maxObjectNests) {
-							for (var key:* in data) {
-								out += arguments.callee(data[key], maxObjectNests, level + 1, key + ' = ');
+			switch (true) {
+				case data is Boolean:
+				case data is Number:
+				case data is int:
+				case data is uint:
+				case data is String:
+				case data === undefined:
+				case data === null:
+					out += pad + label + '(' + typeof data + ') ' + data + '\n';
+					break;
+				default:
+					var type:String = getQualifiedClassName(data);
+					var vecType:String = '';
+					var match:Array = type.match(/__AS3__\.vec::Vector\.<(.*)>/);
+					if (match) {
+						type = 'Vector';
+						vecType = '.<' + match[1].replace(/::/g, '.') + '>';
+					}
+					switch (type) {
+						case 'Array':
+						case 'Vector':
+							out += pad + label + '(' + typeof data + ') [' + type + vecType + ' size = ' + data.length + ']\n';
+							for (var n:* = 0; n < data.length; n++) {
+								out += arguments.callee(data[n], maxObjectNests, level + 1, '[' + n + '] = ');
 							}
-						} else {
-							out += pad + '	... abbreviated ...\n';
-						};
-						break;
-				}
-			};
+							break;
+						case 'flash.utils::ByteArray':
+							out += pad + label + '(object) [ByteArray length = ' + ByteArray(data).length + ']\n';
+							break;
+						case 'flash.display::BitmapData':
+							out += pad + label + '(object) [BitmapData width = ' + BitmapData(data).width + ' height = ' + BitmapData(data).height + ']\n';
+							break;
+						default:
+							out += pad + label + '(' + typeof data + ') ' + data + '\n';
+							if (level < maxObjectNests) {
+								var keys:Array = [];
+								for (var key:* in data) keys.push(key);
+								for each (key in keys.sort()) {
+									out += arguments.callee(data[key], maxObjectNests, level + 1, key + ' = ');
+								}
+							} else {
+								out += pad + '	... abbreviated ...\n';
+							}
+							break;
+					}
+					break;
+			}
 			return out;
-		};
+		}
 
 
 		/**

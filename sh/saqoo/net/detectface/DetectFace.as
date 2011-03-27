@@ -1,5 +1,6 @@
 package sh.saqoo.net.detectface {
 
+	import flash.geom.Matrix;
 	import ru.inspirit.net.MultipartURLLoader;
 
 	import com.adobe.images.JPGEncoder;
@@ -32,6 +33,7 @@ package sh.saqoo.net.detectface {
 		public function get responseXML():XML { return _response; }
 		private var _faceInfo:Vector.<FaceInfo>;
 		public function get faceInfo():Vector.<FaceInfo> { return _faceInfo; }
+		public function get numFaces():uint { return _faceInfo.length; }
 		
 		private var _scale:Number;
 		
@@ -54,7 +56,6 @@ package sh.saqoo.net.detectface {
 
 		private function _onComplete(event:Event):void {
 			var loader:MultipartURLLoader = MultipartURLLoader(event.target);
-			trace(loader.loader.data);
 			parseResponse(loader.loader.data, _scale);
 			_sigComplete.dispatch();
 		}
@@ -67,7 +68,17 @@ package sh.saqoo.net.detectface {
 				tmp.push(new FaceInfo(face, scale));
 			}
 			_faceInfo = tmp.sort(function (a:FaceInfo, b:FaceInfo):int {
-				return b.bounds.width * b.bounds.height * (int(!!b.rightEye) + int(!!b.leftEye)) - a.bounds.width * a.bounds.height * (int(!!a.rightEye) + int(!!a.leftEye));
+				var sa:int = 0;
+				if (a.rightEye) sa++;
+				if (a.leftEye) sa++;
+				sa *= a.bounds.width * a.bounds.height;
+//				var sa:int = a.bounds.width * a.bounds.height * (int(!!a.rightEye) + int(!!a.leftEye));
+				var sb:int = 0;
+				if (b.rightEye) sb++;
+				if (b.leftEye) sb++;
+				sb *= b.bounds.width * b.bounds.height;
+//				var sb:int = b.bounds.width * b.bounds.height * (int(!!b.rightEye) + int(!!b.leftEye));
+				return sb - sa;
 			});
 		}
 
@@ -77,9 +88,16 @@ package sh.saqoo.net.detectface {
 		}
 		
 		
-		public function debugDraw(graphics:Graphics, scale:Number = 1):void {
+		public function transform(mtx:Matrix):void {
 			for each (var face:FaceInfo in _faceInfo) {
-				face.debugDraw(graphics, scale);
+				face.transform(mtx);
+			}
+		}
+		
+		
+		public function drawDebugInfo(graphics:Graphics, scale:Number = 1):void {
+			for each (var face:FaceInfo in _faceInfo) {
+				face.drawDebugInfo(graphics, scale);
 			}
 		}
 	}

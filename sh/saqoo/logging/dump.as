@@ -1,5 +1,7 @@
 package sh.saqoo.logging {
+
 	import sh.saqoo.util.ObjectDumper;
+
 	/**
 	 * @author Saqoosha
 	 */

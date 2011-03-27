@@ -202,6 +202,26 @@ package sh.saqoo.util {
 
 
 		/**
+		 * @see http://sora-blue.net/~shogo82148/memo/geometry/circle-cross.html
+		 */
+		 public static function getCircleIntersectionPoint(centerA:Point, radiusA:Number, centerB:Point, radiusB:Number):Vector.<Point> {
+			var dx:Number = centerB.x - centerA.x;
+			var dy:Number = centerB.y - centerA.y;
+			var l2:Number = dx * dx + dy * dy;
+			var a:Number = (l2 + radiusA * radiusA - radiusB * radiusB) / 2;
+			var D:Number = radiusA * radiusA * l2 - a * a;
+			if (D >= 0) {
+				D = Math.sqrt(D);
+				return Vector.<Point>([
+					new Point((a * dx + D * dy) / l2 + centerA.x, (a * dy - D * dx) / l2 + centerA.y),
+					new Point((a * dx - D * dy) / l2 + centerA.x, (a * dy + D * dx) / l2 + centerA.y)
+				]);
+			}
+			return null;
+		}
+
+
+		/**
 		 * Approximate circular arc with several cubic bezier segments.
 		 * @see http://www.devenezia.com/papers/other/Bezier%20Points%20for%20Circular%20Arc.pdf
 		 */

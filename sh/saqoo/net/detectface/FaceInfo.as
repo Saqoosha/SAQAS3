@@ -1,6 +1,7 @@
 package sh.saqoo.net.detectface {
 
 	import flash.display.Graphics;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
@@ -52,12 +53,40 @@ package sh.saqoo.net.detectface {
 			}
 			return tmp;
 		}
+		
+		
+		public function getAverageScore(names:Array):Number {
+			var score:Number = 0;
+			for each (var name:String in names) {
+				var fp:FeaturePoint = getFeaturePointByName(name);
+				if (fp) score += fp.s;
+			}
+			score /= names.length;
+			return score;
+		}
+		
+		
+		public function transform(mtx:Matrix):void {
+			if (!features) return;
+			var keys:Array = [];
+			for (var key:String in features) keys.push(key);
+			for each (key in keys.sort()) {
+				var fp:FeaturePoint = features[key];
+				var p:Point = mtx.transformPoint(fp);
+				fp.x = p.x;
+				fp.y = p.y;
+			}
+			if (rightEye) rightEye = mtx.transformPoint(rightEye);
+			if (leftEye) leftEye = mtx.transformPoint(leftEye);
+		}
 
 
-		public function debugDraw(graphics:Graphics, scale:Number = 1):void {
+		public function drawDebugInfo(graphics:Graphics, scale:Number = 1):void {
 			// bounds
 			graphics.lineStyle(0, 0xffffff);
-			graphics.drawRect(bounds.x * scale, bounds.y * scale, bounds.width * scale, bounds.height * scale);
+//			graphics.drawRect(bounds.x * scale, bounds.y * scale, bounds.width * scale, bounds.height * scale);
+			
+			// face
 			_drawFeatures(graphics, PointNames.FACE, scale);
 
 			// right eye
