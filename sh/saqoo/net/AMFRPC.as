@@ -1,4 +1,5 @@
 package sh.saqoo.net {
+
 	import sh.saqoo.logging.dump;
 
 	import flash.events.ErrorEvent;
@@ -54,6 +55,7 @@ package sh.saqoo.net {
 		
 		public function AMFRPC(gateway:String = null) {
 			_gateway = gateway || DEFAULT_GATEWAY;
+			if (!_gateway) throw new ArgumentError('please specify gateway...');
 		}
 		
 		
@@ -65,9 +67,7 @@ package sh.saqoo.net {
 			bodyByte.writeInt(args.length); // length of AMF0 arguments array
 			for each (var arg:* in args) {
 				switch (true) {
-					// TODO: needs to investigate which type should be serialized as AMF3.
-					// currently only ByteArray is serialized as AMF3.
-					case arg is ByteArray: amf3 = true; break;
+					case arg is Object: amf3 = true; break;
 					default: amf3 = false;
 				}
 				if (amf3) {
@@ -105,7 +105,7 @@ package sh.saqoo.net {
 			_loader.load(request);
 		}
 
-		
+
 		private function _onComplete(event:Event):void {
 			try {
 				_parseResponse(_loader.data);
@@ -113,13 +113,13 @@ package sh.saqoo.net {
 				_isError = true;
 				trace(e.getStackTrace());
 			}
-			
+
 			_loader.removeEventListener(IOErrorEvent.IO_ERROR, dispatchEvent);
 			_loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, dispatchEvent);
 			_loader.removeEventListener(ProgressEvent.PROGRESS, dispatchEvent);
 			_loader.removeEventListener(Event.COMPLETE, _onComplete);
 			_loader = null;
-			
+
 			if (_isError) {
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, _result.description));
 			} else {
@@ -127,7 +127,7 @@ package sh.saqoo.net {
 			}
 		}
 
-		
+
 		protected function _parseResponse(data:ByteArray):void {
 			data.objectEncoding = ObjectEncoding.AMF0;
 			var amfVersion:int = data.readShort();
