@@ -7,13 +7,6 @@ kernel NewKernel
 	description: "Simply mix multiple audio source.";
 >
 {
-	parameter int numTracks
-	<
-		minValue: int(1);
-		maxValue: int(14);
-		defaultValue: int(1);
-		description: "number of notes";
-	>;
 
 	input image4 audio0;
 	input image4 audio1;
@@ -23,44 +16,31 @@ kernel NewKernel
 	input image4 audio5;
 	input image4 audio6;
 	input image4 audio7;
+	input image4 audio8;
+	input image4 audio9;
+	input image4 audio10;
+	input image4 audio11;
+	input image4 audio12;
+	input image4 audio13;
 	
 	output pixel4 target;
 
 	void evaluatePixel() {
 		float4 value = float4(0, 0, 0, 0);
-		
-		if (numTracks > 0) {
-			value += sampleNearest(audio0, outCoord());
-		}
-		
-		if (numTracks > 1) {
-			value += sampleNearest(audio1, outCoord());
-		}
-		
-		if (numTracks > 2) {
-			value += sampleNearest(audio2, outCoord());
-		}
-		
-		if (numTracks > 3) {
-			value += sampleNearest(audio3, outCoord());
-		}
-		
-		if (numTracks > 4) {
-			value += sampleNearest(audio4, outCoord());
-		}
-		
-		if (numTracks > 5) {
-			value += sampleNearest(audio5, outCoord());
-		}
-		
-		if (numTracks > 6) {
-			value += sampleNearest(audio6, outCoord());
-		}
-		
-		if (numTracks > 7) {
-			value += sampleNearest(audio7, outCoord());
-		}
-		
+		value += sampleNearest(audio0, outCoord());
+		value += sampleNearest(audio1, outCoord());
+		value += sampleNearest(audio2, outCoord());
+		value += sampleNearest(audio3, outCoord());
+		value += sampleNearest(audio4, outCoord());
+		value += sampleNearest(audio5, outCoord());
+		value += sampleNearest(audio6, outCoord());
+		value += sampleNearest(audio7, outCoord());
+		value += sampleNearest(audio8, outCoord());
+		value += sampleNearest(audio9, outCoord());
+		value += sampleNearest(audio10, outCoord());
+		value += sampleNearest(audio11, outCoord());
+		value += sampleNearest(audio12, outCoord());
+		value += sampleNearest(audio13, outCoord());
 		target = value;
 	}
 }

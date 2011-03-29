@@ -5,6 +5,7 @@ package sh.saqoo.geom {
 	import flash.display.GraphicsPathWinding;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 
 	/**
 	 * @author Saqoosha
@@ -12,8 +13,8 @@ package sh.saqoo.geom {
 	public class CubicBezier implements IParametricCurve {
 		
 		
-		public static function buildFromSVG(pathElement:XML):CubicBezier {
-			var d:Array = String(pathElement.@d).match(/[MmZzLlHhVvCcSsQqTtAa]|-?[\d.]+/g);
+		public static function buildFromSVGPathNode(pathNode:XML):CubicBezier {
+			var d:Array = String(pathNode.@d).match(/[MmZzLlHhVvCcSsQqTtAa]|-?[\d.]+/g);
 			var n:int = d.length;
 			var px:Number;
 			var py:Number;
@@ -154,6 +155,15 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function getBounds():Rectangle {
+			var b:Rectangle = new Rectangle();
+			for each (var segment:CubicBezierSegment in _segments) {
+				b = b.union(segment.getBounds());
+			}
+			return b;
+		}
+		
+		
 		public function transform(matrix:Matrix):void {
 			for each (var segment:CubicBezierSegment in _segments) {
 				segment.transform(matrix);
@@ -182,7 +192,7 @@ package sh.saqoo.geom {
 		public function drawStroke(graphics:Graphics, thickness:Number = 2.0, start:Number = 0, end:Number = 1):void {
 			var i:int, ii:int;
 			var dt:Number = end - start;
-			var n:int = _length * dt / 2;
+			var n:int = _length * dt;// / 2;
 			var commands:Vector.<int> = new Vector.<int>(n * 2, true);
 			commands[0] = GraphicsPathCommand.MOVE_TO;
 			for (i = 1; i < n * 2; i++) {
@@ -220,6 +230,13 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function drawDebugInfo(graphics:Graphics):void {
+			for each (var segment:CubicBezierSegment in _segments) {
+				segment.drawDebugInfo(graphics);
+			}
+		}
+		
+		
 		public function toSVG():XML {
 			var d:String = '';
 			var cx:Number, cy:Number;
@@ -249,6 +266,11 @@ package sh.saqoo.geom {
 			} else {
 				return String(int(val * 1000) / 1000);
 			}
+		}
+		
+		
+		public function toString():String {
+			return '[CubicBezier numSegments=' + _segments.length + ' length=' + (int(_length * 1000) / 1000) + ']';
 		}
 		
 		

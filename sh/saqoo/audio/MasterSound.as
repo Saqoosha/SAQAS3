@@ -1,4 +1,5 @@
 package sh.saqoo.audio {
+
 	import fl.motion.easing.Circular;
 
 	import de.polygonal.ds.DLL;
@@ -18,7 +19,7 @@ package sh.saqoo.audio {
 
 		
 		public static const SAMPLES_PER_MSEC:Number = 44.1;
-		public static const BUFFER_SAMPLES:int = 4096;
+		public static const BUFFER_SAMPLES:int = 8192;
 		public static const BUFFER_MSECS:Number = BUFFER_SAMPLES / SAMPLES_PER_MSEC;
 		public static const BUFFER_BYTES:int = BUFFER_SAMPLES * 8;
 		public static const SILENCE_DATA:ByteArray = new ByteArray();
@@ -53,7 +54,14 @@ package sh.saqoo.audio {
 		
 		public function addSound(sound:*, startTime:Number = 0, inPoint:Number = 0, duration:Number = 0, fadeInTime:Number = 0, fadeOutTime:Number = 0):MixInfo {
 			var ip:Number = Math.max(0, inPoint);
-			var info:MixInfo = new MixInfo(sound, startTime, ip, duration || (sound.length - ip), fadeInTime, fadeOutTime);
+			if (!duration) {
+				if (sound is Sound) {
+					duration = sound.length - ip;
+				} else if (sound is ByteArray) {
+					duration = sound.length / (SAMPLES_PER_MSEC * 8) - ip;
+				}
+			}
+			var info:MixInfo = new MixInfo(sound, startTime, ip, duration, fadeInTime, fadeOutTime);
 			_sounds.append(info);
 			return info;
 		}
@@ -80,9 +88,7 @@ package sh.saqoo.audio {
 			while (node) {
 				var loop:MixInfo = MixInfo(node.val);
 				if (loop.startTime + loop.duration <= currentTime) {
-					var n:DLLNode = node.next;
-					_sounds.remove(node);
-					node = n;
+					node = _sounds.unlink(node);
 					continue;
 					
 				} else if (loop.startTime < currentTime + BUFFER_MSECS) {
@@ -90,13 +96,15 @@ package sh.saqoo.audio {
 					samples.length = BUFFER_BYTES;
 					var startSamplePos:int = Math.max(0, (loop.startTime - currentTime) * SAMPLES_PER_MSEC);
 					samples.position = startSamplePos * 8;
-					var samplesNeeded:int = BUFFER_SAMPLES - startSamplePos - Math.max(0, int((currentTime + BUFFER_MSECS - (loop.startTime + loop.duration)) * SAMPLES_PER_MSEC));
+					var samplesNeeded:int = BUFFER_SAMPLES - startSamplePos
+											 - Math.max(0, int((currentTime + BUFFER_MSECS - (loop.startTime + loop.duration)) * SAMPLES_PER_MSEC));
 					var startPosInSound:int = int((loop.inPoint + Math.max(0, currentTime - loop.startTime)) * SAMPLES_PER_MSEC);
 					if (loop.sound is Sound) {
 						Sound(loop.sound).extract(samples, samplesNeeded, startPosInSound);
 					} else if (loop.sound is ByteArray) {
 						startPosInSound *= 8;
 						samplesNeeded *= 8;
+						trace([int(loop.sound.length * 1000) / 1000, startPosInSound, samplesNeeded, Math.min(samplesNeeded, loop.sound.length - startPosInSound)]);
 						if (startPosInSound < loop.sound.length) {
 							samples.writeBytes(loop.sound, startPosInSound, Math.min(samplesNeeded, loop.sound.length - startPosInSound));
 						}

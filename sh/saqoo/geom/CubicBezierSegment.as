@@ -16,13 +16,13 @@ package sh.saqoo.geom {
 		
 		private static var __c:CubicBezierSegment;
 		
-		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
+		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, moveToStart:Boolean = true):void {
 			__c ||= new CubicBezierSegment();
 			__c.p0 = p0;
 			__c.p1 = p1;
 			__c.p2 = p2;
 			__c.p3 = p3;
-			__c.draw2(graphics, true);
+			__c.draw2(graphics, moveToStart);
 		}
 		
 		
@@ -193,7 +193,7 @@ package sh.saqoo.geom {
 			minY = Math.min.apply(null, v);
 			maxY = Math.max.apply(null, v);
 			
-			return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+			return new Rectangle(minX, minY, Math.max(1e-5, maxX - minX), Math.max(1e-5, maxY - minY));
 		}
 
 		
@@ -213,7 +213,7 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function debugDraw(graphics:Graphics):void {
+		public function drawDebugInfo(graphics:Graphics):void {
 			graphics.lineStyle(0, 0x0, 0.2);
 			graphics.moveTo(_p0.x, _p0.y);
 			graphics.lineTo(_p1.x, _p1.y);
