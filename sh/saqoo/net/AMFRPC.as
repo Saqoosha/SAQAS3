@@ -55,11 +55,11 @@ package sh.saqoo.net {
 		
 		public function AMFRPC(gateway:String = null) {
 			_gateway = gateway || DEFAULT_GATEWAY;
-			if (!_gateway) throw new ArgumentError('please specify gateway...');
 		}
 		
 		
 		public function call(method:String, ...args):void {
+			if (!_gateway) throw new ArgumentError('please specify gateway...');
 			var amf3:Boolean;
 			var bodyByte:ByteArray = new ByteArray();
 			bodyByte.objectEncoding = ObjectEncoding.AMF0; 
@@ -178,7 +178,9 @@ package sh.saqoo.net {
 		}
 		
 		
-		public function get result():Object { return _result; }
+		public function get gateway():String { return _gateway; }
+		public function set gateway(value:String):void { _gateway = value; }
 		
+		public function get result():Object { return _result; }
 	}
 }

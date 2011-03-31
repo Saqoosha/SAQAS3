@@ -23,19 +23,23 @@ package sh.saqoo.audio {
 		/**
 		 * Mixdown multitrack sounds by ShaderJob. (at least 2x faster than AS3 only ver.)
 		 */
-		public static function mix(out:ByteArray, numSamples:int, tracks:Array):ByteArray {
+		public static function mix(out:ByteArray, numSamples:int, tracks:Vector.<ByteArray>):ByteArray {
 			if (!_mixer) {
 				_mixer = new Shader(new MixerShaderDataClass() as ByteArray);
 				_dummy = new ByteArray();
 				_dummy.length = 16; // 1px
 			}
 
-			var datalen:int = numSamples * 8;
-			var channels:int = 4;
-			var width:int = 256;
-			var widthBytes:int = width * 1 * channels * 4;
+			const BYTES_PER_SAMPLE:uint = 4;
+			const NUM_AUDIO_CHANNELS:uint = 2;
+			const FLOAT_BYTES:uint = 4;
+			const NUM_IMAGE_CHANNELS:uint = 4;
+			
+			var datalen:int = numSamples * BYTES_PER_SAMPLE * NUM_AUDIO_CHANNELS;
+			const width:int = 2048;
+			var widthBytes:int = width * FLOAT_BYTES * NUM_IMAGE_CHANNELS;
 			var height:int = Math.ceil(datalen / widthBytes);
-			datalen = width * height * channels * 4;
+			datalen = width * height * FLOAT_BYTES * NUM_IMAGE_CHANNELS;
 
 			var numTracks:int = Math.min(MAX_TRACKS, tracks.length);
 			for (var i:int; i < numTracks;++i) {
@@ -57,7 +61,7 @@ package sh.saqoo.audio {
 			var job:ShaderJob = new ShaderJob(_mixer, out, width, height);
 			job.start(true);
 
-			out.length = numSamples * 8;
+			out.length = numSamples * BYTES_PER_SAMPLE * NUM_AUDIO_CHANNELS;
 			return out;
 		}
 

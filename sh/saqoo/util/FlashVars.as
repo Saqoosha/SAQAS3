@@ -1,16 +1,16 @@
 package sh.saqoo.util {
-
+	
+	
 	public class FlashVars {
 
-		
+
 		private static var _parameters:Object = {};
 
-		
+
 		public static function init(parameters:Object):void {
 			for (var key:* in parameters) {
 				_parameters[key] = parameters[key];
 			}
-//			ObjectDumper.dump(_parameters);
 		}
 
 
@@ -32,17 +32,15 @@ package sh.saqoo.util {
 		public static function hasKey(key:String):Boolean {
 			return _parameters && key in _parameters;
 		}
-		
-		
+
+
 		public static function setValue(key:String, value:*):void {
 			_parameters[key] = value;
 		}
 
-		
+
 		public static function deleteKey(key:String):void {
-			if (hasKey(key)) {
-				delete _parameters[key];
-			}
+			if (hasKey(key)) delete _parameters[key];
 		}
 	}
 }

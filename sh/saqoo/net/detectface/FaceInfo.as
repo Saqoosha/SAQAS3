@@ -1,5 +1,7 @@
 package sh.saqoo.net.detectface {
 
+	import sh.saqoo.util.ObjectDumper;
+
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
@@ -12,6 +14,7 @@ package sh.saqoo.net.detectface {
 	public class FaceInfo {
 		
 		
+		public var id:String;
 		public var bounds:Rectangle;
 		public var rightEye:Point;
 		public var leftEye:Point;
@@ -23,6 +26,7 @@ package sh.saqoo.net.detectface {
 
 
 		public function FaceInfo(data:XML, scale:Number = 1.0) {
+			id = data.@id;
 			bounds = new Rectangle(parseInt(data.bounds.@x) * scale, parseInt(data.bounds.@y) * scale, parseInt(data.bounds.@width) * scale, parseInt(data.bounds.@height) * scale);
 			if (data.hasOwnProperty('right-eye')) rightEye = new Point(parseInt(data['right-eye'].@x) * scale, parseInt(data['right-eye'].@y) * scale);
 			if (data.hasOwnProperty('left-eye')) leftEye = new Point(parseInt(data['left-eye'].@x) * scale, parseInt(data['left-eye'].@y) * scale);
@@ -67,17 +71,22 @@ package sh.saqoo.net.detectface {
 		
 		
 		public function transform(mtx:Matrix):void {
-			if (!features) return;
-			var keys:Array = [];
-			for (var key:String in features) keys.push(key);
-			for each (key in keys.sort()) {
-				var fp:FeaturePoint = features[key];
-				var p:Point = mtx.transformPoint(fp);
-				fp.x = p.x;
-				fp.y = p.y;
-			}
+//			if (bounds) {
+//				var tl:Point = mtx.transformPoint(bounds.topLeft);
+//				var br:Point = mtx.transformPoint(bounds.bottomRight);
+//			}
 			if (rightEye) rightEye = mtx.transformPoint(rightEye);
 			if (leftEye) leftEye = mtx.transformPoint(leftEye);
+			if (features) {
+				var keys:Array = [];
+				for (var key:String in features) keys.push(key);
+				for each (key in keys.sort()) {
+					var fp:FeaturePoint = features[key];
+					var p:Point = mtx.transformPoint(fp);
+					fp.x = p.x;
+					fp.y = p.y;
+				}
+			}
 		}
 
 
@@ -161,6 +170,34 @@ package sh.saqoo.net.detectface {
 			} catch (e:Error) {
 				trace('draw error:', pointIds, pointIds[i]);
 			}
+		}
+		
+		
+		public function toXML():XML {
+			var xml:XML = <face id={id}><bounds x={bounds.x} y={bounds.y} width={bounds.width} height={bounds.height}/></face>;
+			if (rightEye) xml.appendChild(<right-eye x={int(rightEye.x * 1000) / 1000} y={int(rightEye.y * 1000) / 1000}/>);
+			if (leftEye) xml.appendChild(<left-eye x={int(leftEye.x * 1000) / 1000} y={int(leftEye.y * 1000) / 1000}/>);
+			if (features) {
+				var f:XML = <features s-avg={sAvg} s-min={sMin} s-max={sMax}/>;
+				for each (var fp:FeaturePoint in features) {
+					f.appendChild(<point id={fp.id} x={int(fp.x * 1000) / 1000} y={int(fp.y * 1000) / 1000} s={fp.s}/>);
+				}
+				xml.appendChild(f);
+			}
+			return xml;
+		}
+		
+		
+		public function toString():String {
+			return ObjectDumper.dumpToText({
+				bounds: bounds,
+				rightEye: rightEye,
+				leftEye: leftEye,
+				features: features,
+				sMin: sMin,
+				sMax: sMax,
+				sAvg: sAvg
+			}, 5, 0, 'FaceInfo: ');
 		}
 	}
 }

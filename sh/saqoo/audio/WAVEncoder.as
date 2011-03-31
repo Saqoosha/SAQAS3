@@ -1,14 +1,14 @@
 package sh.saqoo.audio {
+
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 
-	
 	/**
 	 * @author Saqoosha
 	 */
 	public class WAVEncoder {
-		
-		
+
+
 		public static function encode(soundData:ByteArray):ByteArray {
 			var fmt:ByteArray = _createFmtChunk();
 			var data:ByteArray = _createDataChunk(soundData);
@@ -22,7 +22,7 @@ package sh.saqoo.audio {
 			return wav;
 		}
 
-		
+
 		private static function _createFmtChunk():ByteArray {
 			var fmt:ByteArray = new ByteArray();
 			fmt.endian = Endian.LITTLE_ENDIAN;
@@ -38,7 +38,7 @@ package sh.saqoo.audio {
 			return fmt;
 		}
 
-		
+
 		private static function _createDataChunk(soundData:ByteArray):ByteArray {
 			var data:ByteArray = new ByteArray();
 			data.endian = Endian.LITTLE_ENDIAN;

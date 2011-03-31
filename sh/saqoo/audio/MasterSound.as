@@ -83,7 +83,7 @@ package sh.saqoo.audio {
 				_latency = currentTime - _channel.position;
 			}
 			
-			var tracks:Array = [];
+			var tracks:Vector.<ByteArray> = new Vector.<ByteArray>();
 			var node:DLLNode = _sounds.head;
 			while (node) {
 				var loop:MixInfo = MixInfo(node.val);

@@ -133,7 +133,9 @@ package sh.saqoo.geom {
 		
 		
 		public function getSegmentIndexAt(t:Number):int {
-			if (t < 0 || 1 < t) throw new Error('parameter t must be between 0 to 1.');
+			t = t < 0 ? 0 : t > 1 ? 1 : t;
+//			t = Math.max(0, Math.min(1, t));
+//			if (t < 0 || 1 < t) throw new Error('parameter t must be between 0 to 1.');
 			var r:int, m:int, l:int;
 			r = 0;
 			l = _ratio.length - 1;
@@ -184,7 +186,7 @@ package sh.saqoo.geom {
 		public function draw(graphics:Graphics):void {
 			graphics.moveTo(_segments[0].p0.x, _segments[0].p0.y);
 			for each (var seg:CubicBezierSegment in _segments) {
-				seg.draw2(graphics, false);
+				seg.draw(graphics, false);
 			}
 		}
 
@@ -237,7 +239,52 @@ package sh.saqoo.geom {
 		}
 		
 		
-		public function toSVG():XML {
+		public function toStroke(thickness:Number, start:Number = 0.0, end:Number = 1.0):CubicBezier {
+			var i:int;
+			var dt:Number = end - start;
+			var n:int = Math.max(_length * dt, 10);
+			
+			var pt:Number = 0;
+			var t:Number = start;
+			var si:int = getSegmentIndexAt(t);
+			
+			var p:Point = new Point();
+			var tan:Point = new Point();
+			
+			var halfPI:Number = Math.PI * 0.5;
+			var quatPI:Number = Math.PI * 0.25;
+			var offW:Number = Math.sin(quatPI);
+			var wr:Number = 1 / (1 - offW) * thickness * 0.5;
+			
+			var left:Vector.<Point> = new Vector.<Point>(n + 1);
+			var right:Vector.<Point> = new Vector.<Point>(n + 1);
+			
+			for (i = 0; i <= n; i++) {
+				t = i / n * dt + start;
+				if (_ratio[si + 1] < t) {
+					si++;
+					pt = _ratio[si];
+				}
+				var tt:Number = (t - pt) / (_ratio[si + 1] - pt);
+				_segments[si].getPointAt(tt, p);
+				_segments[si].getTangentAt(tt, tan);
+				var w:Number = (Math.sin(i / n * halfPI + quatPI) - offW) * wr;
+				tan.normalize(w);
+				left[n - i] = new Point(p.x + tan.y, p.y - tan.x);
+				right[i] = new Point(p.x - tan.y, p.y + tan.x);
+			}
+			var b:Rectangle = getBounds();
+			var err:Number = Math.min(b.width, b.height) / 200;
+			var path:CubicBezier = CubicBezierFitter.FitCurve(right, err);
+			for each (var segment:CubicBezierSegment in CubicBezierFitter.FitCurve(left, err).segments) {
+				path.segments.push(segment);
+			}
+			path.recalcLength();
+			return path;
+		}
+		
+		
+		public function toSVGNode(fill:String = null, stroke:String = null, strokeWidth:Number = 1.0):XML {
 			var d:String = '';
 			var cx:Number, cy:Number;
 			for each (var segment:CubicBezierSegment in _segments) {
@@ -256,7 +303,14 @@ package sh.saqoo.geom {
 				cx = p.x;
 				cy = p.y;
 			}
-			return <path fill="none" stroke="#000000" stroke-width="0.25" d={d}/>;
+			var svg:XML = <path/>;
+			if (fill) svg.@fill = fill;
+			if (stroke) {
+				svg.@stroke = stroke;
+				svg.@['stroke-width'] = strokeWidth;
+			}
+			svg.@d = d;
+			return svg;
 		}
 		
 

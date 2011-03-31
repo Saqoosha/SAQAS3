@@ -1,6 +1,5 @@
 package sh.saqoo.net.detectface {
 
-	import flash.geom.Matrix;
 	import ru.inspirit.net.MultipartURLLoader;
 
 	import com.adobe.images.JPGEncoder;
@@ -11,6 +10,7 @@ package sh.saqoo.net.detectface {
 	import flash.display.Graphics;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
+	import flash.geom.Matrix;
 	import flash.net.URLLoaderDataFormat;
 	
 	/**
@@ -99,6 +99,15 @@ package sh.saqoo.net.detectface {
 			for each (var face:FaceInfo in _faceInfo) {
 				face.drawDebugInfo(graphics, scale);
 			}
+		}
+		
+		
+		public function toXML():XML {
+			var xml:XML = <faces/>;
+			for each (var info:FaceInfo in _faceInfo) {
+				xml.appendChild(info.toXML());
+			}
+			return xml;
 		}
 	}
 }

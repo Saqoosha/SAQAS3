@@ -14,15 +14,13 @@ package sh.saqoo.geom {
 	public dynamic class CubicBezierSegment extends Proxy implements IParametricCurve {
 		
 		
-		private static var __c:CubicBezierSegment;
+		private static var __drawFunc:Function;
+		
 		
 		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, moveToStart:Boolean = true):void {
-			__c ||= new CubicBezierSegment();
-			__c.p0 = p0;
-			__c.p1 = p1;
-			__c.p2 = p2;
-			__c.p3 = p3;
-			__c.draw2(graphics, moveToStart);
+			if (__drawFunc == null) __drawFunc = DrawImpl2.draw;
+			if (moveToStart) graphics.moveTo(p0.x, p0.y);
+			__drawFunc(graphics, p0, p1, p2, p3);
 		}
 		
 		
@@ -30,7 +28,7 @@ package sh.saqoo.geom {
 			graphics.moveTo(segments[0].p0.x, segments[0].p0.y);
 			var n:int = segments.length;
 			for (var i:int = 0; i < n; i++) {
-				segments[i].draw2(graphics, false);
+				segments[i].draw(graphics, false);
 			}
 		}
 		
@@ -195,21 +193,12 @@ package sh.saqoo.geom {
 			
 			return new Rectangle(minX, minY, Math.max(1e-5, maxX - minX), Math.max(1e-5, maxY - minY));
 		}
-
-		
-		public function draw(graphics:Graphics):void {
-			DrawImpl1.draw(graphics, _p0, _p1, _p2, _p3);
-		}
 		
 		
-		public function draw2(graphics:Graphics, moveToStart:Boolean):void {
+		public function draw(graphics:Graphics, moveToStart:Boolean = true):void {
+			if (__drawFunc == null) __drawFunc = DrawImpl2.draw;
 			if (moveToStart) graphics.moveTo(_p0.x, _p0.y);
-			DrawImpl2.draw(graphics, _p0, _p1, _p2, _p3);
-		}
-		
-		
-		public function draw3(graphics:Graphics):void {
-			DrawImpl3.draw(graphics, _p0, _p1, _p2, _p3);
+			__drawFunc.call(null, graphics, _p0, _p1, _p2, _p3);
 		}
 		
 		
@@ -330,8 +319,18 @@ package sh.saqoo.geom {
 	}
 }
 
+
 import flash.display.Graphics;
 import flash.geom.Point;
+
+
+class DrawImpl0 {
+	
+	
+	public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
+		graphics['cubicCurveTo'](p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+	}
+}
 
 
 /**
@@ -661,8 +660,8 @@ class DrawImpl3 {
 		var p13:Point = Point.interpolate(p12, p23, 0.5);
 		var p03:Point = Point.interpolate(p02, p13, 0.5);
 		return {
-			b0:{a:p0,  b:p01, c:p02, d:p03},
-			b1:{a:p03, b:p13, c:p23, d:p3 }	 
+			b0: {a: p0,  b: p01, c: p02, d: p03},
+			b1: {a: p03, b: p13, c: p23, d: p3}
 		};
-	};
+	}
 }

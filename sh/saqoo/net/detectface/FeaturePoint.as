@@ -20,7 +20,7 @@ package sh.saqoo.net.detectface {
 
 
 		override public function toString():String {
-			return '[Feature id=' + id + ' x=' + (int(x * 1000) / 1000) + ' y=' + (int(y * 1000) / 1000) + ' s=' + s + ']';
+			return '[FeaturePoint id=' + id + ' x=' + (int(x * 1000) / 1000) + ' y=' + (int(y * 1000) / 1000) + ' s=' + s + ']';
 		}
 	}
 }
