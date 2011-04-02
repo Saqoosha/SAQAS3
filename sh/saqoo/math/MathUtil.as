@@ -13,6 +13,11 @@ package sh.saqoo.math {
 		public static function randomInRange(low:Number, high:Number):Number {
 			return low + (high - low) * Math.random();
 		}
+		
+		
+		public static function randomSign(p:Number):Number { 
+			return Math.random() < p ? 1 : -1;
+		}
 
 
 		/**

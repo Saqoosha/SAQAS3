@@ -14,13 +14,13 @@ package sh.saqoo.geom {
 	public dynamic class CubicBezierSegment extends Proxy implements IParametricCurve {
 		
 		
-		private static var __drawFunc:Function;
+		private static var __drawFunc:Function = __draw2;
 		
 		
 		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, moveToStart:Boolean = true):void {
-			if (__drawFunc == null) __drawFunc = DrawImpl2.draw;
 			if (moveToStart) graphics.moveTo(p0.x, p0.y);
-			__drawFunc(graphics, p0, p1, p2, p3);
+//			__drawFunc(graphics, p0, p1, p2, p3);
+			__draw3(graphics, p0, p1, p2, p3);
 		}
 		
 		
@@ -196,7 +196,6 @@ package sh.saqoo.geom {
 		
 		
 		public function draw(graphics:Graphics, moveToStart:Boolean = true):void {
-			if (__drawFunc == null) __drawFunc = DrawImpl2.draw;
 			if (moveToStart) graphics.moveTo(_p0.x, _p0.y);
 			__drawFunc.call(null, graphics, _p0, _p1, _p2, _p3);
 		}
@@ -316,6 +315,104 @@ package sh.saqoo.geom {
 		public function toString():String {
 			return '[CubicBezier p0=' + _p0 + ' p1=' + _p1 + ' p2=' + _p2 + ' p3=' + _p3 + ']';
 		}
+		
+		
+		//
+		
+
+		/**
+		 * Draw using native cubicCurveTo method. (incuvator release only)
+		 */		
+		private static function __drawNative(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
+			graphics['cubicCurveTo'](p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+		}
+		
+
+		/**
+		 * Draw the cubic bezier with approximation by quadratic curves using fixed mid-point approach.
+		 * @see http://www.timotheegroleau.com/Flash/articles/cubic_bezier_in_flash.htm
+		 */
+		private static function __draw1(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
+			// calculates the useful base points
+			var PA:Point = Point.interpolate(p1, p0, 3 / 4);
+			var PB:Point = Point.interpolate(p2, p3, 3 / 4);
+			
+			// get 1/16 of the [P3, P0] segment
+			var dx:Number = (p3.x - p0.x) / 16;
+			var dy:Number = (p3.y - p0.y) / 16;
+			
+			// calculates control point 1
+			var Pc_1:Point = Point.interpolate(p1, p0, 3 / 8);
+			
+			// calculates control point 2
+			var Pc_2:Point = Point.interpolate(PB, PA, 3 / 8);
+			Pc_2.x -= dx;
+			Pc_2.y -= dy;
+			
+			// calculates control point 3
+			var Pc_3:Point = Point.interpolate(PA, PB, 3 / 8);
+			Pc_3.x += dx;
+			Pc_3.y += dy;
+			
+			// calculates control point 4
+			var Pc_4:Point = Point.interpolate(p2, p3, 3 / 8);
+			
+			// calculates the 3 anchor points
+			var Pa_1:Point = Point.interpolate(Pc_2, Pc_1, 0.5);
+			var Pa_2:Point = Point.interpolate(PB, PA, 0.5);
+			var Pa_3:Point = Point.interpolate(Pc_4, Pc_3, 0.5);
+		
+			// draw the four quadratic subsegments
+			graphics.curveTo(Pc_1.x, Pc_1.y, Pa_1.x, Pa_1.y);
+			graphics.curveTo(Pc_2.x, Pc_2.y, Pa_2.x, Pa_2.y);
+			graphics.curveTo(Pc_3.x, Pc_3.y, Pa_3.x, Pa_3.y);
+			graphics.curveTo(Pc_4.x, Pc_4.y, p3.x, p3.y);
+		}
+
+
+		/**
+		 * Draw the cubic bezier with approximation by quadratic curves using tangent approach.
+		 * @see http://www.timotheegroleau.com/Flash/articles/cubic_bezier_in_flash.htm
+		 */
+		private static function __draw2(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, nSegment:int = 4):void {
+			//define the local variables
+			var curT:Object; // holds the current Tangent object
+			var nextT:Object; // holds the next Tangent object
+			var total:int = 0; // holds the number of slices used
+			
+			// make sure nSegment is within range (also create a default in the process)
+			if (nSegment < 2) nSegment = 4;
+			
+			// get the time Step from nSegment
+			var tStep:Number = 1 / nSegment;
+			
+			// get the first tangent Object
+			curT = new Object();
+			curT.P = p0;
+			curT.l = Line.getLine(p0, p1);
+			
+			// move to the first point
+			// this.moveTo(P0.x, P0.y);
+			
+			// get tangent Objects for all intermediate segments and draw the segments
+			for (var i:int = 1; i <= nSegment; i++) {
+				// get Tangent Object for next point
+				nextT = DrawImpl2.getCubicTgt(p0, p1, p2, p3, i * tStep);
+				// get segment data for the current segment
+				total += DrawImpl2.sliceCubicBezierSegment(graphics, p0, p1, p2, p3, (i - 1) * tStep, i * tStep, curT, nextT, 0);
+				// prepare for next round
+				curT = nextT;
+			}
+		}
+
+
+		/**
+		 * Draw the cubic bezier with approximation by quadratic curves using generic mid-point approach by Robert Penner.
+		 * @see http://www.robertpenner.com/scripts/bezier_draw_cubic.txt
+		 */
+		private static function __draw3(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, tolerance:Number = 5):void {
+			DrawImpl3.$cBez(graphics, p0, p1, p2, p3, tolerance * tolerance);
+		}
 	}
 }
 
@@ -324,101 +421,14 @@ import flash.display.Graphics;
 import flash.geom.Point;
 
 
-class DrawImpl0 {
-	
-	
-	public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
-		graphics['cubicCurveTo'](p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-	}
-}
-
-
-/**
- * Draw the cubic bezier with approximation by quadratic curves using fixed mid-point approach.
- * @see http://www.timotheegroleau.com/Flash/articles/cubic_bezier_in_flash.htm
- */
-class DrawImpl1 {
-	
-	
-	public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point):void {
-		// calculates the useful base points
-		var PA:Point = Point.interpolate(p1, p0, 3 / 4);
-		var PB:Point = Point.interpolate(p2, p3, 3 / 4);
-		
-		// get 1/16 of the [P3, P0] segment
-		var dx:Number = (p3.x - p0.x) / 16;
-		var dy:Number = (p3.y - p0.y) / 16;
-		
-		// calculates control point 1
-		var Pc_1:Point = Point.interpolate(p1, p0, 3 / 8);
-		
-		// calculates control point 2
-		var Pc_2:Point = Point.interpolate(PB, PA, 3 / 8);
-		Pc_2.x -= dx;
-		Pc_2.y -= dy;
-		
-		// calculates control point 3
-		var Pc_3:Point = Point.interpolate(PA, PB, 3 / 8);
-		Pc_3.x += dx;
-		Pc_3.y += dy;
-		
-		// calculates control point 4
-		var Pc_4:Point = Point.interpolate(p2, p3, 3 / 8);
-		
-		// calculates the 3 anchor points
-		var Pa_1:Point = Point.interpolate(Pc_2, Pc_1, 0.5);
-		var Pa_2:Point = Point.interpolate(PB, PA, 0.5);
-		var Pa_3:Point = Point.interpolate(Pc_4, Pc_3, 0.5);
-	
-		// draw the four quadratic subsegments
-		graphics.curveTo(Pc_1.x, Pc_1.y, Pa_1.x, Pa_1.y);
-		graphics.curveTo(Pc_2.x, Pc_2.y, Pa_2.x, Pa_2.y);
-		graphics.curveTo(Pc_3.x, Pc_3.y, Pa_3.x, Pa_3.y);
-		graphics.curveTo(Pc_4.x, Pc_4.y, p3.x, p3.y);
-	}
-}
-
-
 /**
  * Draw the cubic bezier with approximation by quadratic curves using tangent approach.
  * @see http://www.timotheegroleau.com/Flash/articles/cubic_bezier_in_flash.htm
  */
 class DrawImpl2 {
-	
-	
-	public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, nSegment:int = 4):void {
-		//define the local variables
-		var curT:Object; // holds the current Tangent object
-		var nextT:Object; // holds the next Tangent object
-		var total:int = 0; // holds the number of slices used
-		
-		// make sure nSegment is within range (also create a default in the process)
-		if (nSegment < 2) nSegment = 4;
-		
-		// get the time Step from nSegment
-		var tStep:Number = 1 / nSegment;
-		
-		// get the first tangent Object
-		curT = new Object();
-		curT.P = p0;
-		curT.l = Line.getLine(p0, p1);
-		
-		// move to the first point
-		// this.moveTo(P0.x, P0.y);
-		
-		// get tangent Objects for all intermediate segments and draw the segments
-		for (var i:int = 1; i <= nSegment; i++) {
-			// get Tangent Object for next point
-			nextT = getCubicTgt(p0, p1, p2, p3, i * tStep);
-			// get segment data for the current segment
-			total += sliceCubicBezierSegment(graphics, p0, p1, p2, p3, (i - 1) * tStep, i * tStep, curT, nextT, 0);
-			// prepare for next round
-			curT = nextT;
-		}
-	}
 
 
-	private static function sliceCubicBezierSegment(graphics:Graphics, P0:Point, P1:Point, P2:Point, P3:Point, u1:Number, u2:Number, Tu1:Object, Tu2:Object, recurs:int):int {
+	public static function sliceCubicBezierSegment(graphics:Graphics, P0:Point, P1:Point, P2:Point, P3:Point, u1:Number, u2:Number, Tu1:Object, Tu2:Object, recurs:int):int {
 		// prevents infinite recursion (no more than 10 levels)
 		// if 10 levels are reached the latest subsegment is 
 		// approximated with a line (no quadratic curve). It should be good enough.
@@ -457,7 +467,7 @@ class DrawImpl2 {
 	}
 	
 
-	private static function getCubicTgt(P0:Point, P1:Point, P2:Point, P3:Point, t:Number):Object {
+	public static function getCubicTgt(P0:Point, P1:Point, P2:Point, P3:Point, t:Number):Object {
 	
 		// calculates the position of the cubic bezier at t
 		var P:Point = new Point();
@@ -599,13 +609,8 @@ class Line {
  */
 class DrawImpl3 {
 
-
-	public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, tolerance:Number = 5):void {
-		$cBez(graphics, p0, p1, p2, p3, tolerance * tolerance);
-	}
 	
-	
-	private static function $cBez(graphics:Graphics, a:Point, b:Point, c:Point, d:Point, k:Number):void {
+	public static function $cBez(graphics:Graphics, a:Point, b:Point, c:Point, d:Point, k:Number):void {
 		// find intersection between bezier arms
 		var s:Point = intersect2Lines(a, b, c, d);
 		// find distance between the midpoints
