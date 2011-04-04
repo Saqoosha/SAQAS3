@@ -104,7 +104,7 @@ package sh.saqoo.audio {
 					} else if (loop.sound is ByteArray) {
 						startPosInSound *= 8;
 						samplesNeeded *= 8;
-						trace([int(loop.sound.length * 1000) / 1000, startPosInSound, samplesNeeded, Math.min(samplesNeeded, loop.sound.length - startPosInSound)]);
+//						trace([int(loop.sound.length * 1000) / 1000, startPosInSound, samplesNeeded, Math.min(samplesNeeded, loop.sound.length - startPosInSound)]);
 						if (startPosInSound < loop.sound.length) {
 							samples.writeBytes(loop.sound, startPosInSound, Math.min(samplesNeeded, loop.sound.length - startPosInSound));
 						}

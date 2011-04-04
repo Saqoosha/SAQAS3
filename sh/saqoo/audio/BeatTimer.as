@@ -1,5 +1,10 @@
 package sh.saqoo.audio {
 
+	import sh.saqoo.util.EnterFrameBeacon;
+
+	import org.osflash.signals.Signal;
+
+	import flash.events.Event;
 	import flash.media.SoundChannel;
 
 	/**
@@ -19,6 +24,7 @@ package sh.saqoo.audio {
 		private var _phase:Number;
 		private var _isOnBeat:Boolean = false;
 		private var _channel:SoundChannel;
+		private var _sigBeat:Signal = new Signal();
 
 
 		public function BeatTimer() {
@@ -29,28 +35,27 @@ package sh.saqoo.audio {
 			_channel = channel;
 			_bpm = bpm;
 			_offset = offset;
-			update();
+			EnterFrameBeacon.add(_onEnterFrame);
 		}
 
 
-		public function stop():void {
-			if (_channel) _channel.stop();
-		}
-
-
-		public function update():Boolean {
-			if (!_channel) return false;
-
+		private function _onEnterFrame(e:Event):void {
 			var currentTime:Number = _channel.position + _offset;
 			var beatInterval:Number = 60000 / _bpm;
-//			var oldPosition:Number = _beatPosition;
 			var prevCount:uint = _beatCount;
 
 			_beatPosition = currentTime / beatInterval;
 			_beatCount = int(_beatPosition);
 			_phase = _beatPosition - _beatCount;
-//			return _isOnBeat = int(oldPosition) != int(_beatPosition);
-			return _isOnBeat = prevCount != _beatCount;
+			_isOnBeat = prevCount != _beatCount;
+			
+			if (_isOnBeat) _sigBeat.dispatch(_beatCount);
+		}
+
+
+		public function stop():void {
+			if (_channel) _channel.stop();
+			EnterFrameBeacon.remove(_onEnterFrame);
 		}
 
 		
@@ -61,5 +66,6 @@ package sh.saqoo.audio {
 		public function get isOnBeat():Boolean { return _isOnBeat; }
 		public function get soundChannel():SoundChannel { return _channel; }
 		public function set soundChannel(value:SoundChannel):void { _channel = value; }
+		public function get sigBeat():Signal { return _sigBeat; }
 	}
 }
