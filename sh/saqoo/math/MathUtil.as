@@ -15,7 +15,7 @@ package sh.saqoo.math {
 		}
 		
 		
-		public static function randomSign(p:Number):Number { 
+		public static function randomSign(p:Number = 0.5):Number { 
 			return Math.random() < p ? 1 : -1;
 		}
 

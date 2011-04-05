@@ -17,6 +17,11 @@ package sh.saqoo.net.detectface {
 			this.id = id;
 			this.s = s;
 		}
+		
+		
+		override public function clone():Point {
+			return new FeaturePoint(id, x, y, s);
+		}
 
 
 		override public function toString():String {
