@@ -1,5 +1,4 @@
 package sh.saqoo.util {
-	import sh.saqoo.logging.dump;
 
 	import com.bit101.components.CheckBox;
 	import com.bit101.components.ColorChooser;
@@ -17,17 +16,17 @@ package sh.saqoo.util {
 	import flash.utils.Timer;
 	import flash.utils.getQualifiedClassName;
 
-	
+
 	public class MinimalCompsStore {
-		
-		
+
+
 		public static function store(name:String, ...comps):MinimalCompsStore {
 			var store:MinimalCompsStore = new MinimalCompsStore(name);
 			for each (var c:* in comps) store.addComp(c);
 			return store;
 		}
 
-		
+
 		private var _timer:Timer;
 		private var _so:SharedObject;
 		private var _compInfo:Dictionary;
@@ -42,7 +41,7 @@ package sh.saqoo.util {
 			_changed = new Dictionary(true);
 		}
 
-		
+
 		public function addComp(comp:*, name:String = null):void {
 			name ||= comp.name;
 			var prop:String;
@@ -72,42 +71,42 @@ package sh.saqoo.util {
 					comp.addEventListener(Event.CHANGE, _onChange);
 					break;
 				default:
-					throw new Error('MinimalCompsStore only supports InputText, Slider, UISlider, ColorChooser, CheckBox, RadioButton and RotarySelector.');
+					throw new Error('MinimalCompsStore only supports following components: InputText, Slider, UISlider, ColorChooser, CheckBox, RadioButton, RotarySelector');
 					break;
 			}
 			if (!(_so.data[name] === undefined)) {
-				trace('Restore:', getQualifiedClassName(comp) + '.' + prop + ' (' + name + ') = ' + _so.data[name]);
+				trace('Restore:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + ' = ' + _so.data[name]);
 				comp[prop] = _so.data[name];
 				comp.dispatchEvent(event);
 			}
-			_compInfo[comp] = {name:name, prop:prop};
+			_compInfo[comp] = {name: name, prop: prop};
 		}
 
-		
+
 		private function _onChange(e:Event):void {
 			_changed[e.currentTarget] = true;
 			_timer.reset();
 			_timer.start();
 		}
 
-		
+
 		private function _onTimer(e:TimerEvent):void {
 			for (var comp:* in _changed) {
 				var name:String = _compInfo[comp].name;
 				var prop:String = _compInfo[comp].prop;
 				_so.data[name] = comp[prop];
-				trace('Save:', getQualifiedClassName(comp) + '.' + prop + ' (' + name + ') = ' + _so.data[name]);
+				trace('Save:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + ' = ' + _so.data[name]);
 				delete _changed[comp];
 			}
 			_so.flush();
 		}
 
-		
+
 		public function get saveDelay():Number {
 			return _timer.delay;
 		}
 
-		
+
 		public function set saveDelay(value:Number):void {
 			_timer.delay = value;
 		}

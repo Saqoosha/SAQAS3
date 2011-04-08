@@ -69,7 +69,7 @@ package sh.saqoo.audio {
 		/**
 		 * AS3 only multitrack mixdown implementation. (slow...)
 		 */
-		public static function mix0(out:ByteArray, numSamples:int, tracks:Array):ByteArray {
+		public static function mix0(out:ByteArray, numSamples:int, tracks:Vector.<ByteArray>):ByteArray {
 			out ||= new ByteArray();
 
 			for each (var data:ByteArray in tracks) {
