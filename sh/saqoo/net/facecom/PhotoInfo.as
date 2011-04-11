@@ -109,7 +109,7 @@ package sh.saqoo.net.facecom {
 				graphics.drawCircle(tag.eyeLeft.x, tag.eyeLeft.y, r);
 				graphics.drawCircle(tag.eyeRight.x, tag.eyeRight.y, r);
 				graphics.endFill();
-				graphics.lineStyle(0, 0x29FFFF, 0.8)
+				graphics.lineStyle(0, 0x29FFFF, 0.8);
 				graphics.beginFill(0x29FFFF, 0.5);
 				graphics.drawCircle(tag.nose.x, tag.nose.y, r);
 				graphics.endFill();

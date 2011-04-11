@@ -72,12 +72,10 @@ package sh.saqoo.net.detectface {
 				if (a.rightEye) sa++;
 				if (a.leftEye) sa++;
 				sa *= a.bounds.width * a.bounds.height;
-//				var sa:int = a.bounds.width * a.bounds.height * (int(!!a.rightEye) + int(!!a.leftEye));
 				var sb:int = 0;
 				if (b.rightEye) sb++;
 				if (b.leftEye) sb++;
 				sb *= b.bounds.width * b.bounds.height;
-//				var sb:int = b.bounds.width * b.bounds.height * (int(!!b.rightEye) + int(!!b.leftEye));
 				return sb - sa;
 			});
 		}

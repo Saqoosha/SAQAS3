@@ -2,11 +2,13 @@ package sh.saqoo.util {
 
 	import com.bit101.components.CheckBox;
 	import com.bit101.components.ColorChooser;
+	import com.bit101.components.Component;
 	import com.bit101.components.InputText;
 	import com.bit101.components.RadioButton;
 	import com.bit101.components.RotarySelector;
 	import com.bit101.components.Slider;
 	import com.bit101.components.UISlider;
+	import com.bit101.components.Window;
 
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -44,42 +46,49 @@ package sh.saqoo.util {
 
 		public function addComp(comp:*, name:String = null):void {
 			name ||= comp.name;
-			var prop:String;
-			var event:Event;
 			switch (true) {
 				case comp is InputText:
-					prop = 'text';
-					event = new Event(Event.CHANGE);
+					_addProp(comp, name, 'text', new Event(Event.CHANGE));
 					comp.addEventListener(Event.CHANGE, _onChange);
 					break;
 				case comp is Slider:
 				case comp is UISlider:
 				case comp is ColorChooser:
-					prop = 'value';
-					event = new Event(Event.CHANGE);
+					_addProp(comp, name, 'value', new Event(Event.CHANGE));
 					comp.addEventListener(Event.CHANGE, _onChange);
 					break;
 				case comp is CheckBox:
 				case comp is RadioButton:
-					prop = 'selected';
-					event = new MouseEvent(MouseEvent.CLICK);
+					_addProp(comp, name, 'selected', new MouseEvent(MouseEvent.CLICK));
 					comp.addEventListener(MouseEvent.CLICK, _onChange);
 					break;
 				case comp is RotarySelector:
-					prop = 'choice';
-					event = new Event(Event.CHANGE);
+					_addProp(comp, name, 'choice', new Event(Event.CHANGE));
+					comp.addEventListener(Event.CHANGE, _onChange);
+					break;
+				case comp is Window:
+					_addProp(comp, name, 'minimized', new Event(Event.RESIZE));
+					comp.addEventListener(Event.RESIZE, _onChange);
+					_addProp(comp, name, 'x', new Event(Event.CHANGE));
+					_addProp(comp, name, 'y', new Event(Event.CHANGE));
 					comp.addEventListener(Event.CHANGE, _onChange);
 					break;
 				default:
-					throw new Error('MinimalCompsStore only supports following components: InputText, Slider, UISlider, ColorChooser, CheckBox, RadioButton, RotarySelector');
+					throw new Error('MinimalCompsStore only supports following components: InputText, Slider, UISlider, ColorChooser, CheckBox, RadioButton, RotarySelector, Window');
 					break;
 			}
-			if (!(_so.data[name] === undefined)) {
-				trace('Restore:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + ' = ' + _so.data[name]);
-				comp[prop] = _so.data[name];
-				comp.dispatchEvent(event);
+		}
+		
+		
+		private function _addProp(comp:Component, name:String, prop:String, event:Event = null):void {
+			var key:String = name + ':' + prop;
+			if (!(_so.data[key] === undefined)) {
+				trace('Restore:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + '.' + prop + ' = ' + _so.data[key]);
+				comp[prop] = _so.data[key];
+				if (event) comp.dispatchEvent(event);
 			}
-			_compInfo[comp] = {name: name, prop: prop};
+			if (!_compInfo[comp]) _compInfo[comp] = new Dictionary();
+			_compInfo[comp][prop] = {name: name, prop: prop, key: key};
 		}
 
 
@@ -92,10 +101,12 @@ package sh.saqoo.util {
 
 		private function _onTimer(e:TimerEvent):void {
 			for (var comp:* in _changed) {
-				var name:String = _compInfo[comp].name;
-				var prop:String = _compInfo[comp].prop;
-				_so.data[name] = comp[prop];
-				trace('Save:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + ' = ' + _so.data[name]);
+				for (var prop:String in _compInfo[comp]) {
+					var name:String = _compInfo[comp][prop].name;
+					var key:String = _compInfo[comp][prop].key;
+					_so.data[key] = comp[prop];
+					trace('Save:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + '.' + prop + ' = ' + _so.data[key]);
+				}
 				delete _changed[comp];
 			}
 			_so.flush();

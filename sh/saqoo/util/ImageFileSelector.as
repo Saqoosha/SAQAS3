@@ -29,7 +29,9 @@ package sh.saqoo.util {
 				}
 			});
 			if (onCancel is Function) {
-				selector.addEventListener(Event.CANCEL, onCancel);
+				selector.addEventListener(Event.CANCEL, function (e:Event):void {
+					onCancel();
+				});
 			}
 			selector.browse();
 		}

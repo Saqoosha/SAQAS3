@@ -27,16 +27,16 @@ package sh.saqoo.net.detectface {
 
 		public function FaceInfo(data:XML, scale:Number = 1.0) {
 			id = data.@id;
-			bounds = new Rectangle(parseInt(data.bounds.@x) * scale, parseInt(data.bounds.@y) * scale, parseInt(data.bounds.@width) * scale, parseInt(data.bounds.@height) * scale);
-			if (data.hasOwnProperty('right-eye')) rightEye = new Point(parseInt(data['right-eye'].@x) * scale, parseInt(data['right-eye'].@y) * scale);
-			if (data.hasOwnProperty('left-eye')) leftEye = new Point(parseInt(data['left-eye'].@x) * scale, parseInt(data['left-eye'].@y) * scale);
+			bounds = new Rectangle(parseFloat(data.bounds.@x) * scale, parseFloat(data.bounds.@y) * scale, parseFloat(data.bounds.@width) * scale, parseFloat(data.bounds.@height) * scale);
+			if (data.hasOwnProperty('right-eye')) rightEye = new Point(parseFloat(data['right-eye'].@x) * scale, parseFloat(data['right-eye'].@y) * scale);
+			if (data.hasOwnProperty('left-eye')) leftEye = new Point(parseFloat(data['left-eye'].@x) * scale, parseFloat(data['left-eye'].@y) * scale);
 			if (data.hasOwnProperty('features')) {
 				sAvg = parseFloat(data.features.attribute('s-avg'));
 				sMin = parseFloat(data.features.attribute('s-min'));
 				sMax = parseFloat(data.features.attribute('s-max'));
 				features = new Dictionary();
 				for each (var feat:XML in data.features.point) {
-					var f:FeaturePoint = new FeaturePoint(feat.@id, parseInt(feat.@x) * scale, parseInt(feat.@y) * scale, parseFloat(feat.@s));
+					var f:FeaturePoint = new FeaturePoint(feat.@id, parseFloat(feat.@x) * scale, parseFloat(feat.@y) * scale, parseFloat(feat.@s));
 					features[f.id] = f;
 				}
 			}
