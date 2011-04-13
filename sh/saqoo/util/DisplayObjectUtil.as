@@ -1,10 +1,11 @@
 package sh.saqoo.util {
 
-	import flash.display.MovieClip;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 
 
@@ -44,11 +45,11 @@ package sh.saqoo.util {
 
 
 		public static function changeParent(target:DisplayObject, newParent:DisplayObjectContainer):DisplayObject {
-			// TODO: Support rotation and other transform props. (matrix or so)
-			var gp:Point = convertCoord(new Point(target.x, target.y), target.parent, newParent);
-			target.x = gp.x;
-			target.y = gp.y;
-			target.parent.removeChild(target);
+			var m:Matrix = target.transform.concatenatedMatrix;
+			var n:Matrix = newParent.transform.concatenatedMatrix;
+			n.invert();
+			m.concat(n);
+			target.transform.matrix = m;
 			return newParent.addChild(target);
 		}
 

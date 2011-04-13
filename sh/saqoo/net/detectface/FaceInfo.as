@@ -92,7 +92,7 @@ package sh.saqoo.net.detectface {
 
 		public function drawDebugInfo(graphics:Graphics, scale:Number = 1):void {
 			// bounds
-			graphics.lineStyle(0, 0xffffff);
+			graphics.lineStyle(0, 0x808080, 0.8);
 //			graphics.drawRect(bounds.x * scale, bounds.y * scale, bounds.width * scale, bounds.height * scale);
 			
 			// face

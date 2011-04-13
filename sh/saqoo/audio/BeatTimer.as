@@ -24,7 +24,7 @@ package sh.saqoo.audio {
 		private var _phase:Number;
 		private var _isOnBeat:Boolean = false;
 		private var _channel:SoundChannel;
-		private var _sigBeat:Signal = new Signal();
+		private var _sigBeat:Signal = new Signal(uint);
 
 
 		public function BeatTimer() {

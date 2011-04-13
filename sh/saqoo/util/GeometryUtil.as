@@ -63,6 +63,24 @@ package sh.saqoo.util {
 		
 		
 		/**
+		 * Calc bounds rect for specified points.
+		 */
+		public static function getPointsBound(points:Vector.<Point>):Rectangle {
+			var xMin:Number = Number.MAX_VALUE;
+			var xMax:Number = Number.MIN_VALUE;
+			var yMin:Number = Number.MAX_VALUE;
+			var yMax:Number = Number.MIN_VALUE;
+			for each (var p:Point in points) {
+				if (p.x < xMin) xMin = p.x;
+				if (xMax < p.x) xMax = p.x;
+				if (p.y < yMin) yMin = p.y;
+				if (yMax < p.y) yMax = p.y;
+			}
+			return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
+		}
+
+
+		/**
 		 * Check whether the point is insde polygon.
 		 */
 		public static function isInsidePolygon(point:Point, polygon:Vector.<Point>):Boolean {

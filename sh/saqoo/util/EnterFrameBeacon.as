@@ -34,5 +34,8 @@ package sh.saqoo.util {
 		public static function remove(listener:Function):void {
 			_instance.beacon.sigEnterFrame.remove(listener);
 		}
+		
+		
+		public static function get numListeners():int { return _instance.beacon.sigEnterFrame.numListeners; }
 	}
 }
