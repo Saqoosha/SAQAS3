@@ -1,4 +1,5 @@
 package sh.saqoo.midi.event {
+
 	import sh.saqoo.util.StringUtil;
 
 	/**
@@ -111,87 +112,29 @@ package sh.saqoo.midi.event {
 		}
 
 		
-		public function get midiType():int {
-			return _midiType;
-		}
+		public function get midiType():int { return _midiType; }
+		public function set midiType(value:int):void { _midiType = value; }
 		
+		public function get channel():int { return _channel; }
+		public function set channel(value:int):void { _channel = value; }
 		
-		public function set midiType(value:int):void {
-			_midiType = value;
-		}
-		
-		
-		public function get channel():int {
-			return _channel;
-		}
-		
-		
-		public function set channel(value:int):void {
-			_channel = value;
-		}
+		public function get data1():int { return _data1; }
+		public function set data1(value:int):void { _data1 = value; }
 
+		public function get data2():int { return _data2; }
+		public function set data2(value:int):void { _data2 = value; }
 		
-		public function get data1():int {
-			return _data1;
-		}
+		public function get note():int { return _data1; }
+		public function set note(value:int):void { _data1 = value; }
 		
+		public function get velosity():int { return _data2; }
+		public function set velosity(value:int):void { _data2 = value; }
 		
-		public function set data1(value:int):void {
-			_data1 = value;
-		}
+		public function get pressure():int { return _data2; }
+		public function set pressure(value:int):void { _data2 = value; }
 		
-		
-		public function get data2():int {
-			return _data2;
-		}
-		
-		
-		public function set data2(value:int):void {
-			_data2 = value;
-		}
-		
-		
-		//
-		
-		
-		public function get note():int {
-			return _data1;
-		}
-		
-		
-		public function set note(value:int):void {
-			_data1 = value;
-		}
-		
-		
-		public function get velosity():int {
-			return _data2;
-		}
-		
-		
-		public function set velosity(value:int):void {
-			_data2 = value;
-		}
-		
-		
-		public function get pressure():int {
-			return _data2;
-		}
-
-		
-		public function set pressure(value:int):void {
-			_data2 = value;
-		}
-		
-		
-		public function get control():int {
-			return _data1;
-		}
-		
-		
-		public function set control(value:int):void {
-			_data1 = value;
-		}
+		public function get control():int { return _data1; }
+		public function set control(value:int):void { _data1 = value; }
 		
 		
 		public override function toString():String {

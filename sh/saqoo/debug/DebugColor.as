@@ -122,5 +122,10 @@ package sh.saqoo.debug{
 			_prevIndex = (_prevIndex + 181) % _numberOfColors;
 			return _palette[_prevIndex];
 		}
+		
+		
+		public static function getRandom():uint {
+			return _palette[uint(Math.random() * _palette.length)];
+		}
 	}
 }

@@ -23,7 +23,7 @@ package sh.saqoo.midi {
 		
 		
 		private var _header:SMFHeaderChunk;
-		private var _tracks:Array;
+		private var _tracks:Vector.<SMFTrackChunk>;
 		private var _currentTrack:SMFTrackChunk;
 		
 		
@@ -45,7 +45,7 @@ package sh.saqoo.midi {
 			_header = _parseHeaderChunk(data);
 //			trace(_header);
 			
-			_tracks = [];
+			_tracks = new Vector.<SMFTrackChunk>();
 			for (var i:int = 0; i < _header.numTracks; ++i) {
 //			trace('\nTrack:', i);
 				type = data.readUnsignedInt();
@@ -339,24 +339,10 @@ package sh.saqoo.midi {
 		//
 		
 		
-		public function get format():int {
-			return _header.format;
-		}
-		
-		
-		public function get numTracks():int {
-			return _header.numTracks;
-		}
-		
-		
-		public function get resolution():int {
-			return _header.resolution;
-		}
-		
-		
-		public function get tracks():Array {
-			return _tracks;
-		}
+		public function get format():int { return _header.format; }
+		public function get numTracks():int { return _header.numTracks; }
+		public function get resolution():int { return _header.resolution; }
+		public function get tracks():Vector.<SMFTrackChunk> { return _tracks; }
 		
 		
 		public function get duration():int {

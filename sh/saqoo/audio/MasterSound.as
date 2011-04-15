@@ -31,6 +31,7 @@ package sh.saqoo.audio {
 		private var _channel:SoundChannel;
 		private var _sounds:DLL;
 		private var _latency:Number = 0;
+		private var _volume:Number = 1;
 		private var _mute:Boolean = false;
 
 
@@ -41,6 +42,8 @@ package sh.saqoo.audio {
 	
 		
 		public override function play(time:Number = 0, loops:int = 0, sndTransform:SoundTransform = null):SoundChannel {
+			sndTransform ||= new SoundTransform();
+			sndTransform.volume = _volume;
 			_channel = super.play(time, loops, sndTransform);
 			_mute = false;
 			return _channel;
@@ -155,46 +158,31 @@ package sh.saqoo.audio {
 		}
 		
 		
-		public function get volume():Number {
-			return _channel.soundTransform.volume;
-		}
-		
-		
+		public function get volume():Number { return _volume; }
 		public function set volume(value:Number):void {
-			var s:SoundTransform = _channel.soundTransform;
-			s.volume = value;
-			_channel.soundTransform = s;
+			_volume = value;
+			if (_channel) {
+				var s:SoundTransform = _channel.soundTransform;
+				s.volume = value;
+				_channel.soundTransform = s;
+			}
 		}
 		
+		public function get mute():Boolean { return _mute; }
+		public function set mute(mute:Boolean):void { _mute = mute; }
 		
-		public function get mute():Boolean {
-			return _mute;
-		}
-		
-		
-		public function set mute(mute:Boolean):void {
-			_mute = mute;
-		}
-		
-		
-		public function get playPosition():Number {
-			return _channel ? _channel.position : 0;
-		}
+		public function get playPosition():Number { return _channel ? _channel.position : 0; }
 		
 		
 		/**
 		 * @return current data position in milliseconds.
 		 */
-		public function get dataPosition():Number {
-			return _channel ? _channel.position + _latency : 0;
-		}
+		public function get dataPosition():Number { return _channel ? _channel.position + _latency : 0; }
 	
 		
 		/**
 		 * @return current play latency in milliseconds.
 		 */
-		public function get latency():Number {
-			return _latency;
-		}
+		public function get latency():Number { return _latency; }
 	}
 }
