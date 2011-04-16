@@ -33,7 +33,7 @@
 				default: throw new Error('Signal dispatched with too many arguments.');
 			}
 			_signal.addOnce(_callback);
-			_func.apply(this, _args);
+			if (_func is Function) _func.apply(this, _args);
 		}
 
 
@@ -60,7 +60,7 @@
 
 
 		public override function toString():String {
-			return ObjectUtil.formatToString(this, super.className, super.id ? 'id' : null, 'waitFrames');
+			return ObjectUtil.formatToString(this, super.className, super.id ? 'id' : null);
 		}
 	}
 }

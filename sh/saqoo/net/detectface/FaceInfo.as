@@ -1,12 +1,12 @@
 package sh.saqoo.net.detectface {
 
-	import sh.saqoo.util.ObjectDumper;
-
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
+	import sh.saqoo.debug.ObjectDumper;
+
 
 	/**
 	 * @author Saqoosha

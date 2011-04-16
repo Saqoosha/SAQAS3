@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<type name="com.vimeo.loopy::LoopyAPI" base="com.vimeo.loopy::Loopy" isDynamic="false" isFinal="false" isStatic="false">
+	<extendsClass type="com.vimeo.deco.core::BaseController"/>
+	<extendsClass type="com.vimeo.loopy::Loopy"/>
+	<implementsInterface type="com.vimeo.loopy.interfaces::ILoopy"/>
+	<variable name="player_loaded" type="Boolean"/>
+	<accessor name="bytesLoaded" access="readonly" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="bytesTotal" access="readonly" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="color" access="readwrite" type="uint" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="currentTime" access="readonly" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="duration" access="readonly" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="loop" access="readwrite" type="Boolean" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="size" access="readonly" type="Object" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="videoEmbedCode" access="readonly" type="String" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="videoHeight" access="readonly" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="videoUrl" access="readonly" type="String" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="videoWidth" access="readonly" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<accessor name="volume" access="readwrite" type="Number" declaredBy="com.vimeo.loopy::LoopyAPI"/>
+	<method name="api_addEventListener" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="String" optional="false"/><parameter index="2" type="*" optional="false"/></method>
+	<method name="api_changeColor" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="*" optional="false"/></method>
+	<method name="api_changeOutro" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="String" optional="false"/><parameter index="2" type="*" optional="true"/></method>
+	<method name="api_disableHDEmbed" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="api_enableHDEmbed" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="api_getBytesLoaded" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="api_getBytesTotal" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="api_getCurrentTime" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="api_getDuration" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="api_hideOverlay" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="com.vimeo.loopy.enums::OverlayViewEnum" optional="false"/></method>
+	<method name="api_isLoaded" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="api_isPaused" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="api_isPlaying" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="api_likeClip" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="api_loadVideo" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="int" optional="false"/></method>
+	<method name="api_onLoad" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="api_pause" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="api_play" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="api_removeEventListener" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="String" optional="false"/></method>
+	<method name="api_seekTo" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Number" optional="false"/></method>
+	<method name="api_setLoop" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Boolean" optional="false"/></method>
+	<method name="api_setOnFinishCallback" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="*" optional="false"/></method>
+	<method name="api_setOnPauseCallback" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="*" optional="false"/></method>
+	<method name="api_setOnPlayCallback" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="*" optional="false"/></method>
+	<method name="api_setProgressCallback" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="*" optional="false"/></method>
+	<method name="api_setSize" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="int" optional="false"/><parameter index="2" type="int" optional="false"/></method>
+	<method name="api_setVolume" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Number" optional="false"/></method>
+	<method name="api_showOverlay" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="com.vimeo.loopy.enums::OverlayViewEnum" optional="false"/></method>
+	<method name="api_toggleElement" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="String" optional="false"/><parameter index="2" type="Boolean" optional="true"/></method>
+	<method name="api_toggleFullscreen" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="api_toggleLoop" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="api_togglePlayPause" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Boolean" optional="false"/></method>
+	<method name="api_unload" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+	<method name="changeColor" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="String" optional="false"/></method>
+	<method name="destroy" declaredBy="com.vimeo.loopy::Loopy" returnType="void"/>
+	<method name="disableKeyboardEvents" declaredBy="com.vimeo.loopy::Loopy" returnType="void"/>
+	<method name="disableMouseMove" declaredBy="com.vimeo.loopy::Loopy" returnType="void"/>
+	<method name="enableKeyboardEvents" declaredBy="com.vimeo.loopy::Loopy" returnType="void"/>
+	<method name="enableMouseMove" declaredBy="com.vimeo.loopy::Loopy" returnType="void"/>
+	<method name="getBytesLoaded" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="getBytesTotal" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="getColor" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="String"/>
+	<method name="getCurrentTime" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="getDuration" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="getLoop" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="getVideoEmbedCode" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="String"/>
+	<method name="getVideoHeight" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="getVideoUrl" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="String"/>
+	<method name="getVideoWidth" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="getVolume" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Number"/>
+	<method name="isLoaded" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="isPaused" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="isPlaying" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="loadVideo" declaredBy="com.vimeo.loopy::Loopy" returnType="void"><parameter index="1" type="int" optional="false"/></method>
+	<method name="mouseMove" declaredBy="com.vimeo.loopy::Loopy" returnType="void"><parameter index="1" type="flash.events::MouseEvent" optional="true"/></method>
+	<method name="mouseOut" declaredBy="com.vimeo.loopy::Loopy" returnType="void"><parameter index="1" type="flash.events::Event" optional="true"/></method>
+	<method name="mouseOver" declaredBy="com.vimeo.loopy::Loopy" returnType="void"><parameter index="1" type="flash.events::MouseEvent" optional="true"/></method>
+	<method name="pause" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="paused" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="play" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="Boolean"/>
+	<method name="refresh" declaredBy="com.vimeo.deco.core::BaseController" returnType="void"><parameter index="1" type="*" optional="true"/></method>
+	<method name="seek" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Number" optional="false"/></method>
+	<method name="seekTo" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Number" optional="false"/></method>
+	<method name="setLoop" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Boolean" optional="false"/></method>
+	<method name="setVolume" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"><parameter index="1" type="Number" optional="false"/></method>
+	<method name="unload" declaredBy="com.vimeo.loopy::LoopyAPI" returnType="void"/>
+</type>

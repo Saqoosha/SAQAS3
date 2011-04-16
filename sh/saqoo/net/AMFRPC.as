@@ -27,32 +27,32 @@ package sh.saqoo.net {
 	 * @author Saqoosha
 	 */
 	public class AMFRPC extends EventDispatcher {
-		
-		
+
+
 		public static var DEFAULT_GATEWAY:String;
 		public static var DEBUG_OUT:Boolean = false;
 		private static var NEXT_RESPONSE_ID:int = 1;
-		
-		
+
+
 		public static function call(gateway:String, method:String, args:Array, callback:Function):void {
 			var rpc:AMFRPC = new AMFRPC(gateway);
-			rpc.addEventListener(Event.COMPLETE, function (e:Event):void {
+			rpc.addEventListener(Event.COMPLETE, function(e:Event):void {
 				rpc.removeEventListener(Event.COMPLETE, arguments.callee);
 				callback(rpc.result);
 			});
 			rpc.call.apply(rpc, [method].concat(args));
 		}
-		
-		
+
+
 		//
-		
-		
+
+
 		private var _gateway:String;
 		private var _loader:URLLoader;
 		private var _isError:Boolean = false;
 		protected var _result:Object;
 
-		
+
 		public function AMFRPC(gateway:String = null) {
 			_gateway = gateway || DEFAULT_GATEWAY;
 		}
@@ -130,7 +130,7 @@ package sh.saqoo.net {
 
 		protected function _parseResponse(data:ByteArray):void {
 			data.objectEncoding = ObjectEncoding.AMF0;
-			var amfVersion:int = data.readShort();
+			data.readShort(); // AMF version
 			var numHeaders:int = data.readShort();
 			for (var i:int = 0; i < numHeaders; ++i) {
 				_readHeader(data);

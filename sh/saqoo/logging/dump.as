@@ -1,6 +1,6 @@
 package sh.saqoo.logging {
 
-	import sh.saqoo.util.ObjectDumper;
+	import sh.saqoo.debug.ObjectDumper;
 
 	/**
 	 * @author Saqoosha

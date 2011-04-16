@@ -1,8 +1,8 @@
 package sh.saqoo.format.mpo {
 
-	import sh.saqoo.util.ObjectDumper;
-
 	import flash.utils.ByteArray;
+	import sh.saqoo.debug.ObjectDumper;
+
 	
 	
 	/**

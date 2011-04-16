@@ -8,7 +8,7 @@
  *				  <http://kjirou.sakura.ne.jp/mt/>
  * @license MIT License http://www.opensource.org/licenses/mit-license.php
  */
-package sh.saqoo.util {
+package sh.saqoo.debug {
 
 	import flash.display.BitmapData;
 	import flash.utils.ByteArray;

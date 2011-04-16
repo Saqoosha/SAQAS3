@@ -78,7 +78,7 @@ package sh.saqoo.midi {
 			var lastStatus:int;
 			var channel:int;
 			var p:uint;
-			var ev:SMFEvent;
+//			var ev:SMFEvent;
 			while (data.position - start < len) {
 				p = data.position;
 				delta = _readVarInt(data);
