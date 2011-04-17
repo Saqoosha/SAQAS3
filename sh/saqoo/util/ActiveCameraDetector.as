@@ -1,4 +1,5 @@
 package sh.saqoo.util {
+
 	import flash.events.ActivityEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -8,7 +9,6 @@ package sh.saqoo.util {
 	import flash.media.Video;
 	import flash.utils.Timer;
 
-	
 	/**
 	 * @author Saqoosha
 	 */
@@ -20,32 +20,32 @@ package sh.saqoo.util {
 		public static const TIMEOUT:String = 'timeout';		// couldn't detect any activity in specified seconds.
 		public static const ALLOWED:String = 'allowed';		// user clicked "Allow" button on the security panel.
 		public static const DENIED:String = 'denied';		// user clicked "Deny" button on the security panel.
-		
+
 		public static const ALL_EVENTS:Array = [NO_CAMERA, DETECTED, TIMEOUT, ALLOWED, DENIED];
-		
 		public static const MAC_DVCPRO:Array = ['DVCPRO HD (1080i50)', 'DVCPRO HD (1080i60)', 'DVCPRO HD (720p60)'];
-		
-		//
-		
+
 		private static const TEST_CAMERA_WIDTH:int = 80;
 		private static const TEST_CAMERA_HEIGHT:int = 60;
 		private static const TEST_MOTION_LEVEL:int = 1;
-		
+
 		//
-		
+
 		private var _timer:Timer;
 		private var _cameras:Array;
 		private var _videos:Array;
-		
 		private var _detectedIndex:int = -1;
 		private var _detectedName:String = null;
 		
-		
+		public function get detected():Boolean { return _detectedIndex != -1; }
+		public function get detectedCameraIndex():int { return _detectedIndex; }
+		public function get detectedCameraName():String { return _detectedName; }
+		public function get activeCamera():Camera { return Camera.getCamera(_detectedIndex.toString()); }
+
+
 		public function ActiveCameraDetector():void {
-			super();
 		}
-		
-		
+
+
 		public function start(timeout:int = 0, excludeCameraNames:Array = null):void {
 			var n:int = Camera.names.length;
 			if (n == 0) {
@@ -76,7 +76,7 @@ package sh.saqoo.util {
 			_detectedName = null;
 		}
 
-		
+
 		public function stop():void {
 			if (_videos) {
 				var n:int = _videos.length;
@@ -93,8 +93,8 @@ package sh.saqoo.util {
 				}
 			}
 		}
-		
-		
+
+
 		private function _onStatus(e:StatusEvent):void {
 			trace(e);
 			switch (e.code) {
@@ -108,7 +108,7 @@ package sh.saqoo.util {
 			}
 		}
 
-		
+
 		private function _onActivity(e:ActivityEvent):void {
 			trace(e, Camera(e.target).name);
 			if (e.activating) {
@@ -118,30 +118,11 @@ package sh.saqoo.util {
 				dispatchEvent(new Event(DETECTED));
 			}
 		}
-		
-		
+
+
 		private function _onTimeout(e:TimerEvent):void {
 			stop();
 			dispatchEvent(new Event(TIMEOUT));
-		}
-		
-		
-		public function get detected():Boolean {
-			return _detectedIndex != -1;
-		}
-
-		
-		public function get detectedCameraIndex():int {
-			return _detectedIndex;
-		}
-		
-		
-		public function get detectedCameraName():String {
-			return _detectedName;
-		}
-		
-		public function getActiveCamera():Camera {
-			return Camera.getCamera(_detectedIndex.toString());
 		}
 	}
 }

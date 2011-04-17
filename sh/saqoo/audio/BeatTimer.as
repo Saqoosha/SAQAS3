@@ -18,9 +18,9 @@ package sh.saqoo.audio {
 
 
 		private var _bpm:Number;
-		private var _offset:Number = 0;
+		private var _offset:Number;
 		private var _beatPosition:Number;
-		private var _beatCount:uint = 0;
+		private var _beatCount:uint = uint.MAX_VALUE;
 		private var _phase:Number;
 		private var _isOnBeat:Boolean = false;
 		private var _channel:SoundChannel;

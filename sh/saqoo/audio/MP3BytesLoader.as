@@ -12,7 +12,6 @@ package sh.saqoo.audio {
 
 	import org.as3commons.bytecode.abc.AbcFile;
 	import org.as3commons.bytecode.emit.IAbcBuilder;
-	import org.as3commons.bytecode.emit.IClassBuilder;
 	import org.as3commons.bytecode.emit.IPackageBuilder;
 	import org.as3commons.bytecode.emit.impl.AbcBuilder;
 	import org.as3commons.bytecode.io.AbcSerializer;
@@ -64,9 +63,6 @@ package sh.saqoo.audio {
 			var SoundClass:Class = LoaderInfo(e.currentTarget).applicationDomain.getDefinition(QNAME) as Class;
 			// Instantiate the sound class
 			_sigComplete.dispatch(new SoundClass());
-//			var sound:Sound = new SoundClass() as Sound;
-//			// Play the sound
-//			sound.play();
 		}
 
 
@@ -96,7 +92,7 @@ package sh.saqoo.audio {
 			// }
 			var abcBuilder:IAbcBuilder = new AbcBuilder();
 			var packageBuilder:IPackageBuilder = abcBuilder.definePackage(PACKAGENAME);
-			var classBuilder:IClassBuilder = packageBuilder.defineClass(CLASSNAME, "flash.media.Sound");
+			packageBuilder.defineClass(CLASSNAME, "flash.media.Sound");
 			var abcFile:AbcFile = abcBuilder.build();
 			var abcSerializer:AbcSerializer = new AbcSerializer();
 			var abcBytes:ByteArray = abcSerializer.serializeAbcFile(abcFile);

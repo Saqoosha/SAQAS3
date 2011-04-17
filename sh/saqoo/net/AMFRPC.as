@@ -22,7 +22,6 @@ package sh.saqoo.net {
 	[Event(name="progress", type="flash.events.ProgressEvent")]
 	[Event(name="complete", type="flash.events.Event")]
 
-	
 	/**
 	 * @author Saqoosha
 	 */
@@ -89,12 +88,12 @@ package sh.saqoo.net {
 			messageByte.writeUTF(responseId); // responce id
 			messageByte.writeInt(bodyByte.length); // size of serialized body
 			messageByte.writeBytes(bodyByte); // serialized body data
-			
+
 			var request:URLRequest = new URLRequest(_gateway);
-			request.method=URLRequestMethod.POST;
+			request.method = URLRequestMethod.POST;
 			request.data = messageByte;
 			request.requestHeaders = [new URLRequestHeader('Content-Type', 'application/x-amf')];
-			
+
 			_isError = false;
 			_loader = new URLLoader();
 			_loader.dataFormat = URLLoaderDataFormat.BINARY;

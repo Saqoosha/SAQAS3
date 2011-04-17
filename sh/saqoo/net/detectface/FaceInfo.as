@@ -1,17 +1,20 @@
 package sh.saqoo.net.detectface {
 
+	import sh.saqoo.debug.ObjectDumper;
+
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	import sh.saqoo.debug.ObjectDumper;
-
+	import flash.utils.IDataInput;
+	import flash.utils.IDataOutput;
+	import flash.utils.IExternalizable;
 
 	/**
 	 * @author Saqoosha
 	 */
-	public class FaceInfo {
+	public class FaceInfo implements IExternalizable {
 		
 		
 		public var id:String;
@@ -25,7 +28,12 @@ package sh.saqoo.net.detectface {
 		public var sMax:Number;
 
 
-		public function FaceInfo(data:XML, scale:Number = 1.0) {
+		public function FaceInfo(data:XML = null, scale:Number = 1.0) {
+			if (data) parse(data, scale);
+		}
+		
+		
+		public function parse(data:XML, scale:Number = 1.0):void {
 			id = data.@id;
 			bounds = new Rectangle(parseFloat(data.bounds.@x) * scale, parseFloat(data.bounds.@y) * scale, parseFloat(data.bounds.@width) * scale, parseFloat(data.bounds.@height) * scale);
 			if (data.hasOwnProperty('right-eye')) rightEye = new Point(parseFloat(data['right-eye'].@x) * scale, parseFloat(data['right-eye'].@y) * scale);
@@ -170,6 +178,16 @@ package sh.saqoo.net.detectface {
 			} catch (e:Error) {
 				trace('draw error:', pointIds, pointIds[i]);
 			}
+		}
+
+
+		public function readExternal(input:IDataInput):void {
+			parse(input.readObject());
+		}
+
+
+		public function writeExternal(output:IDataOutput):void {
+			output.writeObject(toXML());
 		}
 		
 		

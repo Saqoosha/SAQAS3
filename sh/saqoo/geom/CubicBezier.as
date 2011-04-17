@@ -195,6 +195,7 @@ package sh.saqoo.geom {
 			var i:int, ii:int;
 			var dt:Number = end - start;
 			var n:int = _length * dt;// / 2;
+			if (n < 3) return;
 			var commands:Vector.<int> = new Vector.<int>(n * 2, true);
 			commands[0] = GraphicsPathCommand.MOVE_TO;
 			for (i = 1; i < n * 2; i++) {
