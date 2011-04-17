@@ -37,7 +37,11 @@ package sh.saqoo.debug {
 		
 		
 		private static function _dumpObject(object:DisplayObject, padding:String = '', index:int = 0):void {
-			trace(padding + index + ':' + object + ' (' + object.name + ')');
+			if (object) {
+				trace(padding + index + ':' + object + ' (' + object.name + ')');
+			} else {
+				trace(padding + index + ':' + object);
+			}
 		}
 	}
 }
