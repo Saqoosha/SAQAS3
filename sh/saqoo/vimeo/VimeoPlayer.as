@@ -86,7 +86,7 @@ package sh.saqoo.vimeo {
 //			trace(opts.toString());
 
 			var loader:Loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, _onLoaded, false, 0, true);
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, _onLoaded);
 			loader.load(new URLRequest('http://api.vimeo.com/moogaloop_api.swf?' + opts), new LoaderContext(true, ApplicationDomain.currentDomain));
 		}
 

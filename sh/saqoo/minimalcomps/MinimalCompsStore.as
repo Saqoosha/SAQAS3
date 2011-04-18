@@ -1,5 +1,6 @@
-package sh.saqoo.util {
+package sh.saqoo.minimalcomps {
 
+	import com.bit101.components.ComboBox;
 	import com.bit101.components.RangeSlider;
 	import com.bit101.components.CheckBox;
 	import com.bit101.components.ColorChooser;
@@ -68,6 +69,10 @@ package sh.saqoo.util {
 					_addProp(comp, name, 'selected', new MouseEvent(MouseEvent.CLICK));
 					comp.addEventListener(MouseEvent.CLICK, _onChange);
 					break;
+				case comp is ComboBox:
+					_addProp(comp, name, 'selectedIndex', new Event(Event.SELECT));
+					comp.addEventListener(Event.SELECT, _onChange);
+					break;
 				case comp is RotarySelector:
 					_addProp(comp, name, 'choice', new Event(Event.CHANGE));
 					comp.addEventListener(Event.CHANGE, _onChange);
@@ -80,7 +85,7 @@ package sh.saqoo.util {
 					comp.addEventListener(Event.CHANGE, _onChange);
 					break;
 				default:
-					throw new Error('MinimalCompsStore only supports following components: InputText, Slider, UISlider, RangeSlider, ColorChooser, CheckBox, RadioButton, RotarySelector, Window');
+					throw new Error('MinimalCompsStore only supports following components: InputText, Slider, UISlider, RangeSlider, ColorChooser, CheckBox, RadioButton, ComboBox, RotarySelector, Window');
 					break;
 			}
 		}
