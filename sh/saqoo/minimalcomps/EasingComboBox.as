@@ -12,7 +12,7 @@ package sh.saqoo.minimalcomps {
 	public class EasingComboBox extends ComboBox {
 		
 		
-		private static const ITEMS:Array = [
+		public static const EASINGS:Array = [
 			{label: 'Linear.easeNone', func: Linear.easeNone},
 			{label: 'Sine.easeIn', func: Sine.easeIn},
 			{label: 'Sine.easeOut', func: Sine.easeOut},
@@ -51,7 +51,7 @@ package sh.saqoo.minimalcomps {
 
 
 		public function EasingComboBox(parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0) {
-			super(parent, xpos, ypos, ITEMS[0].label, ITEMS);
+			super(parent, xpos, ypos, EASINGS[0].label, EASINGS);
 			width = 120;
 		}
 	}

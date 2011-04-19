@@ -12,8 +12,6 @@ package sh.saqoo.vimeo {
 	import flash.events.Event;
 	import flash.net.URLRequest;
 	import flash.net.URLVariables;
-	import flash.system.ApplicationDomain;
-	import flash.system.LoaderContext;
 	import flash.system.Security;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
@@ -26,23 +24,29 @@ package sh.saqoo.vimeo {
 
 
 		private var _width:int;
-		override public function get width():Number { return _width; }
 		private var _height:int;
-		override public function get height():Number { return _height; }
 
+		private var _loader:Loader;
 		private var _moogaloop:Object;
 		private var _videoControls:DisplayObject;
 		private var _timer:uint;
 		
 		private var _sigReady:Signal = new Signal();
-		public function get sigReady():Signal { return _sigReady; }
 		private var _sigLoadProgress:Signal = new Signal(Number);
-		public function get sigLoadProgress():Signal { return _sigLoadProgress; }
 		private var _sigPlayProgress:Signal = new Signal(Number);
-		public function get sigPlayProgress():Signal { return _sigPlayProgress; }
 		private var _sigFinish:Signal = new Signal();
+		
+		//
+		
+		override public function get width():Number { return _width; }
+		override public function get height():Number { return _height; }
+		
+		public function get sigReady():Signal { return _sigReady; }
+		public function get sigLoadProgress():Signal { return _sigLoadProgress; }
+		public function get sigPlayProgress():Signal { return _sigPlayProgress; }
 		public function get sigFinish():Signal { return _sigFinish; }
 		
+		//
 		
 		public function get bytesLoaded():Number { return _moogaloop.bytesLoaded; }
 		public function get bytesTotal():Number { return _moogaloop.bytesTotal; }
@@ -65,15 +69,16 @@ package sh.saqoo.vimeo {
 		public function get loop():Boolean { return _moogaloop.getLoop(); }
 		public function set loop(value:Boolean):void { _moogaloop.setLoop(value); }
 		public function get paused():Boolean { return _moogaloop.paused(); }
-
+		
+		//
 		
 		public function VimeoPlayer(clipId:int, width:int, height:int, autoPlay:Boolean = false, oauthKey:String = null) {
-			Security.allowDomain('*');
-			Security.loadPolicyFile('http://api.vimeo.com/crossdomain.xml');
-			
 			_width = width;
 			_height = height;
 			
+			Security.allowDomain('*');
+			Security.loadPolicyFile('http://api.vimeo.com/crossdomain.xml');
+
 			var opts:URLVariables = new URLVariables();
 			opts.clip_id = clipId;
 			opts.width = width;
@@ -83,11 +88,10 @@ package sh.saqoo.vimeo {
 			opts.fp_version = '10';
 			opts.api = '1';
 			opts.r = Math.random().toString(16);
-//			trace(opts.toString());
 
-			var loader:Loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, _onLoaded);
-			loader.load(new URLRequest('http://api.vimeo.com/moogaloop_api.swf?' + opts), new LoaderContext(true, ApplicationDomain.currentDomain));
+			_loader = new Loader();
+			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, _onLoaded);
+			_loader.load(new URLRequest('http://api.vimeo.com/moogaloop_api.swf?' + opts));
 		}
 
 
@@ -95,7 +99,14 @@ package sh.saqoo.vimeo {
 		public function pause():void { _moogaloop.pause(); }
 		public function seek(seconds:Number):void { _moogaloop.seek(seconds); }
 		public function unload():void { _moogaloop.unload(); }
-		public function destroy():void { _moogaloop.destroy(); }
+		public function destroy():void {
+			if (_moogaloop) {
+				_moogaloop.destroy();
+			} else {
+				_loader.unloadAndStop();
+				_cleanupLoader();
+			}
+		}
 		
 		public function enableMouseMove():void { _moogaloop.enableMouseMove(); }
 		public function disableMouseMove():void { _moogaloop.disableMouseMove(); }
@@ -105,6 +116,7 @@ package sh.saqoo.vimeo {
 
 		private function _onLoaded(e:Event):void {
 			_moogaloop = e.currentTarget.loader.content;
+			_cleanupLoader();
 			DisplayObjectUtil.inactivate(InteractiveObject(_moogaloop));
 			addChild(DisplayObject(_moogaloop));
 			EnterFrameBeacon.add(_checkPlayerLoaded);
@@ -112,12 +124,10 @@ package sh.saqoo.vimeo {
 
 
 		private function _checkPlayerLoaded(e:Event):void {
-//			trace('_moogaloop.player_loaded: ' + (_moogaloop.player_loaded));
 			if (_moogaloop.player_loaded) {
 				_videoControls = _moogaloop.getChildByName('videoControlsController');
 				_videoControls.visible = false;
 				EnterFrameBeacon.remove(_checkPlayerLoaded);
-//				DisplayObjectDumper.dump(DisplayObject(_moogaloop));
 				_sigReady.dispatch();
 				_timer = setInterval(_checkProgress, 100);
 			}
@@ -139,6 +149,14 @@ package sh.saqoo.vimeo {
 					_sigFinish.dispatch();
 					clearInterval(_timer);
 				}
+			}
+		}
+		
+		
+		private function _cleanupLoader():void {
+			if (_loader) {
+				_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, _onLoaded);
+				_loader = null;
 			}
 		}
 	}
