@@ -13,22 +13,26 @@ package sh.saqoo.geom {
 	public class CubicBezier implements IParametricCurve {
 		
 		
-		public static function buildFromSVGPathNode(pathNode:XML):CubicBezier {
+		public static function buildFromSVGPathNode(pathNode:XML):Vector.<CubicBezier> {
 			var d:Array = String(pathNode.@d).match(/[MmZzLlHhVvCcSsQqTtAa]|-?[\d.]+/g);
 			var n:int = d.length;
+			var ix:Number;
+			var iy:Number;
 			var px:Number;
 			var py:Number;
 			var p:Point;
 			var cx:Number;
 			var cy:Number;
-			var segments:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
+			var segments:Vector.<CubicBezierSegment>;
+			var subpaths:Vector.<CubicBezier> = new Vector.<CubicBezier>();
 			for (var i:int = 0; i < n; ++i) {
 				var c:String = d[i];
 				switch (c) {
 					case 'M':
-						px = Number(d[++i]);
-						py = Number(d[++i]);
+						ix = px = Number(d[++i]);
+						iy = py = Number(d[++i]);
 						p = new Point(px, py);
+						segments = new Vector.<CubicBezierSegment>();
 						break;
 					case 'C':
 						segments.push(new CubicBezierSegment(
@@ -68,21 +72,40 @@ package sh.saqoo.geom {
 					case 'l':
 						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(px += Number(d[++i]), py += Number(d[++i]))));
 						break;
+					case 'H':
+						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(px = Number(d[++i]), py)));
+						break;
+					case 'h':
+						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(px += Number(d[++i]), py)));
+						break;
+					case 'V':
+						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(px, py = Number(d[++i]))));
+						break;
+					case 'v':
+						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(px, py += Number(d[++i]))));
+						break;
 					case 'Z':
 					case 'z':
+						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(ix, iy)));
+						subpaths.push(new CubicBezier(segments));
 						break;
 					default:
-						throw new Error('Unsupported attribute found: ' + c);
+						throw new Error('Unsupported command found: ' + c);
 				}
 			}
-			return new CubicBezier(segments);
+			return subpaths;
 		}
 
+		//
 
 		private var _segments:Vector.<CubicBezierSegment>;
 		private var _length:Number;
 		private var _ratio:Vector.<Number>;
 		
+		public function get segments():Vector.<CubicBezierSegment> { return _segments; }
+		public function get ratio():Vector.<Number> { return _ratio; }
+
+		//
 		
 		public function CubicBezier(segments:Vector.<CubicBezierSegment>) {
 			_segments = segments;
@@ -327,9 +350,5 @@ package sh.saqoo.geom {
 		public function toString():String {
 			return '[CubicBezier numSegments=' + _segments.length + ' length=' + (int(_length * 1000) / 1000) + ']';
 		}
-		
-		
-		public function get segments():Vector.<CubicBezierSegment> { return _segments; }
-		public function get ratio():Vector.<Number> { return _ratio; }
 	}
 }

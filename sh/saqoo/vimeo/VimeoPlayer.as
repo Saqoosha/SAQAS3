@@ -41,6 +41,8 @@ package sh.saqoo.vimeo {
 		override public function get width():Number { return _width; }
 		override public function get height():Number { return _height; }
 		
+		public function get moogaloop():Object { return _moogaloop; }
+		
 		public function get sigReady():Signal { return _sigReady; }
 		public function get sigLoadProgress():Signal { return _sigLoadProgress; }
 		public function get sigPlayProgress():Signal { return _sigPlayProgress; }

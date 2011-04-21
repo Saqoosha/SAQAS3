@@ -31,6 +31,14 @@ package sh.saqoo.util {
 		}
 		
 		
+		public static function onHatenaBookmark(url:String, title:String = ''):void {
+			var v:URLVariables = new URLVariables();
+			v.url = url;
+			v.title = title;
+			navigateToURL('http://b.hatena.ne.jp/add?' + v);
+		}
+		
+		
 		public static function onDelicious(url:String, title:String = '', notes:String = ''):void {
 			var v:URLVariables = new URLVariables();
 			v.url = url;
