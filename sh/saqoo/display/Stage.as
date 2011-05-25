@@ -6,6 +6,7 @@ package sh.saqoo.display {
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.display.StageAlign;
+	import flash.display.StageDisplayState;
 	import flash.display.StageQuality;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
@@ -53,6 +54,21 @@ package sh.saqoo.display {
 				_sigResize.add(_onResize);
 				_onResize();
 			}
+		}
+
+
+		public static function switchToFullscreen():void {
+			_ref.displayState = StageDisplayState.FULL_SCREEN;
+		}
+		
+		
+		public static function switchToWindowed():void {
+			_ref.displayState = StageDisplayState.NORMAL;
+		}
+
+
+		public static function toggleFullscreen():void {
+			_ref.displayState = _ref.displayState == StageDisplayState.NORMAL ? StageDisplayState.FULL_SCREEN : StageDisplayState.NORMAL;
 		}
 
 		

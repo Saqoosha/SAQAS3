@@ -32,7 +32,7 @@ package sh.saqoo.util {
 
 		private static const TEST_CAMERA_WIDTH:int = 80;
 		private static const TEST_CAMERA_HEIGHT:int = 60;
-		private static const TEST_MOTION_LEVEL:int = 1;
+		private static const TEST_MOTION_LEVEL:int = 10;
 
 		//
 
