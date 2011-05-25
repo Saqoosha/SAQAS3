@@ -147,7 +147,7 @@ package sh.saqoo.vimeo {
 			if (_prevTime < _moogaloop.currentTime) {
 				_prevTime = _moogaloop.currentTime;
 				_sigPlayProgress.dispatch(_moogaloop.currentTime);
-				if (_moogaloop.duration <= _moogaloop.currentTime) {
+				if (_moogaloop.duration - 0.1 <= _moogaloop.currentTime) {
 					_sigFinish.dispatch();
 					clearInterval(_timer);
 				}

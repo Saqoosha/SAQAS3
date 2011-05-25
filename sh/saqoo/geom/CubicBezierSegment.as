@@ -4,14 +4,16 @@ package sh.saqoo.geom {
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.IDataInput;
+	import flash.utils.IDataOutput;
+	import flash.utils.IExternalizable;
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
 
-	
 	/**
 	 * @author Saqoosha
 	 */
-	public dynamic class CubicBezierSegment extends Proxy implements IParametricCurve {
+	public dynamic class CubicBezierSegment extends Proxy implements IParametricCurve, IExternalizable {
 		
 		
 		private static var __drawFunc:Function = __draw2;
@@ -37,9 +39,7 @@ package sh.saqoo.geom {
 			return new CubicBezierSegment(p0, Point.interpolate(p0, p1, 0.66), Point.interpolate(p0, p1, 0.33), p1);
 		}
 
-		
 		//
-		
 		
 		private var _p0:Point;
 		private var _p1:Point;
@@ -47,7 +47,34 @@ package sh.saqoo.geom {
 		private var _p3:Point;
 		
 		private var _points:Vector.<Point>;
+
+		//
 		
+		public function get p0():Point { return _p0; }
+		public function set p0(value:Point):void {
+			_p0.x = value.x;
+			_p0.y = value.y;
+		}
+		
+		public function get p1():Point { return _p1; }
+		public function set p1(value:Point):void {
+			_p1.x = value.x;
+			_p1.y = value.y;
+		}
+		
+		public function get p2():Point { return _p2; }
+		public function set p2(value:Point):void {
+			_p2.x = value.x;
+			_p2.y = value.y;
+		}
+		
+		public function get p3():Point { return _p3; }
+		public function set p3(value:Point):void {
+			_p3.x = value.x;
+			_p3.y = value.y;
+		}
+
+		//
 		
 		public function CubicBezierSegment(p0:Point = null, p1:Point = null, p2:Point = null, p3:Point = null) {
 			_p0 = p0 || new Point();
@@ -218,6 +245,30 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function split(t:Number = 0.5):Vector.<CubicBezierSegment> {
+			t = 1 - t;
+			
+			var p01:Point = Point.interpolate(_p0, _p1, t);
+			var p11:Point = Point.interpolate(_p1, _p2, t);
+			var p21:Point = Point.interpolate(_p2, _p3, t);
+			
+			var p02:Point = Point.interpolate(p01, p11, t);
+			var p12:Point = Point.interpolate(p11, p21, t);
+			
+			var p03:Point = Point.interpolate(p02, p12, t);
+			
+			return Vector.<CubicBezierSegment>([
+				new CubicBezierSegment(_p0.clone(), p01, p02, p03.clone()),
+				new CubicBezierSegment(p03, p12, p21, _p3.clone())
+			]);
+		}
+		
+		
+		public function splitByLength(length:Number):Vector.<CubicBezierSegment> {
+			return split(length / getLength());
+		}
+		
+		
 		public function reverse():void {
 			var tmp:Point;
 			tmp = _p0;
@@ -263,32 +314,28 @@ package sh.saqoo.geom {
 			p3 = points[3];
 		}
 
-		
-		public function get p0():Point { return _p0; }
-		public function set p0(value:Point):void {
-			_p0.x = value.x;
-			_p0.y = value.y;
+
+		public function readExternal(input:IDataInput):void {
+			_p0.x = input.readFloat();
+			_p0.y = input.readFloat();
+			_p1.x = input.readFloat();
+			_p1.y = input.readFloat();
+			_p2.x = input.readFloat();
+			_p2.y = input.readFloat();
+			_p3.x = input.readFloat();
+			_p3.y = input.readFloat();
 		}
-		
-		
-		public function get p1():Point { return _p1; }
-		public function set p1(value:Point):void {
-			_p1.x = value.x;
-			_p1.y = value.y;
-		}
-		
-		
-		public function get p2():Point { return _p2; }
-		public function set p2(value:Point):void {
-			_p2.x = value.x;
-			_p2.y = value.y;
-		}
-		
-		
-		public function get p3():Point { return _p3; }
-		public function set p3(value:Point):void {
-			_p3.x = value.x;
-			_p3.y = value.y;
+
+
+		public function writeExternal(output:IDataOutput):void {
+			output.writeFloat(_p0.x);
+			output.writeFloat(_p0.y);
+			output.writeFloat(_p1.x);
+			output.writeFloat(_p1.y);
+			output.writeFloat(_p2.x);
+			output.writeFloat(_p2.y);
+			output.writeFloat(_p3.x);
+			output.writeFloat(_p3.y);
 		}
 
 		

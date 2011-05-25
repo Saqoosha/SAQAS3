@@ -1,4 +1,5 @@
 package sh.saqoo.display {
+
 	import org.osflash.signals.Signal;
 	import org.osflash.signals.natives.NativeRelaySignal;
 
@@ -33,9 +34,11 @@ package sh.saqoo.display {
 		private static var _sigResize:NativeRelaySignal;
 		private static var _sigResizeDelayed:Signal;
 		private static var _sigClick:NativeRelaySignal;
+		private static var _sigDoubleClick:NativeRelaySignal;
 		private static var _sigMouseDown:NativeRelaySignal;
 		private static var _sigMouseUp:NativeRelaySignal;
 		private static var _sigMouseMove:NativeRelaySignal;
+		private static var _sigMouseWheel:NativeRelaySignal;
 		private static var _sigKeyDown:NativeRelaySignal;
 		private static var _sigKeyUp:NativeRelaySignal;
 
@@ -179,6 +182,13 @@ package sh.saqoo.display {
 		}
 
 		
+		public static function get sigDoubleClick():NativeRelaySignal {
+			_checkRef();
+			_ref.doubleClickEnabled = true;
+			return _sigDoubleClick ||= new NativeRelaySignal(_ref, MouseEvent.DOUBLE_CLICK, MouseEvent);
+		}
+
+		
 		public static function get sigMouseDown():NativeRelaySignal {
 			_checkRef();
 			return _sigMouseDown ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_DOWN, MouseEvent);
@@ -194,6 +204,12 @@ package sh.saqoo.display {
 		public static function get sigMouseMove():NativeRelaySignal {
 			_checkRef();
 			return _sigMouseMove ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_MOVE, MouseEvent);
+		}
+		
+		
+		public static function get sigMouseWheel():NativeRelaySignal {
+			_checkRef();
+			return _sigMouseWheel ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_WHEEL, MouseEvent);
 		}
 		
 		

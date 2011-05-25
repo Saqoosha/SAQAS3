@@ -6,11 +6,14 @@ package sh.saqoo.geom {
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.IDataInput;
+	import flash.utils.IDataOutput;
+	import flash.utils.IExternalizable;
 
 	/**
 	 * @author Saqoosha
 	 */
-	public class CubicBezier implements IParametricCurve {
+	public class CubicBezier implements IParametricCurve, IExternalizable {
 		
 		
 		public static function buildFromSVGPathNode(pathNode:XML):Vector.<CubicBezier> {
@@ -88,11 +91,13 @@ package sh.saqoo.geom {
 					case 'z':
 						segments.push(CubicBezierSegment.buildLineSegment(p.clone(), p = new Point(ix, iy)));
 						subpaths.push(new CubicBezier(segments));
+						segments = null;
 						break;
 					default:
 						throw new Error('Unsupported command found: ' + c);
 				}
 			}
+			if (segments) subpaths.push(new CubicBezier(segments));
 			return subpaths;
 		}
 
@@ -107,9 +112,9 @@ package sh.saqoo.geom {
 
 		//
 		
-		public function CubicBezier(segments:Vector.<CubicBezierSegment>) {
+		public function CubicBezier(segments:Vector.<CubicBezierSegment> = null) {
 			_segments = segments;
-			recalcLength();
+			if (_segments) recalcLength();
 		}
 		
 		
@@ -189,6 +194,17 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function split(t:Number):Vector.<CubicBezier> {
+			var i:int = getSegmentIndexAt(t);
+			var segs:Vector.<CubicBezierSegment> = _segments[i].splitByLength((t - _ratio[i]) * _length);
+			var a:Vector.<CubicBezierSegment> = _segments.slice(0, i);
+			a.push(segs[0]);
+			var b:Vector.<CubicBezierSegment> = _segments.slice(i + 1);
+			b.unshift(segs[1]);
+			return Vector.<CubicBezier>([new CubicBezier(a), new CubicBezier(b)]);
+		}
+		
+		
 		public function transform(matrix:Matrix):void {
 			for each (var segment:CubicBezierSegment in _segments) {
 				segment.transform(matrix);
@@ -217,7 +233,7 @@ package sh.saqoo.geom {
 		public function drawStroke(graphics:Graphics, thickness:Number = 2.0, start:Number = 0, end:Number = 1):void {
 			var i:int, ii:int;
 			var dt:Number = end - start;
-			var n:int = _length * dt;// / 2;
+			var n:int = Math.max(10, _length * dt / 2);
 			if (n < 3) return;
 			var commands:Vector.<int> = new Vector.<int>(n * 2, true);
 			commands[0] = GraphicsPathCommand.MOVE_TO;
@@ -254,12 +270,71 @@ package sh.saqoo.geom {
 			}
 			graphics.drawPath(commands, data, GraphicsPathWinding.NON_ZERO);
 		}
+
+
+//		public function drawStroke2(graphics:Graphics, thickness:Number = 2.0, start:Number = 0, end:Number = 1):void {
+//			var i:int, ii:int;
+//			var dt:Number = end - start;
+//			var n:int = Math.max(10, _length * dt / 2);
+//			if (n < 3) return;
+////			var commands:Vector.<int> = new Vector.<int>(n * 2, true);
+////			commands[0] = GraphicsPathCommand.MOVE_TO;
+////			for (i = 1; i < n * 2; i++) {
+////				commands[i] = GraphicsPathCommand.LINE_TO;
+////			}
+//			var pt:Number = 0;
+//			var t:Number = start;
+//			var si:int = getSegmentIndexAt(t);
+////			var data:Vector.<Number> = new Vector.<Number>(n * 4, true);
+//			var right:Vector.<Point> = new Vector.<Point>();
+//			var left:Vector.<Point> = new Vector.<Point>();
+//			var p:Point = new Point();
+//			var tan:Point = new Point();
+//			var halfPI:Number = Math.PI * 0.5;
+//			var quatPI:Number = Math.PI * 0.25;
+//			var offW:Number = Math.sin(quatPI);
+//			var wr:Number = 1 / (1 - offW) * thickness * 0.5;
+//			for (i = 0; i <= n; i++) {
+//				t = i / n * dt + start;
+//				if (_ratio[si + 1] < t) {
+//					si++;
+//					pt = _ratio[si];
+//				}
+//				var tt:Number = (t - pt) / (_ratio[si + 1] - pt);
+//				_segments[si].getPointAt(tt, p);
+//				_segments[si].getTangentAt(tt, tan);
+//				var w:Number = (Math.sin(i / n * halfPI + quatPI) - offW) * wr;
+//				tan.normalize(w);
+//				
+//				data[i] = new Point(p.x - tan.y, p.y + tan.x);
+//				data[i] = new Point(p.x - tan.y, p.y + tan.x);
+//				
+//				ii = i * 2;
+//				data[ii] = p.x - tan.y;
+//				data[ii + 1] = p.y + tan.x;
+//				ii = n * 4 - 2 - i * 2;
+//				data[ii] = p.x + tan.y;
+//				data[ii + 1] = p.y - tan.x;
+//			}
+////			graphics.drawPath(commands, data, GraphicsPathWinding.NON_ZERO);
+//		}
 		
 		
 		public function drawDebugInfo(graphics:Graphics):void {
 			for each (var segment:CubicBezierSegment in _segments) {
 				segment.drawDebugInfo(graphics);
 			}
+		}
+
+
+		public function readExternal(input:IDataInput):void {
+			_segments = input.readObject();
+			recalcLength();
+		}
+
+
+		public function writeExternal(output:IDataOutput):void {
+			output.writeObject(_segments);
 		}
 		
 		

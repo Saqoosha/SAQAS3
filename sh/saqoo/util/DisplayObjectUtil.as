@@ -62,16 +62,20 @@ package sh.saqoo.util {
 		}
 
 
-		public static function inactivate(object:InteractiveObject):void {
-			object.mouseEnabled = false;
-			object.tabEnabled = false;
-			if (object is Sprite) {
-				Sprite(object).mouseChildren = false;
-				Sprite(object).tabChildren = false;
+		public static function inactivate(object:InteractiveObject, ...objs):void {
+			function f(o:InteractiveObject):void {
+				o.mouseEnabled = false;
+				o.tabEnabled = false;
+				if (object is Sprite) {
+					Sprite(o).mouseChildren = false;
+					Sprite(o).tabChildren = false;
+				}
+				if (object is MovieClip) {
+					MovieClip(o).enabled = false;
+				}
 			}
-			if (object is MovieClip) {
-				MovieClip(object).enabled = false;
-			}
+			f(object);
+			for each (var o:InteractiveObject in objs) f(o);
 		}
 	}
 }

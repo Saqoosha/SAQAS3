@@ -56,7 +56,7 @@ package sh.saqoo.display {
 			Stage.sigResize.remove(_onStageResize);
 			Stage.ref.removeEventListener(KeyboardEvent.KEY_DOWN, _onKeyDown, false);
 			Stage.ref.focus = null;
-			if (_blocker) {
+			if (_blocking) {
 				_blocker.parent.removeChild(_blocker);
 				_blocking = false;
 			}

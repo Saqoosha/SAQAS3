@@ -191,6 +191,11 @@ package sh.saqoo.net.detectface {
 		}
 		
 		
+		public function clone():FaceInfo {
+			return new FaceInfo(toXML());
+		}
+		
+		
 		public function toXML():XML {
 			var xml:XML = <face id={id}><bounds x={bounds.x} y={bounds.y} width={bounds.width} height={bounds.height}/></face>;
 			if (rightEye) xml.appendChild(<right-eye x={int(rightEye.x * 1000) / 1000} y={int(rightEye.y * 1000) / 1000}/>);

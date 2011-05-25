@@ -8,6 +8,12 @@ package sh.saqoo.util {
 	import flash.media.Camera;
 	import flash.media.Video;
 	import flash.utils.Timer;
+	
+	[Event(name="noCamera", type="flash.events.Event")]
+	[Event(name="detected", type="flash.events.Event")]
+	[Event(name="timeout", type="flash.events.Event")]
+	[Event(name="allowed", type="flash.events.Event")]
+	[Event(name="denied", type="flash.events.Event")]
 
 	/**
 	 * @author Saqoosha

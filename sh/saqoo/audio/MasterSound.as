@@ -52,6 +52,7 @@ package sh.saqoo.audio {
 		
 		public function stop():void {
 			_channel.stop();
+			_channel = null;
 		}
 
 		
