@@ -3,6 +3,7 @@ package sh.saqoo.util {
 	import org.osflash.signals.Signal;
 
 	import flash.external.ExternalInterface;
+	import flash.utils.setTimeout;
 	
 	/**
 	 * SWFWheel alternative which supports horizontal mouse wheel scroll.
@@ -17,10 +18,10 @@ package sh.saqoo.util {
 		public static function init():Boolean {
 			if (!ExternalInterface.available || !ExternalInterface.objectID) return false;
 			
-			ExternalInterface.call('eval', SCROLL_SCRIPT);
-			ExternalInterface.call('eval', 'setupScrolling("' + ExternalInterface.objectID + '");');
-			ExternalInterface.call('eval', 'true;');
-			ExternalInterface.addCallback('scrollEvent', _sig.dispatch);
+			setTimeout(function():void {
+				ExternalInterface.addCallback('scrollEvent', _sig.dispatch);
+				ExternalInterface.call(SCROLL_SCRIPT, ExternalInterface.objectID);
+			}, 100);
 			return true;
 		}
 
@@ -31,7 +32,7 @@ package sh.saqoo.util {
 
 
 		private static const SCROLL_SCRIPT:String = (<![CDATA[
-			function setupScrolling(objectID) {
+			(function(objectID) {
 				var flashObject = document.getElementsByName(objectID)[0];
 				var eventListenerObject = flashObject;
 				var isWebkit = false;
@@ -111,7 +112,7 @@ package sh.saqoo.util {
 						document.onmousewheel = scrollHandler;
 					};
 				}
-			}
+			})
 		]]>).toString();
 	}
 }
