@@ -8,7 +8,9 @@ package sh.saqoo.net {
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.net.NetConnection;
 	import flash.net.ObjectEncoding;
+	import flash.net.Responder;
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
@@ -47,61 +49,83 @@ package sh.saqoo.net {
 
 
 		private var _gateway:String;
+		private var _useNetConnection:Boolean;
 		private var _loader:URLLoader;
 		private var _isError:Boolean = false;
 		protected var _result:Object;
 
 
-		public function AMFRPC(gateway:String = null) {
+		public function get gateway():String { return _gateway; }
+		public function set gateway(value:String):void { _gateway = value; }
+		public function get useNetConnection():Boolean { return _useNetConnection; }
+		public function set useNetConnection(value:Boolean):void { _useNetConnection = value; }
+		public function get result():Object { return _result; }
+
+
+		public function AMFRPC(gateway:String = null, useNetConnection:Boolean = false) {
 			_gateway = gateway || DEFAULT_GATEWAY;
+			_useNetConnection = useNetConnection;
 		}
 		
 		
 		public function call(method:String, ...args):void {
 			if (!_gateway) throw new ArgumentError('please specify gateway...');
-			var amf3:Boolean;
-			var bodyByte:ByteArray = new ByteArray();
-			bodyByte.objectEncoding = ObjectEncoding.AMF0; 
-			bodyByte.writeByte(0x0A); // AMF0 array type
-			bodyByte.writeInt(args.length); // length of AMF0 arguments array
-			for each (var arg:* in args) {
-				switch (true) {
-					case arg is Object: amf3 = true; break;
-					default: amf3 = false;
+			
+			if (_useNetConnection) {
+				var conn:NetConnection = new NetConnection();
+				conn.connect(_gateway);
+				conn.call.apply(conn, [method, new Responder(_onComplete0)].concat.apply(null, args));
+				
+			} else {
+				var amf3:Boolean;
+				var bodyByte:ByteArray = new ByteArray();
+				bodyByte.objectEncoding = ObjectEncoding.AMF0; 
+				bodyByte.writeByte(0x0A); // AMF0 array type
+				bodyByte.writeInt(args.length); // length of AMF0 arguments array
+				for each (var arg:* in args) {
+					switch (true) {
+						case arg is Object: amf3 = true; break;
+						default: amf3 = false;
+					}
+					if (amf3) {
+						bodyByte.writeByte(0x11); // AVM+ marker
+						bodyByte.objectEncoding = ObjectEncoding.AMF3; 
+					}
+					bodyByte.writeObject(arg);
+					bodyByte.objectEncoding = ObjectEncoding.AMF0;
 				}
-				if (amf3) {
-					bodyByte.writeByte(0x11); // AVM+ marker
-					bodyByte.objectEncoding = ObjectEncoding.AMF3; 
-				}
-				bodyByte.writeObject(arg);
-				bodyByte.objectEncoding = ObjectEncoding.AMF0;
+				
+				var responseId:String = '/' + NEXT_RESPONSE_ID++; // responce ID
+				
+				var messageByte:ByteArray = new ByteArray();
+				messageByte.objectEncoding = ObjectEncoding.AMF0; // should be AMF0
+				messageByte.writeShort(0x03); // AMF version
+				messageByte.writeShort(0x00); // Number of headers (No header)
+				messageByte.writeShort(0x01); // Number of body
+				messageByte.writeUTF(method); // remote method name
+				messageByte.writeUTF(responseId); // responce id
+				messageByte.writeInt(bodyByte.length); // size of serialized body
+				messageByte.writeBytes(bodyByte); // serialized body data
+	
+				var request:URLRequest = new URLRequest(_gateway);
+				request.method = URLRequestMethod.POST;
+				request.data = messageByte;
+				request.requestHeaders = [new URLRequestHeader('Content-Type', 'application/x-amf')];
+	
+				_isError = false;
+				_loader = new URLLoader();
+				_loader.dataFormat = URLLoaderDataFormat.BINARY;
+				_loader.addEventListener(IOErrorEvent.IO_ERROR, dispatchEvent);
+				_loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, dispatchEvent);
+				_loader.addEventListener(ProgressEvent.PROGRESS, dispatchEvent);
+				_loader.addEventListener(Event.COMPLETE, _onComplete);
+				_loader.load(request);
 			}
-			
-			var responseId:String = '/' + NEXT_RESPONSE_ID++; // responce ID
-			
-			var messageByte:ByteArray = new ByteArray();
-			messageByte.objectEncoding = ObjectEncoding.AMF0; // should be AMF0
-			messageByte.writeShort(0x03); // AMF version
-			messageByte.writeShort(0x00); // Number of headers (No header)
-			messageByte.writeShort(0x01); // Number of body
-			messageByte.writeUTF(method); // remote method name
-			messageByte.writeUTF(responseId); // responce id
-			messageByte.writeInt(bodyByte.length); // size of serialized body
-			messageByte.writeBytes(bodyByte); // serialized body data
-
-			var request:URLRequest = new URLRequest(_gateway);
-			request.method = URLRequestMethod.POST;
-			request.data = messageByte;
-			request.requestHeaders = [new URLRequestHeader('Content-Type', 'application/x-amf')];
-
-			_isError = false;
-			_loader = new URLLoader();
-			_loader.dataFormat = URLLoaderDataFormat.BINARY;
-			_loader.addEventListener(IOErrorEvent.IO_ERROR, dispatchEvent);
-			_loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, dispatchEvent);
-			_loader.addEventListener(ProgressEvent.PROGRESS, dispatchEvent);
-			_loader.addEventListener(Event.COMPLETE, _onComplete);
-			_loader.load(request);
+		}
+		
+		
+		private function _onComplete0(result:Object):void {
+			dump(result);
 		}
 
 
@@ -175,11 +199,5 @@ package sh.saqoo.net {
 			});
 			data.objectEncoding = ObjectEncoding.AMF0;
 		}
-		
-		
-		public function get gateway():String { return _gateway; }
-		public function set gateway(value:String):void { _gateway = value; }
-		
-		public function get result():Object { return _result; }
 	}
 }

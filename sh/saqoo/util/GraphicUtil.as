@@ -34,7 +34,7 @@ package sh.saqoo.util {
 		/**
 		 * @see http://code.google.com/p/leebrimelow/source/browse/trunk/as3/com/theflashblog/drawing/Arc.as
 		 */
-		public static function drawArc(graphics:Graphics, center:Point, radius:Number, startAngle:Number, endAngle:Number):void {
+		public static function drawArc(graphics:Graphics, center:Point, radius:Number, startAngle:Number, endAngle:Number, moveToStart:Boolean = true):void {
 			var segAngle:Number;
 			var angle:Number;
 			var angleMid:Number;
@@ -56,7 +56,7 @@ package sh.saqoo.util {
 			ax = center.x;
 			ay = center.y;
 			
-//			graphics.moveTo(ax + Math.cos(angle) * radius, ay + Math.sin(angle) * radius);
+			if (moveToStart) graphics.moveTo(ax + Math.cos(angle) * radius, ay + Math.sin(angle) * radius);
 		
 			for (var i:int = 0; i < numOfSegs; i++) {
 				// Increment the angle
@@ -93,7 +93,7 @@ package sh.saqoo.util {
 			}
 			var v1:Point = l1.p1.subtract(l1.p0);
 			var a1:Number = Math.atan2(-v1.x, v1.y);
-			if (a1 < a0) a1 += Math.PI * 2;
+//			if (a1 < a0) a1 += Math.PI * 2;
 			GraphicUtil.drawArc(graphics, c, radius, a0 * MathUtil.toDegree, a1 * MathUtil.toDegree);
 			return new Point(Math.cos(a1) * radius + c.x, Math.sin(a1) * radius + c.y);
 		}

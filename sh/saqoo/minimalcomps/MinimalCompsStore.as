@@ -1,12 +1,12 @@
 package sh.saqoo.minimalcomps {
 
-	import com.bit101.components.ComboBox;
-	import com.bit101.components.RangeSlider;
 	import com.bit101.components.CheckBox;
 	import com.bit101.components.ColorChooser;
+	import com.bit101.components.ComboBox;
 	import com.bit101.components.Component;
 	import com.bit101.components.InputText;
 	import com.bit101.components.RadioButton;
+	import com.bit101.components.RangeSlider;
 	import com.bit101.components.RotarySelector;
 	import com.bit101.components.Slider;
 	import com.bit101.components.UISlider;
@@ -111,15 +111,26 @@ package sh.saqoo.minimalcomps {
 
 
 		private function _onTimer(e:TimerEvent):void {
-			for (var comp:* in _changed) {
-				for (var prop:String in _compInfo[comp]) {
-					var name:String = _compInfo[comp][prop].name;
-					var key:String = _compInfo[comp][prop].key;
+			save();
+		}
+		
+		
+		public function save(force:Boolean = false):void {
+			var comp:*,
+				prop:String,
+				name:String,
+				key:String;
+			
+			for (comp in force ? _compInfo : _changed) {
+				for (prop in _compInfo[comp]) {
+					name = _compInfo[comp][prop].name;
+					key = _compInfo[comp][prop].key;
 					_so.data[key] = comp[prop];
 					trace('Save:', getQualifiedClassName(comp).split('::').pop() + ': ' + name + '.' + prop + ' = ' + _so.data[key]);
 				}
-				delete _changed[comp];
 			}
+			
+			_changed = new Dictionary(true);
 			_so.flush();
 		}
 
