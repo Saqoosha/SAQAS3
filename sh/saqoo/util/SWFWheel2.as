@@ -26,8 +26,8 @@ package sh.saqoo.util {
 		}
 
 
-		public static function add(listener:Function):Function { return _sig.add(listener); }
-		public static function remove(listener:Function):Function { return _sig.remove(listener); }
+		public static function add(listener:Function):void { _sig.add(listener); }
+		public static function remove(listener:Function):void { _sig.remove(listener); }
 		public static function removeAll():void { _sig.removeAll(); }
 
 
