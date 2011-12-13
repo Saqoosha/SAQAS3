@@ -35,7 +35,7 @@ package sh.saqoo.display {
 			Stage.ref.addChild(_blocker);
 			Stage.ref.focus = _blocker;
 			Stage.ref.addEventListener(KeyboardEvent.KEY_DOWN, _onKeyDown, false, int.MAX_VALUE);
-			Stage.sigResize.add(_onStageResize);
+			Stage.resized.add(_onStageResize);
 			_onStageResize();
 			_blocking = true;
 		}
@@ -53,7 +53,7 @@ package sh.saqoo.display {
 
 		
 		public static function unblock():void {
-			Stage.sigResize.remove(_onStageResize);
+			Stage.resized.remove(_onStageResize);
 			Stage.ref.removeEventListener(KeyboardEvent.KEY_DOWN, _onKeyDown, false);
 			Stage.ref.focus = null;
 			if (_blocking) {

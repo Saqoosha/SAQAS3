@@ -19,7 +19,7 @@ package sh.saqoo.signal {
 
 
 		public static function init(listener:Function = null):void {
-			Stage.sigKeyDown.add(_onKeyDown);
+			Stage.keyDowned.add(_onKeyDown);
 			if (listener is Function) _signal.add(listener);
 		}
 

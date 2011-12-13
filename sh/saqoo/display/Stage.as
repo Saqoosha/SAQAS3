@@ -32,16 +32,17 @@ package sh.saqoo.display {
 		private static var _qualityHistry:Vector.<String> = new Vector.<String>();
 		private static var _timer:Timer;
 		
-		private static var _sigResize:NativeRelaySignal;
-		private static var _sigResizeDelayed:Signal;
-		private static var _sigClick:NativeRelaySignal;
-		private static var _sigDoubleClick:NativeRelaySignal;
-		private static var _sigMouseDown:NativeRelaySignal;
-		private static var _sigMouseUp:NativeRelaySignal;
-		private static var _sigMouseMove:NativeRelaySignal;
-		private static var _sigMouseWheel:NativeRelaySignal;
-		private static var _sigKeyDown:NativeRelaySignal;
-		private static var _sigKeyUp:NativeRelaySignal;
+		private static var _resized:NativeRelaySignal;
+		private static var _delayResized:Signal;
+		private static var _clicked:NativeRelaySignal;
+		private static var _doubleClicked:NativeRelaySignal;
+		private static var _mouseDowned:NativeRelaySignal;
+		private static var _mouseUpped:NativeRelaySignal;
+		private static var _mouseMoved:NativeRelaySignal;
+		private static var _mouseWheeled:NativeRelaySignal;
+		private static var _mouseLeft:NativeRelaySignal;
+		private static var _keyDowned:NativeRelaySignal;
+		private static var _keyUpped:NativeRelaySignal;
 
 		
 		public static function init(stage:flash.display.Stage, scaleMode:String = StageScaleMode.NO_SCALE, align:String = StageAlign.TOP_LEFT, quality:String = StageQuality.HIGH):void {
@@ -50,8 +51,8 @@ package sh.saqoo.display {
 				_ref.scaleMode = scaleMode;
 				_ref.align = align;
 				_ref.quality = quality;
-				_sigResize = new NativeRelaySignal(stage, Event.RESIZE);
-				_sigResize.add(_onResize);
+				_resized = new NativeRelaySignal(stage, Event.RESIZE);
+				_resized.add(_onResize);
 				_onResize();
 			}
 		}
@@ -108,7 +109,7 @@ package sh.saqoo.display {
 
 		
 		private static function _onTimer(event:TimerEvent):void {
-			_sigResizeDelayed.dispatch();
+			_delayResized.dispatch();
 		}
 
 		
@@ -175,69 +176,75 @@ package sh.saqoo.display {
 		}
 
 		
-		public static function get sigResize():NativeRelaySignal {
+		public static function get resized():NativeRelaySignal {
 			_checkRef();
-			return _sigResize;
+			return _resized;
 		}
 		
 		
-		static public function get sigResizeDelayed():Signal {
+		static public function get delayResized():Signal {
 			_checkRef();
-			if (!_sigResizeDelayed) {
-				_sigResizeDelayed = new Signal();
+			if (!_delayResized) {
+				_delayResized = new Signal();
 				_timer = new Timer(500, 1);
 				_timer.addEventListener(TimerEvent.TIMER, _onTimer);
 			}
-			return _sigResizeDelayed;
+			return _delayResized;
 		}
 		
 		
-		public static function get sigClick():NativeRelaySignal {
+		public static function get clicked():NativeRelaySignal {
 			_checkRef();
-			return _sigClick ||= new NativeRelaySignal(_ref, MouseEvent.CLICK, MouseEvent);
+			return _clicked ||= new NativeRelaySignal(_ref, MouseEvent.CLICK, MouseEvent);
 		}
 
 		
-		public static function get sigDoubleClick():NativeRelaySignal {
+		public static function get doubleClicked():NativeRelaySignal {
 			_checkRef();
 			_ref.doubleClickEnabled = true;
-			return _sigDoubleClick ||= new NativeRelaySignal(_ref, MouseEvent.DOUBLE_CLICK, MouseEvent);
+			return _doubleClicked ||= new NativeRelaySignal(_ref, MouseEvent.DOUBLE_CLICK, MouseEvent);
 		}
 
 		
-		public static function get sigMouseDown():NativeRelaySignal {
+		public static function get mouseDowned():NativeRelaySignal {
 			_checkRef();
-			return _sigMouseDown ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_DOWN, MouseEvent);
+			return _mouseDowned ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_DOWN, MouseEvent);
 		}
 
 		
-		public static function get sigMouseUp():NativeRelaySignal {
+		public static function get mouseUpped():NativeRelaySignal {
 			_checkRef();
-			return _sigMouseUp ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_UP, MouseEvent);
+			return _mouseUpped ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_UP, MouseEvent);
 		}
 		
 		
-		public static function get sigMouseMove():NativeRelaySignal {
+		public static function get mouseMoved():NativeRelaySignal {
 			_checkRef();
-			return _sigMouseMove ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_MOVE, MouseEvent);
+			return _mouseMoved ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_MOVE, MouseEvent);
 		}
 		
 		
-		public static function get sigMouseWheel():NativeRelaySignal {
+		public static function get mouseWheeled():NativeRelaySignal {
 			_checkRef();
-			return _sigMouseWheel ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_WHEEL, MouseEvent);
+			return _mouseWheeled ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_WHEEL, MouseEvent);
 		}
 		
 		
-		public static function get sigKeyDown():NativeRelaySignal {
+		public static function get mouseLeft():NativeRelaySignal {
 			_checkRef();
-			return _sigKeyDown ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_DOWN, KeyboardEvent);
+			return _mouseLeft ||= new NativeRelaySignal(_ref, Event.MOUSE_LEAVE, Event);
 		}
 		
 		
-		public static function get sigKeyUp():NativeRelaySignal {
+		public static function get keyDowned():NativeRelaySignal {
 			_checkRef();
-			return _sigKeyUp ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_UP, KeyboardEvent);
+			return _keyDowned ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_DOWN, KeyboardEvent);
+		}
+		
+		
+		public static function get keyUpped():NativeRelaySignal {
+			_checkRef();
+			return _keyUpped ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_UP, KeyboardEvent);
 		}
 	}
 }

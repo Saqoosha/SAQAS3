@@ -11,12 +11,14 @@ package sh.saqoo.debug {
 
 		private static var _start:Dictionary = new Dictionary();
 		private static var _section:Vector.<String> = new Vector.<String>();
+		
+		public static var traceFunc:Function = trace;
 
 
 		public static function startSection(name:String, stopCurrSect:Boolean = false):void {
 			if (stopCurrSect) stopCurrentSection();
 			if (_start.hasOwnProperty(name)) throw new ArgumentError('[Stopwatch] Section already started: ' + name);
-			trace(_getPad(_section.length) + 'Section start: "' + name + '"');
+			traceFunc(_getPad(_section.length) + 'Section start: "' + name + '"');
 			_start[name] = getTimer();
 			_section.push(name);
 		}
@@ -27,7 +29,7 @@ package sh.saqoo.debug {
 			var name:String = _section.pop();
 			var d:int = getTimer() - _start[name];
 			delete _start[name];
-			trace(_getPad(_section.length) + 'Section finish: "' + name + '" in ' + (int(d) / 1000) + 'secs');
+			traceFunc(_getPad(_section.length) + 'Section finish: "' + name + '" in ' + (d / 1000) + 'secs');
 		}
 
 
