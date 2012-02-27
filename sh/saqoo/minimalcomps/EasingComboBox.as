@@ -5,6 +5,7 @@ package sh.saqoo.minimalcomps {
 	import com.bit101.components.ComboBox;
 
 	import flash.display.DisplayObjectContainer;
+	import flash.events.Event;
 
 	/**
 	 * @author Saqoosha
@@ -50,9 +51,12 @@ package sh.saqoo.minimalcomps {
 		public function get selectedEasing():Function { return selectedItem ? selectedItem.func : Linear.easeNone; }
 
 
-		public function EasingComboBox(parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0) {
+		public function EasingComboBox(parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0, defaultHandler:Function = null) {
 			super(parent, xpos, ypos, EASINGS[0].label, EASINGS);
 			width = 120;
+			if(defaultHandler != null) {
+				addEventListener(Event.SELECT, defaultHandler);
+			}
 		}
 	}
 }

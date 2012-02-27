@@ -1,4 +1,5 @@
 package sh.saqoo.youtube {
+
 	import sh.saqoo.logging.dump;
 
 	import flash.display.Loader;
@@ -62,6 +63,26 @@ package sh.saqoo.youtube {
 		}
 		
 		
+		//----- Queueing function for lists
+		
+		public function cuePlaylist(playlist:*, index:Number = 0, startSeconds:Number = 0, suggestedQuality:String = 'default'):void {
+			_player.cuePlaylist(playlist, index, startSeconds, suggestedQuality);
+		}
+		
+		public function loadPlaylist(playlist:*, index:Number = 0, startSeconds:Number = 0, suggestedQuality:String = 'default'):void {
+			_player.loadPlaylist(playlist, index, startSeconds, suggestedQuality);
+		}
+		
+		
+		//----- Playing a video in a playlist -----
+		
+		public function nextVideo():void { _player.nextVideo(); }
+		
+		public function previousVideo():void { _player.previousVideo(); }
+		
+		public function playVideoAt(index:int):void { _player.playVideoAt(index); }
+		
+		
 		//----- Changing the player volume -----
 		
 		public function mute():void { _player.mute(); }
@@ -78,6 +99,13 @@ package sh.saqoo.youtube {
 		//----- Setting the player size -----
 		
 		public function setSize(width:Number, height:Number):void { _player.setSize(width, height); }
+		
+		
+		//----- Setting playback behavior for playlists -----
+		
+		public function setLoop(loopPlaylists:Boolean):void { _player.setLoop(loopPlaylists); }
+		
+		public function setShuffle(shufflePlaylists:Boolean):void { _player.setShuffle(shufflePlaylists); }
 		
 		
 		//----- Playback status -----
@@ -109,6 +137,13 @@ package sh.saqoo.youtube {
 		public function getVideoUrl():String { return _player.getVideoUrl(); }
 		
 		public function getVideoEmbedCode():String { return _player.getVideoEmbedCode(); }
+		
+		
+		//----- Retrieving playlist information -----
+		
+		public function getPlaylist():Array { return _player.getPlaylist(); }
+		
+		public function getPlaylistIndex():int { return _player.getPlaylistIndex(); }
 		
 		
 		//----- Special Functions -----

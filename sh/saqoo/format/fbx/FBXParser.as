@@ -72,7 +72,7 @@ package sh.saqoo.format.fbx {
 				tokenizer.parseError( "Expecting key but found " + token.value );
 			}
 			
-			root = parseChildren(new FBXNode() );
+			root = parseChildren( new FBXNode() );
 			
 			// Make sure the input stream is empty
 			if ( nextToken() != null )

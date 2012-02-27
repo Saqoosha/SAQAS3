@@ -1,5 +1,6 @@
 package sh.saqoo.util {
 
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
@@ -76,6 +77,29 @@ package sh.saqoo.util {
 			}
 			f(object);
 			for each (var o:InteractiveObject in objs) f(o);
+		}
+		
+		
+		public static function setSmoothingAll(container:DisplayObjectContainer, smoothing:Boolean):void {
+			for (var i:int = 0, n:int = container.numChildren; i < n; ++i) {
+				var obj:DisplayObject = container.getChildAt(i);
+				if (obj is Bitmap) {
+					Bitmap(obj).smoothing = smoothing;
+				} else if (obj is DisplayObjectContainer) {
+					setSmoothingAll(DisplayObjectContainer(obj), smoothing);
+				}
+			}
+		}
+		
+		
+		public static function dumpTree(container:DisplayObjectContainer, padding:String = ''):void {
+			for (var i:int = 0, n:int = container.numChildren; i < n; ++i) {
+				var obj:DisplayObject = container.getChildAt(i);
+				trace(padding + obj);
+				if (obj is DisplayObjectContainer) {
+					dumpTree(DisplayObjectContainer(obj), padding + '    ');
+				}
+			}
 		}
 	}
 }

@@ -36,13 +36,13 @@ package sh.saqoo.display {
 		private static var _delayResized:Signal;
 		private static var _clicked:NativeRelaySignal;
 		private static var _doubleClicked:NativeRelaySignal;
-		private static var _mouseDowned:NativeRelaySignal;
-		private static var _mouseUpped:NativeRelaySignal;
+		private static var _mousePressed:NativeRelaySignal;
+		private static var _mouseReleased:NativeRelaySignal;
 		private static var _mouseMoved:NativeRelaySignal;
 		private static var _mouseWheeled:NativeRelaySignal;
 		private static var _mouseLeft:NativeRelaySignal;
-		private static var _keyDowned:NativeRelaySignal;
-		private static var _keyUpped:NativeRelaySignal;
+		private static var _keyPressed:NativeRelaySignal;
+		private static var _keyReleased:NativeRelaySignal;
 
 		
 		public static function init(stage:flash.display.Stage, scaleMode:String = StageScaleMode.NO_SCALE, align:String = StageAlign.TOP_LEFT, quality:String = StageQuality.HIGH):void {
@@ -206,15 +206,15 @@ package sh.saqoo.display {
 		}
 
 		
-		public static function get mouseDowned():NativeRelaySignal {
+		public static function get mousePressed():NativeRelaySignal {
 			_checkRef();
-			return _mouseDowned ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_DOWN, MouseEvent);
+			return _mousePressed ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_DOWN, MouseEvent);
 		}
 
 		
-		public static function get mouseUpped():NativeRelaySignal {
+		public static function get mouseReleased():NativeRelaySignal {
 			_checkRef();
-			return _mouseUpped ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_UP, MouseEvent);
+			return _mouseReleased ||= new NativeRelaySignal(_ref, MouseEvent.MOUSE_UP, MouseEvent);
 		}
 		
 		
@@ -236,15 +236,15 @@ package sh.saqoo.display {
 		}
 		
 		
-		public static function get keyDowned():NativeRelaySignal {
+		public static function get keyPressed():NativeRelaySignal {
 			_checkRef();
-			return _keyDowned ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_DOWN, KeyboardEvent);
+			return _keyPressed ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_DOWN, KeyboardEvent);
 		}
 		
 		
-		public static function get keyUpped():NativeRelaySignal {
+		public static function get keyReleased():NativeRelaySignal {
 			_checkRef();
-			return _keyUpped ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_UP, KeyboardEvent);
+			return _keyReleased ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_UP, KeyboardEvent);
 		}
 	}
 }

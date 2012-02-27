@@ -48,18 +48,18 @@ package sh.saqoo.net {
 		//
 
 
-		private var _gateway:String;
-		private var _useNetConnection:Boolean;
-		private var _loader:URLLoader;
-		private var _isError:Boolean = false;
-		protected var _result:Object;
+		protected var _gateway:String;
+		protected var _useNetConnection:Boolean;
+		protected var _loader:URLLoader;
+		protected var _isError:Boolean = false;
+		protected var _result:*;
 
 
 		public function get gateway():String { return _gateway; }
 		public function set gateway(value:String):void { _gateway = value; }
 		public function get useNetConnection():Boolean { return _useNetConnection; }
 		public function set useNetConnection(value:Boolean):void { _useNetConnection = value; }
-		public function get result():Object { return _result; }
+		public function get result():* { return _result; }
 
 
 		public function AMFRPC(gateway:String = null, useNetConnection:Boolean = false) {
@@ -125,7 +125,9 @@ package sh.saqoo.net {
 		
 		
 		private function _onComplete0(result:Object):void {
-			dump(result);
+			_result = result;
+			_isError = false;
+			dispatchEvent(new Event(Event.COMPLETE));
 		}
 
 
