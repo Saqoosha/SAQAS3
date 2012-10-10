@@ -165,7 +165,7 @@ package sh.saqoo.youtube {
 
 		
 		private function _dispatchEvent(event:Event):void {
-			dump(event, event['data']);
+//			dump(event, event['data']);
 			if (hasEventListener(event.type)) {
 				var ev:YouTubePlayerEvent = new YouTubePlayerEvent(event.type, event.bubbles, event.cancelable);
 				switch (event.type) {

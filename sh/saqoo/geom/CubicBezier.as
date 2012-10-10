@@ -17,7 +17,11 @@ package sh.saqoo.geom {
 		
 		
 		public static function buildFromSVGPathNode(pathNode:XML):Vector.<CubicBezier> {
-			var d:Array = String(pathNode.@d).match(/[MmZzLlHhVvCcSsQqTtAa]|-?[\d.]+/g);
+			return buildFromSVGPath(pathNode.@d);
+		}
+		
+		public static function buildFromSVGPath(path:String):Vector.<CubicBezier> {
+			var d:Array = path.match(/[MmZzLlHhVvCcSsQqTtAa]|-?[\d.]+/g);
 			var n:int = d.length;
 			var ix:Number;
 			var iy:Number;
@@ -213,6 +217,15 @@ package sh.saqoo.geom {
 		}
 		
 		
+		public function reverse():void {
+			_segments.reverse();
+			for each (var segment:CubicBezierSegment in _segments) {
+				segment.reverse();
+			}
+			recalcLength();
+		}
+		
+		
 		public function clone():CubicBezier {
 			var clonedsegs:Vector.<CubicBezierSegment> = new Vector.<CubicBezierSegment>();
 			for each (var segs:CubicBezierSegment in _segments) {
@@ -228,12 +241,43 @@ package sh.saqoo.geom {
 				seg.draw(graphics, false);
 			}
 		}
+		
+		
+		public function drawPartial(graphics:Graphics, start:Number = 0, end:Number = 1):void {
+			var i:int, ii:int;
+			var dt:Number = end - start;
+			var n:int = Math.max(10, _length * dt / 5);
+			if (n < 3) return;
+			var commands:Vector.<int> = new Vector.<int>(n + 1, true);
+			commands[0] = GraphicsPathCommand.MOVE_TO;
+			for (i = 1; i <= n; i++) {
+				commands[i] = GraphicsPathCommand.LINE_TO;
+			}
+			var pt:Number = 0;
+			var t:Number = start;
+			var si:int = getSegmentIndexAt(t);
+			var data:Vector.<Number> = new Vector.<Number>(n * 2 + 2, true);
+			var p:Point = new Point();
+			for (i = 0; i <= n; i++) {
+				t = i / n * dt + start;
+				if (_ratio[si + 1] < t) {
+					si++;
+					pt = _ratio[si];
+				}
+				var tt:Number = (t - pt) / (_ratio[si + 1] - pt);
+				_segments[si].getPointAt(tt, p);
+				ii = i * 2;
+				data[ii] = p.x;
+				data[ii + 1] = p.y;
+			}
+			graphics.drawPath(commands, data, GraphicsPathWinding.NON_ZERO);
+		}
 
 
 		public function drawStroke(graphics:Graphics, thickness:Number = 2.0, start:Number = 0, end:Number = 1):void {
 			var i:int, ii:int;
 			var dt:Number = end - start;
-			var n:int = Math.max(10, _length * dt / 2);
+			var n:int = Math.max(10, _length * dt / 5);
 			if (n < 3) return;
 			var commands:Vector.<int> = new Vector.<int>(n * 2, true);
 			commands[0] = GraphicsPathCommand.MOVE_TO;
@@ -413,8 +457,8 @@ package sh.saqoo.geom {
 		}
 		
 
-		private function _toSVGNumber(val:Number, hoge:Boolean = true):String {
-			if (val >= 0 && hoge) {
+		private function _toSVGNumber(val:Number, preComma:Boolean = true):String {
+			if (val >= 0 && preComma) {
 				return ',' + String(int(val * 1000) / 1000);
 			} else {
 				return String(int(val * 1000) / 1000);

@@ -16,7 +16,7 @@ package sh.saqoo.geom {
 	public dynamic class CubicBezierSegment extends Proxy implements IParametricCurve, IExternalizable {
 		
 		
-		private static var __drawFunc:Function = __draw2;
+		private static var __drawFunc:Function = __draw3;
 		
 		
 		public static function draw(graphics:Graphics, p0:Point, p1:Point, p2:Point, p3:Point, moveToStart:Boolean = true):void {
@@ -660,6 +660,7 @@ class DrawImpl3 {
 	public static function $cBez(graphics:Graphics, a:Point, b:Point, c:Point, d:Point, k:Number):void {
 		// find intersection between bezier arms
 		var s:Point = intersect2Lines(a, b, c, d);
+		if (!s) return;
 		// find distance between the midpoints
 		var dx:Number = (a.x + d.x + s.x * 4 - (b.x + c.x) * 3) * .125;
 		var dy:Number = (a.y + d.y + s.y * 4 - (b.y + c.y) * 3) * .125;

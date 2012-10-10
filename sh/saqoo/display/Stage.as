@@ -1,5 +1,6 @@
 package sh.saqoo.display {
 
+	import flash.events.FullScreenEvent;
 	import org.osflash.signals.Signal;
 	import org.osflash.signals.natives.NativeRelaySignal;
 
@@ -43,6 +44,7 @@ package sh.saqoo.display {
 		private static var _mouseLeft:NativeRelaySignal;
 		private static var _keyPressed:NativeRelaySignal;
 		private static var _keyReleased:NativeRelaySignal;
+		private static var _fullScreened:NativeRelaySignal;
 
 		
 		public static function init(stage:flash.display.Stage, scaleMode:String = StageScaleMode.NO_SCALE, align:String = StageAlign.TOP_LEFT, quality:String = StageQuality.HIGH):void {
@@ -245,6 +247,12 @@ package sh.saqoo.display {
 		public static function get keyReleased():NativeRelaySignal {
 			_checkRef();
 			return _keyReleased ||= new NativeRelaySignal(_ref, KeyboardEvent.KEY_UP, KeyboardEvent);
+		}
+		
+		
+		public static function get fullScreened():NativeRelaySignal {
+			_checkRef();
+			return _fullScreened ||= new NativeRelaySignal(_ref, FullScreenEvent.FULL_SCREEN);
 		}
 	}
 }
